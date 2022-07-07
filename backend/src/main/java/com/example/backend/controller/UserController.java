@@ -64,9 +64,7 @@ public class UserController {
             return ResponseEntity.ok(authUser);
         }
         else {
-            User invalidUser = new User();
-            invalidUser.setUsername("invalid user");
-            return ResponseEntity.ok(invalidUser);
+            return null;
         }
     }
 
