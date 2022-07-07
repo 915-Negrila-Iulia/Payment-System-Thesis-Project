@@ -1,6 +1,5 @@
 package com.example.backend.model;
 
-import jdk.jfr.DataAmount;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,4 +24,8 @@ public class User {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
 }
