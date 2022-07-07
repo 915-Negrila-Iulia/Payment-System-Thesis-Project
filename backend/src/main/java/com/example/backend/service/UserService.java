@@ -3,6 +3,9 @@ package com.example.backend.service;
 import com.example.backend.model.User;
 import com.example.backend.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +16,11 @@ public class UserService implements IUserService{
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Override
     public List<User> getAllUsers(){
@@ -35,8 +43,8 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public User login(String username, String password){
-        User user = userRepository.findByUsernameAndPassword(username,password);
+    public User findUserByUsername(String username){
+        User user = userRepository.findByUsername(username);
         return user;
     }
 }

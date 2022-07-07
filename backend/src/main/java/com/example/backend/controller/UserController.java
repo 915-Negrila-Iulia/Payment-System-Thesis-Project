@@ -4,6 +4,7 @@ import com.example.backend.model.User;
 import com.example.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,6 +23,9 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping("/users")
     public List<User> getUsers(){
         return userService.getAllUsers();
@@ -29,6 +33,7 @@ public class UserController {
 
     @PostMapping("/users")
     public User createUser(@RequestBody User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userService.saveUser(user);
     }
 
@@ -54,12 +59,14 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User user){
-        User authUser = userService.login(user.getUsername(), user.getPassword());
-        if(Objects.nonNull(authUser)){
+        User authUser = userService.findUserByUsername(user.getUsername());
+        if(passwordEncoder.matches(user.getPassword(),authUser.getPassword())){
             return ResponseEntity.ok(authUser);
         }
         else {
-            return null;
+            User invalidUser = new User();
+            invalidUser.setUsername("invalid user");
+            return ResponseEntity.ok(invalidUser);
         }
     }
 
