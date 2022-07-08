@@ -1,0 +1,15 @@
+<div class="register-container">
+    <form #myForm="ngForm" class="register-form" (ngSubmit) = "onSubmit();  myForm.resetForm()" [formGroup]="registerForm">
+        <label for="username">Username</label>
+        <input type="text" id="username" formControlName="username">
+        <span *ngIf="username && username.invalid && username.touched">Username is invalid</span>
+        <label for="email">Email</label>
+        <input type="text" id="email" formControlName="email">
+        <span *ngIf="email && email.invalid && email.touched">Email is invalid</span>
+        <label for="password">Password</label>
+        <input type="password" id="password" formControlName="password">
+        <span *ngIf="password && password.invalid && password.touched">Password is invalid</span>
+        <button class="register-button" type="submit" [disabled]="registerForm.invalid">register</button>
+    </form>
+    <button class="back-button" (click)="goToHomePage()">Back</button>
+</div>

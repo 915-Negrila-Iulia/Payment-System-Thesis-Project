@@ -4,11 +4,13 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { LoginFailedComponent } from './login-failed/login-failed.component';
 import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'home', component: HomeComponent },
   { path: 'login-failed', component: LoginFailedComponent },
+  { path: 'register', component: RegisterComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 

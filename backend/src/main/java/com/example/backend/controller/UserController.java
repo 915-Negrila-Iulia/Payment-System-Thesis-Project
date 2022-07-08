@@ -31,7 +31,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @PostMapping("/users")
+    @PostMapping("/register")
     public User createUser(@RequestBody User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userService.saveUser(user);

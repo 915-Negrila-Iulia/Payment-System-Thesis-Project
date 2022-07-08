@@ -12,7 +12,11 @@ export class UserService {
   constructor(private httpClient: HttpClient) { }
 
   authenticate(user: User){
-    return this.httpClient.post<User[]>(this.baseUrl+"/login", user);
+    return this.httpClient.post<User>(this.baseUrl+"/login", user);
+  }
+
+  register(user: User){
+    return this.httpClient.post<User>(this.baseUrl+"/register", user);
   }
 
   getAllUsers(){
