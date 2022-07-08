@@ -1,6 +1,8 @@
 package com.example.backend.controller;
 
 import com.example.backend.model.User;
+import com.example.backend.model.UserHistory;
+import com.example.backend.service.IUserHistoryService;
 import com.example.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,9 @@ public class UserController {
     private IUserService userService;
 
     @Autowired
+    private IUserHistoryService userHistoryService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/users")
@@ -31,6 +36,18 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/users/history")
+    public List<UserHistory> getHistoryOfUsers() {
+        return userHistoryService.getHistoryOfUsers();
+    }
+
+    /**
+     * Register user
+     * Create new user and save it
+     * Encode user's password before storing it in the database
+     * @param user user to be created
+     * @return created user
+     */
     @PostMapping("/register")
     public User createUser(@RequestBody User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -46,17 +63,35 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Update user
+     * Check if the user is found by using the given id
+     * And throw an exception otherwise
+     * Add a new record in 'UserHistory' table containing the previous state of the user
+     * @param id of the user that is updated
+     * @param userDetails updates to be done on the user
+     * @return status set to 'OK' and the updated user
+     */
     @PutMapping("/users/{id}")
-    public ResponseEntity<User> updateEmployee(@PathVariable Long id, @RequestBody User userDetails){
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails){
         User user = userService.findUserById(id)
                 .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
+        userHistoryService.saveUserHistory(user);
         user.setUsername(userDetails.getUsername());
         user.setEmail(userDetails.getEmail());
-        user.setPassword(userDetails.getPassword());
+        user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        user.setStatus(userDetails.getStatus());
         User updatedUser = userService.saveUser(user);
         return ResponseEntity.ok(updatedUser);
     }
 
+    /**
+     * Login user
+     * Check if the given user exists in the database
+     * And return null if not found
+     * @param user user to be checked
+     * @return status set to 'OK' and the authenticated user
+     */
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User user){
         User authUser = userService.findUserByUsername(user.getUsername());
