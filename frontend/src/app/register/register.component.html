@@ -1,0 +1,12 @@
+<div class="register-container">
+    <form #myForm="ngForm" class="register-form" (ngSubmit) = "onSubmit();  myForm.resetForm()">
+        <label>Username</label>
+        <input type="text" id="Username" [(ngModel)]="user.username" name="Username">
+        <label>Email</label>
+        <input type="text" id="Email" [(ngModel)]="user.email" name="Email">
+        <label>Password</label>
+        <input type="password" id="Password" [(ngModel)]="user.password" name="Password">
+        <button class="register-button" type="submit">register</button>
+    </form>
+    <button class="back-button" (click)="goToHomePage()">Back</button>
+</div>
