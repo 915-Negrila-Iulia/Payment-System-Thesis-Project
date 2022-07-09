@@ -10,27 +10,26 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_history")
+@Table(name = "audit")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserHistory {
+public class Audit {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "object_id")
+    private Long objectID;
 
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "password")
-    private String password;
-
-    @Column(name = "status")
+    @Column(name = "object_type")
     @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+    private ObjectTypeEnum objectType;
+
+    @Column(name = "operation")
+    @Enumerated(EnumType.STRING)
+    private OperationEnum operation;
 
     @Column(name = "user_id")
     private Long userID;
@@ -40,11 +39,10 @@ public class UserHistory {
     @CreationTimestamp
     private LocalDateTime timestamp;
 
-    public UserHistory(String username, String email, String password, StatusEnum status, Long userID) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.status = status;
+    public Audit(Long objectID, ObjectTypeEnum objectType, OperationEnum operation, Long userID) {
+        this.objectID = objectID;
+        this.objectType = objectType;
+        this.operation = operation;
         this.userID = userID;
     }
 }
