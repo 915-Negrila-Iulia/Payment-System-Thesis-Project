@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.model.StatusEnum;
 import com.example.backend.model.User;
 import com.example.backend.model.UserHistory;
 import com.example.backend.service.IUserHistoryService;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Status;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,37 +56,6 @@ public class UserController {
         return userService.saveUser(user);
     }
 
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<Map<String,Boolean>> deleteUser(@PathVariable Long id){
-        userService.findUserById(id).orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
-        userService.deleteUserById(id);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("deleted", true);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * Update user
-     * Check if the user is found by using the given id
-     * And throw an exception otherwise
-     * Add a new record in 'UserHistory' table containing the previous state of the user
-     * @param id of the user that is updated
-     * @param userDetails updates to be done on the user
-     * @return status set to 'OK' and the updated user
-     */
-    @PutMapping("/users/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails){
-        User user = userService.findUserById(id)
-                .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
-        userHistoryService.saveUserHistory(user);
-        user.setUsername(userDetails.getUsername());
-        user.setEmail(userDetails.getEmail());
-        user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
-        user.setStatus(userDetails.getStatus());
-        User updatedUser = userService.saveUser(user);
-        return ResponseEntity.ok(updatedUser);
-    }
-
     /**
      * Login user
      * Check if the given user exists in the database
@@ -103,4 +74,38 @@ public class UserController {
         }
     }
 
+    /**
+     * Update user
+     * Check if the user exists by using the given id
+     * And throw an exception otherwise
+     * Add a new record in 'UserHistory' table containing the previous state of the user
+     * Status of the updated user is changed to 'approve'
+     * @param id of the user that is updated
+     * @param userDetails updates to be done on the user
+     * @return status set to 'OK' and the updated user
+     */
+    @PutMapping("/users/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails){
+        User user = userService.findUserById(id)
+                .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
+        userHistoryService.saveUserHistory(user);
+        user.setUsername(userDetails.getUsername());
+        user.setEmail(userDetails.getEmail());
+        user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        user.setStatus(StatusEnum.APPROVE);
+        User updatedUser = userService.saveUser(user);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @PutMapping("users/approve/{id}")
+    public ResponseEntity<User> approveUser(@PathVariable Long id){
+        User user = userService.findUserById(id)
+                .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
+        userHistoryService.saveUserHistory(user);
+        user.setStatus(StatusEnum.ACTIVE);
+        User activeUser = userService.saveUser(user);
+        return ResponseEntity.ok(activeUser);
+    }
+
+    //todo: delete user => inactive
 }
