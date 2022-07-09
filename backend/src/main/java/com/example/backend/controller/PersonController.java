@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.model.*;
+import com.example.backend.service.IAuditService;
 import com.example.backend.service.IPersonHistoryService;
 import com.example.backend.service.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class PersonController {
     @Autowired
     private IPersonHistoryService personHistoryService;
 
+    @Autowired
+    private IAuditService auditService;
+
     @GetMapping()
     public List<Person> getPersons(){
         return personService.getAllPersons();
@@ -31,8 +35,12 @@ public class PersonController {
     }
 
     @PostMapping()
-    public Person createUser(@RequestBody Person personalInfo){
-        return personService.savePerson(personalInfo);
+    public Person createPerson(@RequestBody Person personalInfo){
+        personalInfo.setStatus(StatusEnum.APPROVE);
+        Person person = personService.savePerson(personalInfo);
+        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.CREATE,0L);
+        auditService.saveAudit(audit);
+        return person;
     }
 
     /**
@@ -40,6 +48,7 @@ public class PersonController {
      * Check if the person exists by using the given id
      * And throw an exception otherwise
      * Add a new record in 'PersonHistory' table containing the previous state of the person
+     * Update 'Audit' table
      * @param id of the person that is updated
      * @param details updates to be done on the person
      * @return status set to 'OK' and the updated person
@@ -57,6 +66,8 @@ public class PersonController {
         person.setUserID(details.getUserID());
         person.setStatus(StatusEnum.APPROVE);
         Person updatedPerson = personService.savePerson(person);
+        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.UPDATE,0L);
+        auditService.saveAudit(audit);
         return ResponseEntity.ok(updatedPerson);
     }
 
@@ -67,6 +78,8 @@ public class PersonController {
         personHistoryService.savePersonHistory(person);
         person.setStatus(StatusEnum.ACTIVE);
         Person activePerson = personService.savePerson(person);
+        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.APPROVE,0L);
+        auditService.saveAudit(audit);
         return ResponseEntity.ok(activePerson);
     }
 }

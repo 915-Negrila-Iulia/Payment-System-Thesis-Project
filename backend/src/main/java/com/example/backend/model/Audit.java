@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Audit {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,4 +38,11 @@ public class Audit {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
     private LocalDateTime timestamp;
+
+    public Audit(Long objectID, ObjectTypeEnum objectType, OperationEnum operation, Long userID) {
+        this.objectID = objectID;
+        this.objectType = objectType;
+        this.operation = operation;
+        this.userID = userID;
+    }
 }

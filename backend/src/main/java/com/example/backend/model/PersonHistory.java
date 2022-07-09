@@ -53,4 +53,16 @@ public class PersonHistory {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
     private LocalDateTime timestamp;
+
+    public PersonHistory(String firstName, String lastName, String address,
+                         LocalDate dateOfBirth, String phoneNumber, Long userID, StatusEnum status, Long personID) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.dateOfBirth = dateOfBirth;
+        this.phoneNumber = phoneNumber;
+        this.userID = userID;
+        this.status = status;
+        this.personID = personID;
+    }
 }

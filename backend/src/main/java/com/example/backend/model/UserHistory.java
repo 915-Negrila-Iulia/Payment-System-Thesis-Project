@@ -39,4 +39,12 @@ public class UserHistory {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
     private LocalDateTime timestamp;
+
+    public UserHistory(String username, String email, String password, StatusEnum status, Long userID) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.status = status;
+        this.userID = userID;
+    }
 }

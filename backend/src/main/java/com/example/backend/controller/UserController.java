@@ -42,19 +42,17 @@ public class UserController {
      * Register user
      * Create new user and save it
      * Encode user's password before storing it in the database
-     * Update audit
+     * Update 'Audit' table
      * @param user user to be created
      * @return created user
      */
     @PostMapping("/register")
     public User createUser(@RequestBody User user){
+        user.setStatus(StatusEnum.APPROVE);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User createdUser = userService.saveUser(user);
-        Audit audit = new Audit();
-        audit.setObjectID(user.getId());
-        audit.setObjectType(ObjectTypeEnum.USER);
-        audit.setOperation(OperationEnum.CREATE);
-        audit.setUserID(0L); //todo: remove hardcoded id; make sessions for users
+        //todo: remove hardcoded id=0L; make sessions for users
+        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.CREATE,0L);
         auditService.saveAudit(audit);
         return createdUser;
     }
@@ -83,6 +81,7 @@ public class UserController {
      * And throw an exception otherwise
      * Add a new record in 'UserHistory' table containing the previous state of the user
      * Status of the updated user is changed to 'approve'
+     * Update 'Audit' table
      * @param id of the user that is updated
      * @param userDetails updates to be done on the user
      * @return status set to 'OK' and the updated user
@@ -97,6 +96,8 @@ public class UserController {
         user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
         user.setStatus(StatusEnum.APPROVE);
         User updatedUser = userService.saveUser(user);
+        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.UPDATE,0L);
+        auditService.saveAudit(audit);
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -107,6 +108,8 @@ public class UserController {
         userHistoryService.saveUserHistory(user);
         user.setStatus(StatusEnum.ACTIVE);
         User activeUser = userService.saveUser(user);
+        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.APPROVE,0L);
+        auditService.saveAudit(audit);
         return ResponseEntity.ok(activeUser);
     }
 
