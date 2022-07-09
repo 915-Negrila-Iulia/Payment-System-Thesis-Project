@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from './user';
+import { UserHistory } from './user-history';
 
 @Injectable({
   providedIn: 'root'
@@ -21,5 +22,9 @@ export class UserService {
 
   getAllUsers(){
     return this.httpClient.get<User[]>(this.baseUrl+"/users");
+  }
+
+  getHistoryOfUsers(){
+    return this.httpClient.get<UserHistory[]>(this.baseUrl+"/users/history");
   }
 }
