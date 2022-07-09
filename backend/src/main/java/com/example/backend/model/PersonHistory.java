@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -12,11 +13,11 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "personal_information")
+@Table(name = "person_history")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Person {
+public class PersonHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,4 +45,12 @@ public class Person {
     @Enumerated(EnumType.STRING)
     @ColumnDefault(value = "APPROVE")
     private StatusEnum status;
+
+    @Column(name = "person_id")
+    private Long personID;
+
+    @Column(name = "timestamp")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @CreationTimestamp
+    private LocalDateTime timestamp;
 }
