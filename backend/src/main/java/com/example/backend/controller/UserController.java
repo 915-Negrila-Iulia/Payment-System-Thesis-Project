@@ -1,23 +1,15 @@
 package com.example.backend.controller;
 
-import com.example.backend.model.StatusEnum;
-import com.example.backend.model.User;
-import com.example.backend.model.UserHistory;
+import com.example.backend.model.*;
+import com.example.backend.service.IAuditService;
 import com.example.backend.service.IUserHistoryService;
 import com.example.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Status;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -29,6 +21,9 @@ public class UserController {
 
     @Autowired
     private IUserHistoryService userHistoryService;
+
+    @Autowired
+    private IAuditService auditService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -47,13 +42,21 @@ public class UserController {
      * Register user
      * Create new user and save it
      * Encode user's password before storing it in the database
+     * Update audit
      * @param user user to be created
      * @return created user
      */
     @PostMapping("/register")
     public User createUser(@RequestBody User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userService.saveUser(user);
+        User createdUser = userService.saveUser(user);
+        Audit audit = new Audit();
+        audit.setObjectID(user.getId());
+        audit.setObjectType(ObjectTypeEnum.USER);
+        audit.setOperation(OperationEnum.CREATE);
+        audit.setUserID(0L); //todo: remove hardcoded id; make sessions for users
+        auditService.saveAudit(audit);
+        return createdUser;
     }
 
     /**

@@ -3,13 +3,10 @@ package com.example.backend.service;
 import com.example.backend.model.User;
 import com.example.backend.model.UserHistory;
 import com.example.backend.repository.IUserHistoryRepository;
-import com.example.backend.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserHistoryService implements IUserHistoryService{
