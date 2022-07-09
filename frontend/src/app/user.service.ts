@@ -27,4 +27,12 @@ export class UserService {
   getHistoryOfUsers(){
     return this.httpClient.get<UserHistory[]>(this.baseUrl+"/users/history");
   }
+
+  updateUser(id: number | undefined, user: User){
+    return this.httpClient.put<User>(this.baseUrl+"/users/"+`${id}`,user);
+  }
+
+  approveUser(id: number | undefined){
+    return this.httpClient.put<User>(this.baseUrl+"/users/approve/"+`${id}`,null);
+  }
 }

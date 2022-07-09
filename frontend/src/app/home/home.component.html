@@ -1,20 +1,4 @@
-<h3> Users </h3>
-<table id='usersTable' border='1'>
-    <tr>
-        <th>id</th>
-        <th>username</th>
-        <th>email</th>
-        <th>status</th>
-    </tr>
-    <tr *ngFor="let item of users; let i = index;">
-      <td>{{item.id}}</td>
-      <td>{{item.username}}</td>
-      <td>{{item.email}}</td>
-      <td>{{item.status}}</td>
-    </tr>
-  </table>
-<br>
-<button (click)="getUsers()">getUsers</button>
+<app-users-list></app-users-list>
 <br><br>
 <button (click)="registerUser()">register user</button>
 <br><br>
