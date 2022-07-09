@@ -1,8 +1,6 @@
 package com.example.backend.controller;
 
-import com.example.backend.model.Person;
-import com.example.backend.model.PersonHistory;
-import com.example.backend.model.UserHistory;
+import com.example.backend.model.*;
 import com.example.backend.service.IPersonHistoryService;
 import com.example.backend.service.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +55,18 @@ public class PersonController {
         person.setDateOfBirth(details.getDateOfBirth());
         person.setPhoneNumber(details.getPhoneNumber());
         person.setUserID(details.getUserID());
-        person.setStatus(details.getStatus());
+        person.setStatus(StatusEnum.APPROVE);
         Person updatedPerson = personService.savePerson(person);
         return ResponseEntity.ok(updatedPerson);
+    }
+
+    @PutMapping("/approve/{id}")
+    public ResponseEntity<Person> approvePerson(@PathVariable Long id){
+        Person person = personService.findPersonById(id)
+                .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
+        personHistoryService.savePersonHistory(person);
+        person.setStatus(StatusEnum.ACTIVE);
+        Person activePerson = personService.savePerson(person);
+        return ResponseEntity.ok(activePerson);
     }
 }
