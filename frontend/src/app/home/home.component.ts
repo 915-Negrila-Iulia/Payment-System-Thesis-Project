@@ -19,4 +19,20 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/users-home']);
   }
 
+  goToPersonsHomePage(){
+
+  }
+
+  goToAccountsHomePage(){
+
+  }
+
+  goToBalancesHomePage(){
+
+  }
+
+  goToTransactionsHomePage(){
+    
+  }
+
 }
