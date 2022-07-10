@@ -8,21 +8,23 @@ import { Router } from '@angular/router';
 })
 export class UsersHomeComponent implements OnInit {
 
-  constructor(private router: Router ) { }
+  show: string | undefined;
+
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }
 
   viewUsers(){
-    this.router.navigate(['users-list']);
+    this.show = "usersList";
   }
 
   registerUser(){
-    this.router.navigate(['/register']);
+    this.show = "registerUser";
   }
 
   viewHistory(){
-    this.router.navigate(['/users-history']);
+    this.show = "usersHistory";
   }
 
 }

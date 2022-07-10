@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
   }
 
   goToPersonsHomePage(){
-
+    this.router.navigate(['/persons-home']);
   }
 
   goToAccountsHomePage(){

@@ -1,0 +1,33 @@
+<div class="container">
+    <h3> Persons History </h3>
+    <div class="persons-history-container">
+      <table id='personsHistoryTable'>
+          <tr>
+              <th>id</th>
+              <th>personID</th>
+              <th>first name</th>
+              <th>last name</th>
+              <th>address</th>
+              <th>date of birth</th>
+              <th>phone number</th>
+              <th>user id</th>
+              <th>status</th>
+              <th>timestamp</th>
+          </tr>
+          <tr *ngFor="let item of personsHistory; let i = index;">
+            <td>{{item.id}}</td>
+            <td>{{item.personID}}</td>
+            <td>{{item.firstName}}</td>
+            <td>{{item.lastName}}</td>
+            <td>{{item.address}}</td>
+            <td>{{item.dateOfBirth}}</td>
+            <td>{{item.phoneNumber}}</td>
+            <td>{{item.userID}}</td>
+            <td>{{item.status}}</td>
+            <td>{{item.timestamp}}</td>
+          </tr>
+        </table>
+      <br>
+      <button (click)="getPersonsHistory()">getPersonsHistory</button>
+    </div>
+  </div>

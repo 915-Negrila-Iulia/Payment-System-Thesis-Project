@@ -1,7 +1,10 @@
-<br>
-<button (click)="viewUsers()">USERS</button>
-<br><br>
-<button (click)="registerUser()">REGISTER</button>
-<br><br>
-<button (click)="viewHistory()">HISTORY</button>
-
+<div class="container">
+    <div class="top-bar-container">
+        <button (click)="viewUsers()">USERS</button>
+        <button (click)="registerUser()">REGISTER</button>
+        <button (click)="viewHistory()">HISTORY</button>
+    </div>
+    <app-users-list *ngIf="show==='usersList'"></app-users-list>
+    <app-register *ngIf="show==='registerUser'"></app-register>
+    <app-users-history *ngIf="show==='usersHistory'"></app-users-history>
+</div>

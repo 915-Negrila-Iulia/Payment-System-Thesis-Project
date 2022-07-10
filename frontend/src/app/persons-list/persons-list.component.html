@@ -1,0 +1,32 @@
+<div class="container">
+    <h3> Persons </h3>
+    <div class="persons-list-container">
+      <table id='personsTable'>
+          <tr>
+              <th>id</th>
+              <th>first name</th>
+              <th>last name</th>
+              <th>address</th>
+              <th>date of birth</th>
+              <th>phone number</th>
+              <th>user id</th>
+              <th>status</th>
+              <th colspan="2">Actions</th>
+          </tr>
+          <tr *ngFor="let item of persons; let i = index;">
+            <td>{{item.id}}</td>
+            <td class="td-input"><input type="text" [(ngModel)]="persons[i].firstName" #firstName="ngModel"></td>
+            <td class="td-input"><input type="text" [(ngModel)]="persons[i].lastName" #lastName="ngModel"></td>
+            <td class="td-input"><input type="text" [(ngModel)]="persons[i].address" #address="ngModel"></td>
+            <td class="td-input"><input type="text" [(ngModel)]="persons[i].dateOfBirth" #dateOfBirth="ngModel"></td>
+            <td class="td-input"><input type="text" [(ngModel)]="persons[i].phoneNumber" #phoneNumber="ngModel"></td>
+            <td>{{item.userID}}</td>
+            <td>{{item.status}}</td>
+            <td class="td-button"><button class="updateButton" (click)="updatePerson(item.id,firstName,lastName,address,dateOfBirth,phoneNumber,item.userID,item.status)">update</button></td>
+            <td class="td-button"><button class="approveButton" (click)="approvePerson(item.id)">approve</button></td>
+          </tr>
+        </table>
+      <br>
+      <button (click)="getPersons()">getPersons</button>
+    </div>
+  </div>
