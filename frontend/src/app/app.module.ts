@@ -13,6 +13,7 @@ import { RegisterComponent } from './register/register.component';
 import { UsersHistoryComponent } from './users-history/users-history.component';
 import { UsersListComponent } from './users-list/users-list.component';
 import { UsersHomeComponent } from './users-home/users-home.component';
+import { AuditListComponent } from './audit-list/audit-list.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { UsersHomeComponent } from './users-home/users-home.component';
     RegisterComponent,
     UsersHistoryComponent,
     UsersListComponent,
-    UsersHomeComponent
+    UsersHomeComponent,
+    AuditListComponent
   ],
   imports: [
     BrowserModule,

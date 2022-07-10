@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
+import { AuditListComponent } from './audit-list/audit-list.component';
 import { HomeComponent } from './home/home.component';
 import { LoginFailedComponent } from './login-failed/login-failed.component';
 import { LoginComponent } from './login/login.component';
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'users-list', component: UsersListComponent },
   { path: 'users-history', component: UsersHistoryComponent },
   { path: 'users-home', component: UsersHomeComponent },
+  { path: 'audit-list', component:AuditListComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 

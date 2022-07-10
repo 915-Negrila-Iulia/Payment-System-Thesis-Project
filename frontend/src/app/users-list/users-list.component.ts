@@ -13,7 +13,7 @@ export class UsersListComponent implements OnInit {
   users: User[] = [];
   user: User = new User();
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(private userService: UserService) { }
 
   ngOnInit(): void {
     this.getUsers();
