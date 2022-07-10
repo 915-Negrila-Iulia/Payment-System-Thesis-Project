@@ -4,6 +4,7 @@
     margin: 0;
     
     .login-form{
+        font-family: Arial, Helvetica, sans-serif;
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -16,15 +17,19 @@
 
         input{
             height: 25px;
+            border-radius: 5px;
+            border: 0px;
         }
 
         button{
             height: 30px;
-            margin-top: 15px;
+            margin: 20px 0 10px 0;
+            border-radius: 5px;
+            border: 0px;
         }
 
         label{
-            margin: 0;
+            margin-top: 10px;
             padding: 0;
         }
     }
