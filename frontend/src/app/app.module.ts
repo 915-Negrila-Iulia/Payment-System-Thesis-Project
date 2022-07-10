@@ -14,6 +14,10 @@ import { UsersHistoryComponent } from './users-history/users-history.component';
 import { UsersListComponent } from './users-list/users-list.component';
 import { UsersHomeComponent } from './users-home/users-home.component';
 import { AuditListComponent } from './audit-list/audit-list.component';
+import { PersonsListComponent } from './persons-list/persons-list.component';
+import { PersonsHomeComponent } from './persons-home/persons-home.component';
+import { AddPersonComponent } from './add-person/add-person.component';
+import { PersonsHistoryComponent } from './persons-history/persons-history.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +29,11 @@ import { AuditListComponent } from './audit-list/audit-list.component';
     UsersHistoryComponent,
     UsersListComponent,
     UsersHomeComponent,
-    AuditListComponent
+    AuditListComponent,
+    PersonsListComponent,
+    PersonsHomeComponent,
+    AddPersonComponent,
+    PersonsHistoryComponent
   ],
   imports: [
     BrowserModule,

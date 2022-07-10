@@ -1,9 +1,9 @@
-.register-container{
+.add-person-container{
     height: 100%;
     width: 100%;
     margin: 0;
     
-    .register-form{
+    .add-person-form{
         font-family: Arial, Helvetica, sans-serif;
         display: flex;
         flex-direction: column;
@@ -29,7 +29,7 @@
             color: #de5800;
         }
 
-        .register-button{
+        .add-button{
             height: 30px;
             border-radius: 5px;
             border: 0px;
