@@ -6,16 +6,26 @@
     .login-form{
         display: flex;
         flex-direction: column;
+        gap: 10px;
         max-width: 300px;
         margin: auto;
         margin-top: 100px;
-    
-        label{
-            margin: 5px 0 5px 0;
+        background-color: #b2d9c3;
+        padding: 20px;
+        border-radius: 5px;
+
+        input{
+            height: 25px;
         }
 
-        .login-button{
-             margin-top: 20px;
+        button{
+            height: 30px;
+            margin-top: 15px;
+        }
+
+        label{
+            margin: 0;
+            padding: 0;
         }
     }
 }

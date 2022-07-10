@@ -12,6 +12,7 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { UsersHistoryComponent } from './users-history/users-history.component';
 import { UsersListComponent } from './users-list/users-list.component';
+import { UsersHomeComponent } from './users-home/users-home.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { UsersListComponent } from './users-list/users-list.component';
     HomeComponent,
     RegisterComponent,
     UsersHistoryComponent,
-    UsersListComponent
+    UsersListComponent,
+    UsersHomeComponent
   ],
   imports: [
     BrowserModule,

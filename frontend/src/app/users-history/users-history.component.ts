@@ -14,6 +14,7 @@ export class UsersHistoryComponent implements OnInit {
   constructor(private userService: UserService) { }
 
   ngOnInit(): void {
+    this.getUsersHistory();
   }
 
   getUsersHistory(){
