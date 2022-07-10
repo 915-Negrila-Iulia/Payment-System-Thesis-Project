@@ -35,4 +35,8 @@ export class HomeComponent implements OnInit {
     
   }
 
+  goToAuditListPage(){
+    this.router.navigate(['audit-list']);
+  }
+
 }
