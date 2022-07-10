@@ -11,6 +11,8 @@ import { LoginFailedComponent } from './login-failed/login-failed.component';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { UsersHistoryComponent } from './users-history/users-history.component';
+import { UsersListComponent } from './users-list/users-list.component';
+import { UsersHomeComponent } from './users-home/users-home.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { UsersHistoryComponent } from './users-history/users-history.component';
     LoginFailedComponent,
     HomeComponent,
     RegisterComponent,
-    UsersHistoryComponent
+    UsersHistoryComponent,
+    UsersListComponent,
+    UsersHomeComponent
   ],
   imports: [
     BrowserModule,

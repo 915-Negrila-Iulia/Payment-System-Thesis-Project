@@ -1,0 +1,26 @@
+<div class="container">
+  <h3> Users </h3>
+  <div class="users-list-container">
+    <table id='usersTable'>
+        <tr>
+            <th>id</th>
+            <th>username</th>
+            <th>email</th>
+            <th>password</th>
+            <th>status</th>
+            <th colspan="2">Actions</th>
+        </tr>
+        <tr *ngFor="let item of users; let i = index;">
+          <td>{{item.id}}</td>
+          <td class="td-input"><input type="text" [(ngModel)]="users[i].username" #username="ngModel"></td>
+          <td class="td-input"><input type="text" [(ngModel)]="users[i].email" #email="ngModel"></td>
+          <td>{{item.password}}</td>
+          <td>{{item.status}}</td>
+          <td class="td-button"><button class="updateButton" (click)="updateUser(item.id,username,email,item.password,item.status)">update</button></td>
+          <td class="td-button"><button class="approveButton" (click)="approveUser(item.id)">approve</button></td>
+        </tr>
+      </table>
+    <br>
+    <button (click)="getUsers()">getUsers</button>
+  </div>
+</div>

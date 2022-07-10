@@ -10,21 +10,29 @@ import { UserService } from '../user.service';
 })
 export class HomeComponent implements OnInit {
 
-  users: User[] = [];
-
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }
 
-  getUsers(){
-    this.userService.getAllUsers().subscribe(data => {
-      this.users = data;
-    })
+  goToUsersHomePage(){
+    this.router.navigate(['/users-home']);
   }
 
-  registerUser(){
-    this.router.navigate(['/register']);
+  goToPersonsHomePage(){
+
+  }
+
+  goToAccountsHomePage(){
+
+  }
+
+  goToBalancesHomePage(){
+
+  }
+
+  goToTransactionsHomePage(){
+    
   }
 
 }

@@ -3,11 +3,11 @@
     width: 100%;
     margin: 0;
     
-    .users-history-container{
+    .users-list-container{
         display: flex;
         flex-direction: column;
 
-        #usersHistoryTable{
+        #usersTable{
             font-family: Arial, Helvetica, sans-serif;
             border-collapse: collapse;
             width: 100%;
@@ -28,10 +28,40 @@
 
             tr:nth-child(odd){
                 background-color: #f2f2f2;
+                
+                input{
+                    background-color: #f2f2f2;
+                }
             }
 
             tr:hover {
                 background-color: #b2d9c3; //#ddd;
+
+                input{
+                    background-color: #b2d9c3; //#ddd;
+                }
+            }
+
+            input{
+                border: none;
+            }
+
+            input:focus{
+                border: 1px solid  #de5800;
+                box-shadow: 0 0 3px  #de5800;
+                outline: none;
+            }
+
+            input, button{
+                margin: 0;
+                padding: 0;
+                height: 30px;
+                width: 100%;
+            }
+
+            .td-input, .td-button{
+                padding: 1px;
+                margin: 0;
             }
 
         }
