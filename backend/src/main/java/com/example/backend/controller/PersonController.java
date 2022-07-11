@@ -41,7 +41,8 @@ public class PersonController {
     public Person createPerson(@RequestBody Person personalInfo){
         personalInfo.setStatus(StatusEnum.APPROVE);
         Person person = personService.savePerson(personalInfo);
-        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.CREATE,0L);
+        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.CREATE,currentUserId);
         auditService.saveAudit(audit);
         return person;
     }
