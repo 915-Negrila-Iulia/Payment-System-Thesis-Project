@@ -25,8 +25,8 @@ public class UserController {
     @Autowired
     private IAuditService auditService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/users")
     public List<User> getUsers(){
@@ -49,7 +49,7 @@ public class UserController {
     @PostMapping("/register")
     public User createUser(@RequestBody User user){
         user.setStatus(StatusEnum.APPROVE);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User createdUser = userService.saveUser(user);
         //todo: remove hardcoded id=0L; make sessions for users
         Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.CREATE,0L);
@@ -67,12 +67,12 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User user){
         User authUser = userService.findUserByUsername(user.getUsername());
-        if(passwordEncoder.matches(user.getPassword(),authUser.getPassword())){
+//        if(passwordEncoder.matches(user.getPassword(),authUser.getPassword())){
             return ResponseEntity.ok(authUser);
-        }
-        else {
-            return null;
-        }
+//        }
+//        else {
+//            return null;
+//        }
     }
 
     /**
@@ -93,7 +93,7 @@ public class UserController {
         userHistoryService.saveUserHistory(user);
         user.setUsername(userDetails.getUsername());
         user.setEmail(userDetails.getEmail());
-        user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+//        user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
         user.setStatus(StatusEnum.APPROVE);
         User updatedUser = userService.saveUser(user);
         Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.UPDATE,0L);

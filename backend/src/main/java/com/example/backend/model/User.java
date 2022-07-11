@@ -8,7 +8,11 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "user",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "email")
+        })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,4 +34,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     @ColumnDefault(value = "APPROVE")
     private StatusEnum status;
+
+    public User(String username, String email, String password, StatusEnum status) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.status = status;
+    }
 }
