@@ -39,4 +39,9 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['audit-list']);
   }
 
+  logout(){
+    sessionStorage.removeItem('token');
+    this.router.navigate(['/login']);
+  }
+
 }

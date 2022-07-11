@@ -17,10 +17,10 @@ public class UserService implements IUserService{
     @Autowired
     private IUserRepository userRepository;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
     @Override
     public List<User> getAllUsers(){
