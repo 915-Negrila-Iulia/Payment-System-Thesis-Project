@@ -64,8 +64,8 @@ public class UserController {
      * @param user user to be checked
      * @return status set to 'OK' and the authenticated user
      */
-    @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User user){
+    @PostMapping("/signin")
+    public ResponseEntity<User> signin(@RequestBody User user){
         User authUser = userService.findUserByUsername(user.getUsername());
 //        if(passwordEncoder.matches(user.getPassword(),authUser.getPassword())){
             return ResponseEntity.ok(authUser);

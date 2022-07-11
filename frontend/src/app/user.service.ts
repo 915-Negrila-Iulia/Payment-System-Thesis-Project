@@ -13,15 +13,19 @@ export class UserService {
   constructor(private httpClient: HttpClient) { }
 
   authenticate(user: User){
-    return this.httpClient.post<User>(this.baseUrl+"/login", user);
+    return this.httpClient.post<any>(this.baseUrl+"/login", user);
   }
 
   register(user: User){
-    return this.httpClient.post<User>(this.baseUrl+"/register", user);
+    return this.httpClient.post<User>(this.baseUrl+"/signup", user);
   }
 
   getAllUsers(){
     return this.httpClient.get<User[]>(this.baseUrl+"/users");
+  }
+
+  getCurrentUser(){
+    return this.httpClient.get(this.baseUrl+"/current-user", {responseType: 'text'});
   }
 
   getHistoryOfUsers(){

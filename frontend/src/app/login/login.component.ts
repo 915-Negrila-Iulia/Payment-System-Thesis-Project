@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../user';
@@ -11,8 +12,9 @@ import { UserService } from '../user.service';
 export class LoginComponent implements OnInit {
 
   userCreds: User = new User();
+  sessionId: any = "";
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(private userService: UserService, private router: Router, private httpClient: HttpClient) { }
 
   ngOnInit(): void {
   }
@@ -27,17 +29,20 @@ export class LoginComponent implements OnInit {
 
   onSubmit(){
     this.userService.authenticate(this.userCreds).subscribe(data => {
-      console.log(data);
       if(data){
-        console.log("succeded");
+        console.log(data);
+        this.sessionId = data.accessToken; //sessionId is the token of the current user logged
+        sessionStorage.setItem(
+          'token',
+          this.sessionId
+        );
         this.goToHomePage();
       }
       else{
-        console.log("failed");
         this.goToFailedLoginPage();
-      }   
+      }
     },
-    error => console.log(error));
+    error => this.goToFailedLoginPage())
   }
 
 }
