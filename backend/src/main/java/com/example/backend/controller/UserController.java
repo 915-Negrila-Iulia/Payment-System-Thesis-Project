@@ -25,8 +25,8 @@ public class UserController {
     @Autowired
     private IAuditService auditService;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthController authController;
 
     @GetMapping("/users")
     public List<User> getUsers(){
@@ -36,43 +36,6 @@ public class UserController {
     @GetMapping("/users/history")
     public List<UserHistory> getHistoryOfUsers() {
         return userHistoryService.getHistoryOfUsers();
-    }
-
-    /**
-     * Register user
-     * Create new user and save it
-     * Encode user's password before storing it in the database
-     * Update 'Audit' table
-     * @param user user to be created
-     * @return created user
-     */
-    @PostMapping("/register")
-    public User createUser(@RequestBody User user){
-        user.setStatus(StatusEnum.APPROVE);
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User createdUser = userService.saveUser(user);
-        //todo: remove hardcoded id=0L; make sessions for users
-        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.CREATE,0L);
-        auditService.saveAudit(audit);
-        return createdUser;
-    }
-
-    /**
-     * Login user
-     * Check if the given user exists in the database
-     * And return null if not found
-     * @param user user to be checked
-     * @return status set to 'OK' and the authenticated user
-     */
-    @PostMapping("/signin")
-    public ResponseEntity<User> signin(@RequestBody User user){
-        User authUser = userService.findUserByUsername(user.getUsername());
-//        if(passwordEncoder.matches(user.getPassword(),authUser.getPassword())){
-            return ResponseEntity.ok(authUser);
-//        }
-//        else {
-//            return null;
-//        }
     }
 
     /**
@@ -93,10 +56,10 @@ public class UserController {
         userHistoryService.saveUserHistory(user);
         user.setUsername(userDetails.getUsername());
         user.setEmail(userDetails.getEmail());
-//        user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
         user.setStatus(StatusEnum.APPROVE);
         User updatedUser = userService.saveUser(user);
-        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.UPDATE,0L);
+        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.UPDATE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(updatedUser);
     }
@@ -108,7 +71,8 @@ public class UserController {
         userHistoryService.saveUserHistory(user);
         user.setStatus(StatusEnum.ACTIVE);
         User activeUser = userService.saveUser(user);
-        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.APPROVE,0L);
+        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.APPROVE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(activeUser);
     }

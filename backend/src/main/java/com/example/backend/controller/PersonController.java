@@ -24,6 +24,9 @@ public class PersonController {
     @Autowired
     private IAuditService auditService;
 
+    @Autowired
+    private AuthController authController;
+
     @GetMapping()
     public List<Person> getPersons(){
         return personService.getAllPersons();
@@ -66,7 +69,8 @@ public class PersonController {
         person.setUserID(details.getUserID());
         person.setStatus(StatusEnum.APPROVE);
         Person updatedPerson = personService.savePerson(person);
-        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.UPDATE,0L);
+        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.UPDATE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(updatedPerson);
     }
@@ -78,7 +82,8 @@ public class PersonController {
         personHistoryService.savePersonHistory(person);
         person.setStatus(StatusEnum.ACTIVE);
         Person activePerson = personService.savePerson(person);
-        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.APPROVE,0L);
+        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.APPROVE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(activePerson);
     }

@@ -73,7 +73,7 @@ public class AuthController {
     }
 
     @GetMapping("/current-user")
-    public ResponseEntity<String> currentUser() {
-        return ResponseEntity.ok(this.currentUser);
+    public String currentUser() {
+        return this.currentUser;
     }
 }
