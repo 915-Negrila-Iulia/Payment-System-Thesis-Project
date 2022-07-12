@@ -7,6 +7,6 @@ export class AccountHistory {
     status: string | undefined;
     personID: number | undefined;
     accountStatus: string | undefined;
-    acountID: number |  undefined;
+    accountID: number |  undefined;
     timestamp: Date | undefined;
 }

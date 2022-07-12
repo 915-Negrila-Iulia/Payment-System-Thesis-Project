@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AccountHistory } from '../account-history';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'app-accounts-history',
@@ -7,9 +9,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AccountsHistoryComponent implements OnInit {
 
-  constructor() { }
+  accountsHistory: AccountHistory[] = [];
+
+  constructor(private accountService: AccountService) { }
 
   ngOnInit(): void {
+    this.getAccountsHistory();
+  }
+
+  getAccountsHistory(){
+    this.accountService.getHistoryOfAccounts().subscribe(data => {
+      this.accountsHistory = data;
+    })
   }
 
 }

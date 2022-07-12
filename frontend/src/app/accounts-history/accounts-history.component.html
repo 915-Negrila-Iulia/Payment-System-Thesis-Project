@@ -1,1 +1,33 @@
-<p>accounts-history works!</p>
+<div class="container">
+    <h3> Accounts History </h3>
+    <div class="accounts-history-container">
+      <table id='accountsHistoryTable'>
+          <tr>
+            <th>id</th>
+            <th>accountID</th>
+            <th>iban</th>
+            <th>country code</th>
+            <th>bank code</th>
+            <th>currency</th>
+            <th>account status</th>
+            <th>person id</th>
+            <th>status</th>
+            <th>timestamp</th>
+          </tr>
+          <tr *ngFor="let item of accountsHistory; let i = index;">
+            <td>{{item.id}}</td>
+            <td>{{item.accountID}}</td>
+            <td>{{item.iban}}</td>
+            <td>{{item.countryCode}}</td>
+            <td>{{item.bankCode}}</td>
+            <td>{{item.currency}}</td>
+            <td>{{item.accountStatus}}</td>
+            <td>{{item.personID}}</td>
+            <td>{{item.status}}</td>
+            <td>{{item.timestamp}}</td>
+          </tr>
+        </table>
+      <br>
+      <button (click)="getAccountsHistory()">getAccountsHistory</button>
+    </div>
+  </div>
