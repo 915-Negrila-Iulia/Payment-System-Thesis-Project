@@ -1,0 +1,10 @@
+<div class="container">
+    <div class="top-bar-container">
+        <button (click)="viewAccounts()">ACCOUNTS</button>
+        <button (click)="addAccount()">ADD</button>
+        <button (click)="viewHistory()">HISTORY</button>
+    </div>
+    <app-accounts-list *ngIf="show==='accountsList'"></app-accounts-list>
+    <app-add-account *ngIf="show==='addAccount'"></app-add-account>
+    <app-accounts-history *ngIf="show==='accountsHistory'"></app-accounts-history>
+</div>
