@@ -1,1 +1,32 @@
-<p>accounts-list works!</p>
+<div class="container">
+    <h3> Accounts </h3>
+    <div class="accounts-list-container">
+      <table id='accountsTable'>
+          <tr>
+              <th>id</th>
+              <th>iban</th>
+              <th>country code</th>
+              <th>bank code</th>
+              <th>currency</th>
+              <th>account status</th>
+              <th>person id</th>
+              <th>status</th>
+              <th colspan="2">Actions</th>
+          </tr>
+          <tr *ngFor="let item of accounts; let i = index;">
+            <td>{{item.id}}</td>
+            <td class="td-input"><input type="text" [(ngModel)]="accounts[i].iban" #iban="ngModel"></td>
+            <td class="td-input"><input type="text" [(ngModel)]="accounts[i].countryCode" #countryCode="ngModel"></td>
+            <td class="td-input"><input type="text" [(ngModel)]="accounts[i].bankCode" #bankCode="ngModel"></td>
+            <td class="td-input"><input type="text" [(ngModel)]="accounts[i].currency" #currency="ngModel"></td>
+            <td class="td-input"><input type="text" [(ngModel)]="accounts[i].accountStatus" #accountStatus="ngModel"></td>
+            <td>{{item.personID}}</td>
+            <td>{{item.status}}</td>
+            <td class="td-button"><button class="updateButton" (click)="updateAccount(item.id,iban,countryCode,bankCode,currency,accountStatus,item.personID,item.status)">update</button></td>
+            <td class="td-button"><button class="approveButton" (click)="approveAccount(item.id)">approve</button></td>
+          </tr>
+        </table>
+      <br>
+      <button (click)="getAccounts()">getAccounts</button>
+    </div>
+  </div>
