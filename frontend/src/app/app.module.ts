@@ -23,6 +23,8 @@ import { AccountsHomeComponent } from './accounts-home/accounts-home.component';
 import { AccountsListComponent } from './accounts-list/accounts-list.component';
 import { AddAccountComponent } from './add-account/add-account.component';
 import { AccountsHistoryComponent } from './accounts-history/accounts-history.component';
+import { CurrentBalanceComponent } from './current-balance/current-balance.component';
+import { BalanceHistoryComponent } from './balance-history/balance-history.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,9 @@ import { AccountsHistoryComponent } from './accounts-history/accounts-history.co
     AccountsHomeComponent,
     AccountsListComponent,
     AddAccountComponent,
-    AccountsHistoryComponent
+    AccountsHistoryComponent,
+    CurrentBalanceComponent,
+    BalanceHistoryComponent
   ],
   imports: [
     BrowserModule,

@@ -31,4 +31,8 @@ export class AccountService {
   approveAccount(id: number | undefined){
     return this.httpClient.put<Account>(this.baseUrl+"/approve/"+`${id}`,null);
   }
+
+  getAccountById(id: number | undefined){
+    return this.httpClient.get<Account>(this.baseUrl+`/${id}`);
+  }
 }

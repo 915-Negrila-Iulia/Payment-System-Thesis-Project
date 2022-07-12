@@ -1,0 +1,16 @@
+<div class="container">
+    <div class="balance-history-container">
+          <div class="header-row-details">
+            <div>Total</div>
+            <div>Available</div>
+            <div>Timestamp</div>
+          </div>
+          <div class="box-details">
+          <div *ngFor="let item of balanceHistory; let i = index;" class="row-details">
+            <p>{{item.total}}</p>
+            <p>{{item.available}}</p>
+            <p>{{item.timestamp}}</p>
+          </div>
+        </div>
+    </div>
+  </div>

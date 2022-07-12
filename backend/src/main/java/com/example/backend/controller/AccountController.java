@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -78,6 +79,11 @@ public class AccountController {
         Audit audit = new Audit(account.getId(),ObjectTypeEnum.ACCOUNT,OperationEnum.APPROVE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(activeAccount);
+    }
+
+    @GetMapping("/{id}")
+    public Optional<Account> GetAccountById(@PathVariable Long id){
+        return accountService.findAccountById(id);
     }
 
 }
