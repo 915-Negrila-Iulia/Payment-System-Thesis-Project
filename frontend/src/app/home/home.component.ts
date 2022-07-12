@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
   }
 
   goToAccountsHomePage(){
-
+    this.router.navigate(['/accounts-home']);
   }
 
   goToBalancesHomePage(){

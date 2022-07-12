@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AccountsHomeComponent } from './accounts-home/accounts-home.component';
 import { AppComponent } from './app.component';
 import { AuditListComponent } from './audit-list/audit-list.component';
 import { AuthenticationGuard } from './authentication.guard';
@@ -20,6 +21,7 @@ const routes: Routes = [
     { path: 'users-home', component: UsersHomeComponent },
     { path: 'audit-list', component: AuditListComponent },
     { path: 'persons-home', component: PersonsHomeComponent },
+    { path: 'accounts-home', component: AccountsHomeComponent },
     { path: '**', redirectTo: 'home', pathMatch: 'full' }
   ]}
 ];

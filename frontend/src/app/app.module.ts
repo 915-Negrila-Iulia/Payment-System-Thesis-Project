@@ -19,6 +19,10 @@ import { PersonsHomeComponent } from './persons-home/persons-home.component';
 import { AddPersonComponent } from './add-person/add-person.component';
 import { PersonsHistoryComponent } from './persons-history/persons-history.component';
 import { RequestInterceptor } from './request.interceptor';
+import { AccountsHomeComponent } from './accounts-home/accounts-home.component';
+import { AccountsListComponent } from './accounts-list/accounts-list.component';
+import { AddAccountComponent } from './add-account/add-account.component';
+import { AccountsHistoryComponent } from './accounts-history/accounts-history.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +38,11 @@ import { RequestInterceptor } from './request.interceptor';
     PersonsListComponent,
     PersonsHomeComponent,
     AddPersonComponent,
-    PersonsHistoryComponent
+    PersonsHistoryComponent,
+    AccountsHomeComponent,
+    AccountsListComponent,
+    AddAccountComponent,
+    AccountsHistoryComponent
   ],
   imports: [
     BrowserModule,
