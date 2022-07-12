@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class AccountsHomeComponent implements OnInit {
 
   show: string | undefined;
-
+  
   constructor() { }
 
   ngOnInit(): void {

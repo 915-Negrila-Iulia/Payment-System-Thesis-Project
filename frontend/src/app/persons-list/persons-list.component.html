@@ -3,7 +3,7 @@
     <div class="persons-list-container">
       <table id='personsTable'>
           <tr>
-              <th>id</th>
+              <th>#</th>
               <th>first name</th>
               <th>last name</th>
               <th>address</th>
@@ -14,7 +14,7 @@
               <th colspan="2">Actions</th>
           </tr>
           <tr *ngFor="let item of persons; let i = index;">
-            <td>{{item.id}}</td>
+            <td>{{i+1}}</td>
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].firstName" #firstName="ngModel"></td>
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].lastName" #lastName="ngModel"></td>
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].address" #address="ngModel"></td>

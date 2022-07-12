@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Account } from '../account';
 import { AccountService } from '../account.service';
+import { Balance } from '../balance';
+import { BalanceService } from '../balance.service';
 
 @Component({
   selector: 'app-accounts-list',
@@ -11,8 +14,11 @@ export class AccountsListComponent implements OnInit {
 
   accounts: Account[] = [];
   account: Account = new Account();
+  currentBalance: Balance = new Balance();
+  selectedAccountId: number | undefined;
+  showDetails: boolean = false;
 
-  constructor(private accountService: AccountService) { }
+  constructor(private accountService: AccountService, private router: Router) { }
 
   ngOnInit(): void {
     this.getAccounts();
@@ -46,6 +52,18 @@ export class AccountsListComponent implements OnInit {
     },
     error => console.log(error)
     );
+  }
+
+  selectAccount(id: any){
+    this.selectedAccountId = id;
+    this.showDetails = true;
+    console.log(this.selectedAccountId);
+    document.getElementById('container-accounts')!.style.opacity = '20%';
+  }
+
+  closePopup(){
+    this.showDetails = false;
+    document.getElementById('container-accounts')!.style.opacity = '100%';
   }
 
 }

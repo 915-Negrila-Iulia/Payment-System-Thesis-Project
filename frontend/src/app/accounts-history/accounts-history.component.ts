@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AccountHistory } from '../account-history';
 import { AccountService } from '../account.service';
 

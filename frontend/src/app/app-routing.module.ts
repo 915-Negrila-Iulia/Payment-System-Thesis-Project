@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AccountsHomeComponent } from './accounts-home/accounts-home.component';
+import { AccountsListComponent } from './accounts-list/accounts-list.component';
 import { AppComponent } from './app.component';
 import { AuditListComponent } from './audit-list/audit-list.component';
 import { AuthenticationGuard } from './authentication.guard';
