@@ -1,0 +1,24 @@
+<div class="transaction-container">
+    <form #myForm="ngForm" class="transaction-form" (ngSubmit) = "onSubmit();  myForm.resetForm()" [formGroup]="transactionForm">
+        <label for="iban">Iban of Selected Account</label>
+        <input type="text" id="iban" formControlName="iban">
+        <label for="amount">Enter Amount</label>
+        <input type="text" id="amount" formControlName="amount">
+        <span *ngIf="amount && amount.invalid && amount.touched">Amount is invalid</span>
+        <label for="type">Choose Type</label>
+        <select formControlName="type">
+            <option></option>
+            <option *ngFor="let itemType of types">{{itemType}}</option>
+        </select>
+        <label for="type">Choose Action</label>
+        <select formControlName="action">
+            <option></option>
+            <option *ngFor="let itemAction of actions">{{itemAction}}</option>
+        </select>
+        <fieldset [disabled]="this.transactionForm.value.action !== 'TRANSFER'" >
+            <label for="targetAccountID">Target Account</label>
+            <input type="text" id="targetAccountID" formControlName="targetAccountID">
+        </fieldset>
+        <button class="submit-button" type="submit" [disabled]="transactionForm.invalid">Submit</button>
+    </form>
+</div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Account } from '../account';
 import { AccountService } from '../account.service';
@@ -10,18 +10,22 @@ import { BalanceService } from '../balance.service';
   templateUrl: './accounts-list.component.html',
   styleUrls: ['./accounts-list.component.scss']
 })
-export class AccountsListComponent implements OnInit {
+export class AccountsListComponent implements OnInit, OnChanges {
 
   accounts: Account[] = [];
   account: Account = new Account();
   currentBalance: Balance = new Balance();
   selectedAccountId: number | undefined;
   showDetails: boolean = false;
+  doTransaction: boolean = false;
 
   constructor(private accountService: AccountService, private router: Router) { }
 
   ngOnInit(): void {
     this.getAccounts();
+  }
+
+  ngOnChanges() {
   }
 
   getAccounts(){
@@ -56,8 +60,14 @@ export class AccountsListComponent implements OnInit {
 
   selectAccount(id: any){
     this.selectedAccountId = id;
+  }
+
+  createTransaction(){
+    this.doTransaction = true;
+  }
+
+  openPopup(){
     this.showDetails = true;
-    console.log(this.selectedAccountId);
     document.getElementById('container-accounts')!.style.opacity = '20%';
   }
 

@@ -1,0 +1,50 @@
+.transaction-container{
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    
+    .transaction-form{
+        font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 300px;
+        margin: auto;
+        margin-top: 100px;
+        background-color: #b2d9c3;
+        padding: 20px;
+        border-radius: 5px;
+    
+        label{
+            margin-top: 10px;
+        }
+
+        input, select{
+            height: 25px;
+            border-radius: 5px;
+            border: 0px;
+        }
+
+        span{
+            color: #de5800;
+        }
+
+        .submit-button{
+            height: 30px;
+            border-radius: 5px;
+            border: 0px;
+            margin: 20px 0 10px 0;
+            font-size: 16px;
+        }
+
+        fieldset{
+            border: none;
+            padding: 0px;
+            margin-top: 10px;
+
+            label{
+                margin-right: 10px;
+            }
+        }
+    }
+}

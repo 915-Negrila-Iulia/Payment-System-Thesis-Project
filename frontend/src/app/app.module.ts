@@ -25,6 +25,9 @@ import { AddAccountComponent } from './add-account/add-account.component';
 import { AccountsHistoryComponent } from './accounts-history/accounts-history.component';
 import { CurrentBalanceComponent } from './current-balance/current-balance.component';
 import { BalanceHistoryComponent } from './balance-history/balance-history.component';
+import { TransactionsAccountComponent } from './transactions-account/transactions-account.component';
+import { TransactionsListComponent } from './transactions-list/transactions-list.component';
+import { BalancesListComponent } from './balances-list/balances-list.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +49,10 @@ import { BalanceHistoryComponent } from './balance-history/balance-history.compo
     AddAccountComponent,
     AccountsHistoryComponent,
     CurrentBalanceComponent,
-    BalanceHistoryComponent
+    BalanceHistoryComponent,
+    TransactionsAccountComponent,
+    TransactionsListComponent,
+    BalancesListComponent
   ],
   imports: [
     BrowserModule,

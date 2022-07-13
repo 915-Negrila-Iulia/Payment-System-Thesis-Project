@@ -55,8 +55,10 @@ public class TransactionController {
         return ResponseEntity.ok(activeTransaction);
     }
 
-    @PutMapping("/deposit/{accountId}/{amount}")
-    public ResponseEntity<Transaction> depositTransaction(@PathVariable Long accountId, @PathVariable Double amount){
+    @PutMapping("/deposit")
+    public ResponseEntity<Transaction> depositTransaction(@RequestBody Transaction transactionDetails){
+        Long accountId = transactionDetails.getAccountID();
+        Double amount = transactionDetails.getAmount();
         Transaction transaction = transactionService.depositTransaction(accountId, amount);
         balanceService.updateAvailableAmount(accountId, transaction.getId());
         Long currentUserId = Long.parseLong(this.authController.currentUser());
@@ -65,8 +67,10 @@ public class TransactionController {
         return ResponseEntity.ok(transaction);
     }
 
-    @PutMapping("/withdrawal/{accountId}/{amount}")
-    public ResponseEntity<Transaction> withdrawalTransaction(@PathVariable Long accountId, @PathVariable Double amount){
+    @PutMapping("/withdrawal")
+    public ResponseEntity<Transaction> withdrawalTransaction(@RequestBody Transaction transactionDetails){
+        Long accountId = transactionDetails.getAccountID();
+        Double amount = transactionDetails.getAmount();
         Transaction transaction = transactionService.withdrawalTransaction(accountId, amount);
         balanceService.updateAvailableAmount(accountId, transaction.getId());
         Long currentUserId = Long.parseLong(this.authController.currentUser());
@@ -75,9 +79,11 @@ public class TransactionController {
         return ResponseEntity.ok(transaction);
     }
 
-    @PutMapping("/transfer/{accountId}/{targetId}/{amount}")
-    public ResponseEntity<Transaction> transferTransaction(@PathVariable Long accountId, @PathVariable Long targetId,
-                                                           @PathVariable Double amount){
+    @PutMapping("/transfer")
+    public ResponseEntity<Transaction> transferTransaction(@RequestBody Transaction transactionDetails){
+        Long accountId = transactionDetails.getAccountID();
+        Long targetId = transactionDetails.getTargetAccountID();
+        Double amount = transactionDetails.getAmount();
         Transaction transaction = transactionService.transferTransaction(accountId, targetId, amount);
         balanceService.updateAvailableAmount(accountId, transaction.getId());
         Long currentUserId = Long.parseLong(this.authController.currentUser());
