@@ -32,4 +32,10 @@ public class Balance {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
     private LocalDateTime timestamp;
+
+    public Balance(Double total, Double available, Long accountID) {
+        this.total = total;
+        this.available = available;
+        this.accountID = accountID;
+    }
 }
