@@ -1,0 +1,23 @@
+<div class="container">
+    <h3> Balances </h3>
+    <div class="balances-list-container">
+      <table id='balancesTable'>
+          <tr>
+              <th>#</th>
+              <th>accountID</th>
+              <th>available</th>
+              <th>total</th>
+              <th>timestamp</th>
+          </tr>
+          <tr *ngFor="let item of balances; let i = index;">
+            <td>{{i+1}}</td>
+            <td>{{item.accountID}}</td>
+            <td>{{item.available}}</td>
+            <td>{{item.total}}</td>
+            <td>{{item.timestamp}}</td>
+          </tr>
+        </table>
+      <br>
+      <button (click)="getBalances()">getBalances</button>
+    </div>
+  </div>

@@ -9,4 +9,6 @@ public interface IBalanceService {
     Balance getCurrentBalance(Long id);
     List<Balance> getAllBalances();
     List<Balance> getAllBalancesByAccountId(Long id);
+    void updateAvailableAmount(Long accountId, Long transactionId);
+    void updateTotalAmount(Long transactionId);
 }

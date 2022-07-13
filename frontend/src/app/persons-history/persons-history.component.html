@@ -3,7 +3,7 @@
     <div class="persons-history-container">
       <table id='personsHistoryTable'>
           <tr>
-              <th>id</th>
+              <th>#</th>
               <th>personID</th>
               <th>first name</th>
               <th>last name</th>
@@ -15,7 +15,7 @@
               <th>timestamp</th>
           </tr>
           <tr *ngFor="let item of personsHistory; let i = index;">
-            <td>{{item.id}}</td>
+            <td>{{i+1}}</td>
             <td>{{item.personID}}</td>
             <td>{{item.firstName}}</td>
             <td>{{item.lastName}}</td>

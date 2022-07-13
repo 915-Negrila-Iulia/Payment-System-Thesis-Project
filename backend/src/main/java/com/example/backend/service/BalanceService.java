@@ -1,7 +1,10 @@
 package com.example.backend.service;
 
+import com.example.backend.model.ActionTransactionEnum;
 import com.example.backend.model.Balance;
+import com.example.backend.model.Transaction;
 import com.example.backend.repository.IBalanceRepository;
+import com.example.backend.repository.ITransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,9 @@ public class BalanceService implements IBalanceService{
 
     @Autowired
     IBalanceRepository balanceRepository;
+
+    @Autowired
+    ITransactionRepository transactionRepository;
 
     @Override
     public Balance saveBalance(Balance balance) {
@@ -37,5 +43,48 @@ public class BalanceService implements IBalanceService{
         return this.getAllBalancesByAccountId(id).stream()
                 .reduce((previous, current) -> current)
                 .orElse(null);
+    }
+
+    @Override
+    public void updateAvailableAmount(Long accountId, Long transactionId){
+        Transaction transaction = transactionRepository.findById(transactionId).get();
+        Balance currentBalance = this.getCurrentBalance(accountId);
+        Balance updatedBalance = new Balance(currentBalance.getTotal(), currentBalance.getAvailable(),
+                currentBalance.getAccountID());
+        //if transaction.getAction() == ActionTransactionEnum.DEPOSIT => do nothing
+        if(transaction.getAction() == ActionTransactionEnum.WITHDRAWAL){
+            updatedBalance.setAvailable(currentBalance.getAvailable() - transaction.getAmount());
+        }
+        else if(transaction.getAction() == ActionTransactionEnum.TRANSFER){
+            updatedBalance.setAvailable(currentBalance.getAvailable() - transaction.getAmount());
+            //in target account => do nothing
+        }
+        balanceRepository.save(updatedBalance);
+    }
+
+    @Override
+    public void updateTotalAmount(Long transactionId){
+        Transaction transaction = transactionRepository.findById(transactionId).get();
+        Balance currentBalance = this.getCurrentBalance(transaction.getAccountID());
+        Balance updatedBalance = new Balance(currentBalance.getTotal(), currentBalance.getAvailable(),
+                currentBalance.getAccountID());
+        if(transaction.getAction() == ActionTransactionEnum.DEPOSIT){
+            updatedBalance.setAvailable(currentBalance.getAvailable() + transaction.getAmount());
+            updatedBalance.setTotal(currentBalance.getTotal() + transaction.getAmount());
+        }
+        else if(transaction.getAction() == ActionTransactionEnum.WITHDRAWAL){
+            updatedBalance.setTotal(currentBalance.getTotal() - transaction.getAmount());
+        }
+        else if(transaction.getAction() == ActionTransactionEnum.TRANSFER) {
+            updatedBalance.setTotal(currentBalance.getTotal() - transaction.getAmount());
+
+            Balance targetAccountBalance = this.getCurrentBalance(transaction.getTargetAccountID());
+            Balance updatedTargetAccountBalance = new Balance(targetAccountBalance.getTotal(),
+                    targetAccountBalance.getAvailable(), targetAccountBalance.getAccountID());
+            updatedTargetAccountBalance.setAvailable(targetAccountBalance.getAvailable() + transaction.getAmount());
+            updatedTargetAccountBalance.setTotal(targetAccountBalance.getTotal() + transaction.getAmount());
+            balanceRepository.save(updatedTargetAccountBalance);
+        }
+        balanceRepository.save(updatedBalance);
     }
 }

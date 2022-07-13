@@ -28,11 +28,11 @@ export class HomeComponent implements OnInit {
   }
 
   goToBalancesHomePage(){
-
+    this.router.navigate(['/balances-list']);
   }
 
   goToTransactionsHomePage(){
-    
+    this.router.navigate(['/transactions-list']);
   }
 
   goToAuditListPage(){
