@@ -33,7 +33,11 @@ export class TransactionsListComponent implements OnInit {
   }
 
   rejectTransaction(id: number | undefined){
-    
+    this.transactionService.rejectTransaction(id).subscribe(data => {
+      console.log(data);
+    },
+    error => console.log(error)
+    );
   }
 
 }

@@ -30,4 +30,8 @@ export class TransactionService {
   approveTransaction(id: number | undefined){
     return this.httpClient.put<Transaction>(this.baseUrl+"/approve/"+`${id}`,null);
   }
+
+  rejectTransaction(id: number | undefined){
+    return this.httpClient.put<Transaction>(this.baseUrl+"/reject/"+`${id}`,null);
+  }
 }

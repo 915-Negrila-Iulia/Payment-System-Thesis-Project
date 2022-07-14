@@ -47,12 +47,25 @@ public class TransactionController {
     public ResponseEntity<Transaction> approveTransaction(@PathVariable Long id){
         Transaction transaction = transactionService.findTransactionById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
-        transaction.setStatus(StatusEnum.ACTIVE);
-        transaction.setNextStatus(StatusEnum.ACTIVE);
+        transaction.setStatus(transaction.getNextStatus());
         Transaction activeTransaction = transactionService.saveTransaction(transaction);
         balanceService.updateTotalAmount(transaction.getId());
         Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(transaction.getId(),ObjectTypeEnum.TRANSACTION,OperationEnum.APPROVE,currentUserId);
+        auditService.saveAudit(audit);
+        return ResponseEntity.ok(activeTransaction);
+    }
+
+    @PutMapping("/reject/{id}")
+    public ResponseEntity<Transaction> rejectTransaction(@PathVariable Long id){
+        Transaction transaction = transactionService.findTransactionById(id)
+                .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
+        transaction.setStatus(StatusEnum.DELETE);
+        transaction.setNextStatus(StatusEnum.DELETE);
+        Transaction activeTransaction = transactionService.saveTransaction(transaction);
+        balanceService.cancelAmountChanges(transaction.getId());
+        Long currentUserId = this.authController.currentUser().getId();
+        Audit audit = new Audit(transaction.getId(),ObjectTypeEnum.TRANSACTION,OperationEnum.REJECT,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(activeTransaction);
     }

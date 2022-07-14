@@ -51,7 +51,6 @@ public class AccountController {
     public Account createAccount(@RequestBody Account accountDetails){
         accountDetails.setStatus(StatusEnum.APPROVE);
         accountDetails.setNextStatus(StatusEnum.ACTIVE);
-        accountDetails.setAccountStatus(AccountStatusEnum.CLOSED);
         Account account = accountService.saveAccount(accountDetails);
         balanceService.createInitialBalance(account.getId());
         accountHistoryService.saveAccountHistory(accountDetails);
