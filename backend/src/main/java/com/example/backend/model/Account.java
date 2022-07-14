@@ -38,6 +38,11 @@ public class Account {
     @ColumnDefault(value = "APPROVE")
     private StatusEnum status;
 
+    @Column(name = "next_status")
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault(value = "ACTIVE")
+    private StatusEnum nextStatus;
+
     @Column(name = "account_status")
     @Enumerated(EnumType.STRING)
     @ColumnDefault(value = "OPEN")

@@ -35,10 +35,16 @@ public class User {
     @ColumnDefault(value = "APPROVE")
     private StatusEnum status;
 
-    public User(String username, String email, String password, StatusEnum status) {
+    @Column(name = "next_status")
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault(value = "ACTIVE")
+    private StatusEnum nextStatus;
+
+    public User(String username, String email, String password, StatusEnum status, StatusEnum nextStatus) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.status = status;
+        this.nextStatus = nextStatus;
     }
 }

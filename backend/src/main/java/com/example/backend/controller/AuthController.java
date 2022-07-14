@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.jwt.JwtUtils;
 import com.example.backend.model.*;
 import com.example.backend.repository.IUserRepository;
+import com.example.backend.service.IUserHistoryService;
 import com.example.backend.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +25,12 @@ public class AuthController {
     @Autowired
     IUserRepository userRepository;
     @Autowired
+    IUserHistoryService userHistoryService;
+    @Autowired
     PasswordEncoder encoder;
     @Autowired
     JwtUtils jwtUtils;
-    private String currentUser;
+    private Long currentUser;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -37,7 +40,7 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        this.currentUser = userDetails.getId().toString();
+        this.currentUser = userDetails.getId();
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
@@ -60,13 +63,16 @@ public class AuthController {
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()),
-                StatusEnum.APPROVE);
+                StatusEnum.APPROVE,
+                StatusEnum.ACTIVE);
         userRepository.save(user);
+        userHistoryService.saveUserHistory(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
     @GetMapping("/current-user")
-    public String currentUser() {
-        return this.currentUser;
+    public User currentUser() {
+        return this.userRepository.findById(this.currentUser).get();
     }
+
 }

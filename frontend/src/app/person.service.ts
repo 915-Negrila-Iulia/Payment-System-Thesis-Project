@@ -29,7 +29,15 @@ export class PersonService {
     return this.httpClient.put<Person>(this.baseUrl+`/${id}`,person);
   }
 
+  deletePerson(id: number | undefined){
+    return this.httpClient.put<Person>(this.baseUrl+"/delete/"+`${id}`,null);
+  }
+
   approvePerson(id: number | undefined){
     return this.httpClient.put<Person>(this.baseUrl+"/approve/"+`${id}`,null);
+  }
+
+  rejectPerson(id: number | undefined){
+    return this.httpClient.put<Person>(this.baseUrl+"/reject/"+`${id}`,null);
   }
 }

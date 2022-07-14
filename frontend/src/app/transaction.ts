@@ -6,5 +6,6 @@ export class Transaction {
     accountID: number | undefined;
     targetAccountID: number | undefined;
     status: string | undefined;
+    nextStatus: string | undefined;
     timestamp: Date | undefined;
 }

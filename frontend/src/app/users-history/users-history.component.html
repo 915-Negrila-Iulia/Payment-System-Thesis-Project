@@ -8,6 +8,7 @@
             <th>username</th>
             <th>email</th>
             <th>status</th>
+            <th>next status</th>
             <th>timestamp</th>
         </tr>
         <tr *ngFor="let item of usersHistory; let i = index;">
@@ -16,6 +17,7 @@
           <td>{{item.username}}</td>
           <td>{{item.email}}</td>
           <td>{{item.status}}</td>
+          <td>{{item.nextStatus}}</td>
           <td>{{item.timestamp}}</td>
         </tr>
       </table>

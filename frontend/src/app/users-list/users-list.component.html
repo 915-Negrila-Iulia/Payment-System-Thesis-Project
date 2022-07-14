@@ -6,18 +6,24 @@
             <th>#</th>
             <th>username</th>
             <th>email</th>
-            <th>password</th>
             <th>status</th>
-            <th colspan="2">Actions</th>
+            <th>next status</th>
+            <th colspan="4">Actions</th>
         </tr>
         <tr *ngFor="let item of users; let i = index;">
           <td>{{i+1}}</td>
-          <td class="td-input"><input type="text" [(ngModel)]="users[i].username" #username="ngModel"></td>
+          <td>{{item.username}}</td>
           <td class="td-input"><input type="text" [(ngModel)]="users[i].email" #email="ngModel"></td>
-          <td>{{item.password}}</td>
           <td>{{item.status}}</td>
-          <td class="td-button"><button class="updateButton" (click)="updateUser(item.id,username,email,item.password,item.status)">update</button></td>
-          <td class="td-button"><button class="approveButton" (click)="approveUser(item.id)">approve</button></td>
+          <td>{{item.nextStatus}}</td>
+          <td class="td-button"><button class="updateButton" (click)="updateUser(item.id,item.username,email,item.password,item.status)"
+            [disabled] = "item.status !== 'ACTIVE'">update</button></td>
+          <td class="td-button"><button class="deleteButton" (click)="deleteUser(item.id)"
+            [disabled] = "item.status !== 'ACTIVE'">delete</button></td>
+          <td class="td-button"><button class="approveButton" (click)="approveUser(item.id)"
+            [disabled] = "item.status !== 'APPROVE'">approve</button></td>
+          <td class="td-button"><button class="rejectButton" (click)="rejectUser(item.id)"
+            [disabled] = "item.status !== 'APPROVE'">reject</button></td>
         </tr>
       </table>
     <br>

@@ -36,7 +36,7 @@ public class TransactionService implements ITransactionService{
     @Override
     public Transaction depositTransaction(Long accountId, Double amount){
         Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.DEPOSIT, amount,
-                accountId, StatusEnum.APPROVE);
+                accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
         transactionRepository.save(transaction);
         return transaction;
     }
@@ -44,7 +44,7 @@ public class TransactionService implements ITransactionService{
     @Override
     public Transaction withdrawalTransaction(Long accountId, Double amount) {
         Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.WITHDRAWAL, amount,
-                accountId, StatusEnum.APPROVE);
+                accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
         transactionRepository.save(transaction);
         return transaction;
     }
@@ -52,7 +52,7 @@ public class TransactionService implements ITransactionService{
     @Override
     public Transaction transferTransaction(Long accountId, Long targetId, Double amount) {
         Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.TRANSFER, amount,
-                accountId, StatusEnum.APPROVE);
+                accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
         transaction.setTargetAccountID(targetId);
         transactionRepository.save(transaction);
         return transaction;

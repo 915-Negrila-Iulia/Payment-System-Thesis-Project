@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { tap } from 'rxjs';
 import { Person } from '../person';
 import { PersonService } from '../person.service';
+import { User } from '../user';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-persons-list',
@@ -11,11 +14,28 @@ export class PersonsListComponent implements OnInit {
 
   persons: Person[] = [];
   person: Person = new Person();
+  users: User[] = [];
 
-  constructor(private personService: PersonService) { }
+  constructor(private personService: PersonService, private userService: UserService) { }
 
   ngOnInit(): void {
     this.getPersons();
+    this.userService.getAllUsers().subscribe(data => {
+    this.users = data;
+    })
+  }
+
+  getUsername(id: number | undefined){
+    if(this.users){
+      let user = this.users.filter(user => user.id === id)[0];
+      if(user){
+        return user.username;
+      }
+      return '';
+    }
+    else{
+      return '';
+    }
   }
 
   getPersons(){
@@ -34,10 +54,17 @@ export class PersonsListComponent implements OnInit {
     this.person.userID = userID;
     this.person.status = status;
     this.personService.updatePerson(id,this.person).subscribe(data => {
-      console.log(data);
+      //console.log(data);
     },
     error => console.log(error)
     );
+  }
+
+  deletePerson(id: any){
+    this.personService.deletePerson(id).subscribe(data => {
+     console.log(data)
+    },
+    error => console.log(error))
   }
 
   getPersonById(id: any){
@@ -50,6 +77,13 @@ export class PersonsListComponent implements OnInit {
     },
     error => console.log(error)
     );
+  }
+
+  rejectPerson(id: number | undefined){
+    this.personService.rejectPerson(id).subscribe(data => {
+      console.log(data)
+     },
+     error => console.log(error))
   }
 
 }

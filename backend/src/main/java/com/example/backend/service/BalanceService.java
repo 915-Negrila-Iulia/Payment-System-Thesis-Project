@@ -87,4 +87,28 @@ public class BalanceService implements IBalanceService{
         }
         balanceRepository.save(updatedBalance);
     }
+
+    @Override
+    public Balance createInitialBalance(Long accountId) {
+        Balance initialBalance = new Balance(0D,0D,accountId);
+        balanceRepository.save(initialBalance);
+        return initialBalance;
+    }
+
+    @Override
+    public void cancelAmountChanges(Long transactionId) {
+        Transaction transaction = transactionRepository.findById(transactionId).get();
+        Balance currentBalance = this.getCurrentBalance(transaction.getAccountID());
+        Balance updatedBalance = new Balance(currentBalance.getTotal(), currentBalance.getAvailable(),
+                currentBalance.getAccountID());
+        //if transaction.getAction() == ActionTransactionEnum.DEPOSIT => do nothing
+        if(transaction.getAction() == ActionTransactionEnum.WITHDRAWAL){
+            updatedBalance.setAvailable(currentBalance.getAvailable() + transaction.getAmount());
+        }
+        else if(transaction.getAction() == ActionTransactionEnum.TRANSFER){
+            updatedBalance.setAvailable(currentBalance.getAvailable() + transaction.getAmount());
+            //in target account => do nothing
+        }
+        balanceRepository.save(updatedBalance);
+    }
 }

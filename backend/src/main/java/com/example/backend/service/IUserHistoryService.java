@@ -8,4 +8,6 @@ import java.util.List;
 public interface IUserHistoryService {
     UserHistory saveUserHistory(User user);
     List<UserHistory> getHistoryOfUsers();
+    List<UserHistory> getHistoryByUserId(Long id);
+    UserHistory getLastVersionOfUser(Long userId);
 }

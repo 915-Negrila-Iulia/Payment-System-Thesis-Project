@@ -6,6 +6,7 @@ import com.example.backend.service.IPersonHistoryService;
 import com.example.backend.service.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,16 +33,26 @@ public class PersonController {
         return personService.getAllPersons();
     }
 
+    @GetMapping("/{id}")
+    public Person getPersonById(@PathVariable Long id) {return personService.findPersonById(id).get();}
+
     @GetMapping("/history")
     public List<PersonHistory> getHistoryOfPersons() {
         return personHistoryService.getHistoryOfPersons();
     }
 
+    @GetMapping("/history/{personId}")
+    public List<PersonHistory> getHistoryOfPerson(@PathVariable Long personId){
+        return personHistoryService.getHistoryByPersonId(personId);
+    }
+
     @PostMapping()
     public Person createPerson(@RequestBody Person personalInfo){
         personalInfo.setStatus(StatusEnum.APPROVE);
+        personalInfo.setNextStatus(StatusEnum.ACTIVE);
         Person person = personService.savePerson(personalInfo);
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        personHistoryService.savePersonHistory(personalInfo);
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.CREATE,currentUserId);
         auditService.saveAudit(audit);
         return person;
@@ -69,8 +80,9 @@ public class PersonController {
         person.setPhoneNumber(details.getPhoneNumber());
         person.setUserID(details.getUserID());
         person.setStatus(StatusEnum.APPROVE);
+        person.setNextStatus(StatusEnum.ACTIVE);
         Person updatedPerson = personService.savePerson(person);
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.UPDATE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(updatedPerson);
@@ -81,11 +93,47 @@ public class PersonController {
         Person person = personService.findPersonById(id)
                 .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
         personHistoryService.savePersonHistory(person);
-        person.setStatus(StatusEnum.ACTIVE);
+        person.setStatus(person.getNextStatus());
         Person activePerson = personService.savePerson(person);
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.APPROVE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(activePerson);
+    }
+
+    @PutMapping("/reject/{id}")
+    public ResponseEntity<Person> rejectPerson(@PathVariable Long id){
+        Person person = personService.findPersonById(id)
+                .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
+        PersonHistory lastVersion = personHistoryService.getLastVersionOfPerson(id);
+        personHistoryService.savePersonHistory(person);
+        if(personHistoryService.getHistoryByPersonId(id).size() <= 2){
+            // person will be deleted
+            person.setStatus(StatusEnum.DELETE);
+            person.setNextStatus(StatusEnum.DELETE);
+        }
+        else{
+            // person will have changes undone
+            personService.undonePersonChanges(person,lastVersion);
+        }
+        Person rejectedPerson = personService.savePerson(person);
+        Long currentUserId = this.authController.currentUser().getId();
+        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.REJECT,currentUserId);
+        auditService.saveAudit(audit);
+        return ResponseEntity.ok(rejectedPerson);
+    }
+
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<Person> deletePerson(@PathVariable Long id){
+        Person person = personService.findPersonById(id)
+                .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
+        personHistoryService.savePersonHistory(person);
+        person.setStatus(StatusEnum.APPROVE);
+        person.setNextStatus(StatusEnum.DELETE);
+        Person deletedPerson = personService.savePerson(person);
+        Long currentUserId = this.authController.currentUser().getId();
+        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.DELETE,currentUserId);
+        auditService.saveAudit(audit);
+        return ResponseEntity.ok(deletedPerson);
     }
 }

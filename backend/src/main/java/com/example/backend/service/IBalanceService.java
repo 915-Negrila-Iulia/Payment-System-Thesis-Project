@@ -11,4 +11,6 @@ public interface IBalanceService {
     List<Balance> getAllBalancesByAccountId(Long id);
     void updateAvailableAmount(Long accountId, Long transactionId);
     void updateTotalAmount(Long transactionId);
+    Balance createInitialBalance(Long accountId);
+    void cancelAmountChanges(Long transactionId);
 }

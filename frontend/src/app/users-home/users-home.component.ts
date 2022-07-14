@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,11 +8,12 @@ import { Router } from '@angular/router';
 })
 export class UsersHomeComponent implements OnInit {
 
-  show: string | undefined;
+  show: string = "usersList";
 
   constructor(private router: Router) { }
 
   ngOnInit(): void {
+    
   }
 
   viewUsers(){

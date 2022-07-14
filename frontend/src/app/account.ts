@@ -5,6 +5,7 @@ export class Account {
     bankCode: string | undefined;
     currency: string | undefined;
     status: string | undefined;
+    nextStatus: string | undefined;
     personID: number | undefined;
     accountStatus: string | undefined;
 }

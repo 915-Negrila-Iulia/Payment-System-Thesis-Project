@@ -42,4 +42,9 @@ public class Person {
     @Enumerated(EnumType.STRING)
     @ColumnDefault(value = "APPROVE")
     private StatusEnum status;
+
+    @Column(name = "next_status")
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault(value = "ACTIVE")
+    private StatusEnum nextStatus;
 }

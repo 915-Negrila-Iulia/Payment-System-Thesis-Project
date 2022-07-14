@@ -1,6 +1,8 @@
 package com.example.backend.service;
 
+import com.example.backend.model.StatusEnum;
 import com.example.backend.model.User;
+import com.example.backend.model.UserHistory;
 import com.example.backend.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +47,14 @@ public class UserService implements IUserService{
     @Override
     public User findUserByUsername(String username){
         User user = userRepository.findByUsername(username);
+        return user;
+    }
+
+    @Override
+    public User undoneUserChanges(User user, UserHistory lastVersion){
+        user.setEmail(lastVersion.getEmail());
+        user.setStatus(StatusEnum.ACTIVE);
+        user.setNextStatus(StatusEnum.ACTIVE);
         return user;
     }
 }

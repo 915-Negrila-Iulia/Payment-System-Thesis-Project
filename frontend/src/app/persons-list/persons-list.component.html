@@ -9,9 +9,10 @@
               <th>address</th>
               <th>date of birth</th>
               <th>phone number</th>
-              <th>user id</th>
+              <th>username</th>
               <th>status</th>
-              <th colspan="2">Actions</th>
+              <th>next status</th>
+              <th colspan="4">Actions</th>
           </tr>
           <tr *ngFor="let item of persons; let i = index;">
             <td>{{i+1}}</td>
@@ -20,10 +21,17 @@
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].address" #address="ngModel"></td>
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].dateOfBirth" #dateOfBirth="ngModel"></td>
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].phoneNumber" #phoneNumber="ngModel"></td>
-            <td>{{item.userID}}</td>
+            <td>{{getUsername(item.userID)}}</td>
             <td>{{item.status}}</td>
-            <td class="td-button"><button class="updateButton" (click)="updatePerson(item.id,firstName,lastName,address,dateOfBirth,phoneNumber,item.userID,item.status)">update</button></td>
-            <td class="td-button"><button class="approveButton" (click)="approvePerson(item.id)">approve</button></td>
+            <td>{{item.nextStatus}}</td>
+            <td class="td-button"><button class="updateButton" (click)="getUsername(item.userID); updatePerson(item.id,firstName,lastName,address,dateOfBirth,phoneNumber,item.userID,item.status)"
+              [disabled] = "item.status !== 'ACTIVE'">update</button></td>
+            <td class="td-button"><button class="updateButton" (click)="deletePerson(item.id)"
+              [disabled] = "item.status !== 'ACTIVE'">delete</button></td>
+            <td class="td-button"><button class="approveButton" (click)="approvePerson(item.id)"
+              [disabled] = "item.status !== 'APPROVE'">approve</button></td>
+            <td class="td-button"><button class="rejectButton" (click)="rejectPerson(item.id)"
+              [disabled] = "item.status !== 'APPROVE'">reject</button></td>
           </tr>
         </table>
       <br>

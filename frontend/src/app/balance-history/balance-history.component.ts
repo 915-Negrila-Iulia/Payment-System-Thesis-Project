@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Account } from '../account';
+import { AccountService } from '../account.service';
 import { Balance } from '../balance';
 import { BalanceService } from '../balance.service';
 

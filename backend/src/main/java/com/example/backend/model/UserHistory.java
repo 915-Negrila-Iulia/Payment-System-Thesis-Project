@@ -32,6 +32,10 @@ public class UserHistory {
     @Enumerated(EnumType.STRING)
     private StatusEnum status;
 
+    @Column(name = "next_status")
+    @Enumerated(EnumType.STRING)
+    private StatusEnum nextStatus;
+
     @Column(name = "user_id")
     private Long userID;
 
@@ -40,11 +44,16 @@ public class UserHistory {
     @CreationTimestamp
     private LocalDateTime timestamp;
 
-    public UserHistory(String username, String email, String password, StatusEnum status, Long userID) {
+    public UserHistory(String username, String email, String password, StatusEnum status, StatusEnum nextStatus, Long userID) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.status = status;
+        this.nextStatus = nextStatus;
         this.userID = userID;
+    }
+
+    public UserHistory(String email) {
+        this.email = email;
     }
 }

@@ -7,6 +7,7 @@ export class PersonHistory {
     phoneNumber: string | undefined;
     userID: number | undefined;
     status: string | undefined;
+    nextStatus: string | undefined;
     personID: number | undefined;
     timestamp: Date | undefined;
 }

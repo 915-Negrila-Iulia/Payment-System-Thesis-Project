@@ -6,7 +6,10 @@ import com.example.backend.repository.IUserHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class UserHistoryService implements IUserHistoryService{
@@ -23,8 +26,23 @@ public class UserHistoryService implements IUserHistoryService{
     @Override
     public UserHistory saveUserHistory(User user) {
         UserHistory userHistory = new UserHistory(user.getUsername(),user.getEmail(),
-                user.getPassword(), user.getStatus(), user.getId());
+                user.getPassword(), user.getStatus(), user.getNextStatus(), user.getId());
         return userHistoryRepository.save(userHistory);
+    }
+
+    @Override
+    public List<UserHistory> getHistoryByUserId(Long userId){
+        return userHistoryRepository.findAll().stream()
+                .filter(userHistory -> Objects.equals(userHistory.getUserID(), userId))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserHistory getLastVersionOfUser(Long userId){
+        List<UserHistory> history = this.getHistoryByUserId(userId);
+        UserHistory findLastVersion = history.stream().max(Comparator.comparing(UserHistory::getTimestamp)).get();
+        UserHistory lastVersion = new UserHistory(findLastVersion.getEmail());
+        return lastVersion;
     }
 
     @Override

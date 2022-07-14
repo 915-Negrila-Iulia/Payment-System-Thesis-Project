@@ -28,8 +28,16 @@ export class AccountService {
     return this.httpClient.put<Account>(this.baseUrl+`/${id}`,account);
   }
 
+  deleteAccount(id: number | undefined){
+    return this.httpClient.put<Account>(this.baseUrl+"/delete/"+`${id}`,null);
+  }
+
   approveAccount(id: number | undefined){
     return this.httpClient.put<Account>(this.baseUrl+"/approve/"+`${id}`,null);
+  }
+
+  rejectAccount(id: number | undefined){
+    return this.httpClient.put<Account>(this.baseUrl+"/reject/"+`${id}`,null);
   }
 
   getAccountById(id: number | undefined){

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../user';
 import { UserService } from '../user.service';
@@ -27,7 +27,7 @@ export class UsersListComponent implements OnInit {
 
   updateUser(id: any, username: any, email: any, password: any, status: any){
     this.user.id = id;
-    this.user.username = username.value;
+    this.user.username = username;
     this.user.email = email.value;
     this.user.password = password;
     this.user.status = status;
@@ -36,9 +36,18 @@ export class UsersListComponent implements OnInit {
     },
     error => console.log(error)
     );
+    window.location.reload();
   }
 
-  getUserById(id: any){
+  deleteUser(id: any){
+    this.userService.deleteUser(id).subscribe(data => {
+      console.log(data)
+    },
+    error => console.log(error))
+    window.location.reload();
+  }
+
+  filterById(id: any){
     return this.users.filter( user => user.id === id)[0];
   }
 
@@ -48,6 +57,15 @@ export class UsersListComponent implements OnInit {
     },
     error => console.log(error)
     );
+    window.location.reload();
+  }
+
+  rejectUser(id: any){
+    this.userService.rejectUser(id).subscribe(data => {
+      console.log(data);
+    },
+    error => console.log(error))
+    window.location.reload();
   }
 
 }

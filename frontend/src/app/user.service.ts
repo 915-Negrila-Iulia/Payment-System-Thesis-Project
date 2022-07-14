@@ -25,7 +25,15 @@ export class UserService {
   }
 
   getCurrentUser(){
-    return this.httpClient.get(this.baseUrl+"/current-user", {responseType: 'text'});
+    return this.httpClient.get<User>(this.baseUrl+"/current-user");
+  }
+
+  getUserById(id: number | undefined){
+    return this.httpClient.get<User>(this.baseUrl+"/users/"+`${id}`);
+  }
+
+  getUserWhoMadeChanges(objectId: number | undefined, objectType: string | undefined){
+    return this.httpClient.get<User>(this.baseUrl+"/user-audit/"+`${objectId}/${objectType}`);
   }
 
   getHistoryOfUsers(){
@@ -36,7 +44,15 @@ export class UserService {
     return this.httpClient.put<User>(this.baseUrl+"/users/"+`${id}`,user);
   }
 
+  deleteUser(id: number | undefined){
+    return this.httpClient.put<User>(this.baseUrl+"/users/delete/"+`${id}`,null);
+  }
+
   approveUser(id: number | undefined){
     return this.httpClient.put<User>(this.baseUrl+"/users/approve/"+`${id}`,null);
+  }
+
+  rejectUser(id: number | undefined){
+    return this.httpClient.put<User>(this.baseUrl+"/users/reject/"+`${id}`,null);
   }
 }
