@@ -4,6 +4,7 @@ import com.example.backend.model.*;
 import com.example.backend.service.IAccountHistoryService;
 import com.example.backend.service.IAccountService;
 import com.example.backend.service.IAuditService;
+import com.example.backend.service.IBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,9 @@ public class AccountController {
 
     @Autowired
     IAccountHistoryService accountHistoryService;
+
+    @Autowired
+    IBalanceService balanceService;
 
     @Autowired
     IAuditService auditService;
@@ -49,6 +53,7 @@ public class AccountController {
         accountDetails.setNextStatus(StatusEnum.ACTIVE);
         accountDetails.setAccountStatus(AccountStatusEnum.CLOSED);
         Account account = accountService.saveAccount(accountDetails);
+        balanceService.createInitialBalance(account.getId());
         accountHistoryService.saveAccountHistory(accountDetails);
         Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(account.getId(),ObjectTypeEnum.ACCOUNT,OperationEnum.CREATE,currentUserId);
@@ -81,13 +86,48 @@ public class AccountController {
         Account account = accountService.findAccountById(id)
                 .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
         accountHistoryService.saveAccountHistory(account);
-        account.setStatus(StatusEnum.ACTIVE);
-        account.setNextStatus(StatusEnum.ACTIVE);
+        account.setStatus(account.getNextStatus());
         Account activeAccount = accountService.saveAccount(account);
         Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(account.getId(),ObjectTypeEnum.ACCOUNT,OperationEnum.APPROVE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(activeAccount);
+    }
+
+    @PutMapping("/reject/{id}")
+    public ResponseEntity<Account> rejectAccount(@PathVariable Long id){
+        Account account = accountService.findAccountById(id)
+                .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
+        AccountHistory lastVersion = accountHistoryService.getLastVersionOfAccount(id);
+        accountHistoryService.saveAccountHistory(account);
+        if(accountHistoryService.getHistoryByAccountId(id).size() <= 2){
+            // account will be deleted
+            account.setStatus(StatusEnum.DELETE);
+            account.setNextStatus(StatusEnum.DELETE);
+        }
+        else{
+            // account will have changes undone
+            accountService.undoneAccountChanges(account,lastVersion);
+        }
+        Account rejectedAccount = accountService.saveAccount(account);
+        Long currentUserId = this.authController.currentUser().getId();
+        Audit audit = new Audit(account.getId(),ObjectTypeEnum.ACCOUNT,OperationEnum.REJECT,currentUserId);
+        auditService.saveAudit(audit);
+        return ResponseEntity.ok(rejectedAccount);
+    }
+
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<Account> deleteAccount(@PathVariable Long id){
+        Account account = accountService.findAccountById(id)
+                .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
+        accountHistoryService.saveAccountHistory(account);
+        account.setStatus(StatusEnum.APPROVE);
+        account.setNextStatus(StatusEnum.DELETE);
+        Account deletedAccount = accountService.saveAccount(account);
+        Long currentUserId = this.authController.currentUser().getId();
+        Audit audit = new Audit(account.getId(),ObjectTypeEnum.ACCOUNT,OperationEnum.DELETE,currentUserId);
+        auditService.saveAudit(audit);
+        return ResponseEntity.ok(deletedAccount);
     }
 
     @GetMapping("/{id}")

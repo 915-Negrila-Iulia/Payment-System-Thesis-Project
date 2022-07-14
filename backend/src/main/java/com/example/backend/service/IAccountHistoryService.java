@@ -9,4 +9,5 @@ public interface IAccountHistoryService {
     AccountHistory saveAccountHistory(Account accountHistory);
     List<AccountHistory> getHistoryOfAccounts();
     List<AccountHistory> getHistoryByAccountId(Long id);
+    AccountHistory getLastVersionOfAccount(Long id);
 }

@@ -50,6 +50,14 @@ export class AccountsListComponent implements OnInit, OnChanges {
     );
   }
 
+  deleteAccount(id: any){
+    this.accountService.deleteAccount(id).subscribe(data => {
+      console.log(data);
+    },
+    error => console.log(error)
+    );
+  }
+
   approveAccount(id: any){
     this.accountService.approveAccount(id).subscribe(data => {
       console.log(data);
@@ -59,7 +67,11 @@ export class AccountsListComponent implements OnInit, OnChanges {
   }
 
   rejectAccount(id: number | undefined){
-    
+        this.accountService.rejectAccount(id).subscribe(data => {
+      console.log(data);
+    },
+    error => console.log(error)
+    );
   }
 
   selectAccount(id: any){

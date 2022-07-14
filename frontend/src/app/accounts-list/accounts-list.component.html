@@ -12,7 +12,7 @@
               <th>person id</th>
               <th>status</th>
               <th>next status</th>
-              <th colspan="5">Actions</th>
+              <th colspan="6">Actions</th>
           </tr>
           <tr *ngFor="let item of accounts; let i = index;">
             <td>{{i+1}}</td>
@@ -26,11 +26,14 @@
             <td>{{item.nextStatus}}</td>
             <td class="td-button"><button class="updateButton" (click)="updateAccount(item.id,iban,countryCode,bankCode,currency,accountStatus,item.personID,item.status)"
               [disabled] = "item.status !== 'ACTIVE'">update</button></td>
+            <td class="td-button"><button class="deleteButton" (click)="deleteAccount(item.id)"
+              [disabled] = "item.status !== 'ACTIVE'">delete</button></td>  
             <td class="td-button"><button class="approveButton" (click)="approveAccount(item.id)"
               [disabled] = "item.status !== 'APPROVE'">approve</button></td>
             <td class="td-button"><button class="rejectButton" (click)="rejectAccount(item.id)"
               [disabled] = "item.status !== 'APPROVE'">reject</button></td>
-            <td class="td-button"><button class="balanceButton" (click)="selectAccount(item.id); openPopup()">details</button></td>
+            <td class="td-button"><button class="balanceButton" (click)="selectAccount(item.id); openPopup()"
+              [disabled] = "item.status === 'DELETE'">details</button></td>
             <td class="td-button"><button class="transactionButton" (click)="selectAccount(item.id); createTransaction()"
               [disabled] = "item.status !== 'ACTIVE'">transaction</button></td>
           </tr>

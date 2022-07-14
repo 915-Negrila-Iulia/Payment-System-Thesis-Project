@@ -70,4 +70,12 @@ public class AccountHistory {
         this.accountStatus = accountStatus;
         this.accountID = accountID;
     }
+
+    public AccountHistory(String iban, String countryCode, String bankCode, String currency, AccountStatusEnum accountStatus) {
+        this.iban = iban;
+        this.countryCode = countryCode;
+        this.bankCode = bankCode;
+        this.currency = currency;
+        this.accountStatus = accountStatus;
+    }
 }

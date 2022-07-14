@@ -87,4 +87,11 @@ public class BalanceService implements IBalanceService{
         }
         balanceRepository.save(updatedBalance);
     }
+
+    @Override
+    public Balance createInitialBalance(Long accountId) {
+        Balance initialBalance = new Balance(0D,0D,accountId);
+        balanceRepository.save(initialBalance);
+        return initialBalance;
+    }
 }
