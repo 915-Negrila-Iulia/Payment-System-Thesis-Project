@@ -7,4 +7,5 @@ export class Person {
     phoneNumber: string | undefined;
     userID: number | undefined;
     status: string | undefined;
+    nextStatus: string | undefined;
 }

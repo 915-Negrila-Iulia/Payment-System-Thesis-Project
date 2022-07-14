@@ -8,4 +8,5 @@ import java.util.List;
 public interface IAccountHistoryService {
     AccountHistory saveAccountHistory(Account accountHistory);
     List<AccountHistory> getHistoryOfAccounts();
+    List<AccountHistory> getHistoryByAccountId(Long id);
 }

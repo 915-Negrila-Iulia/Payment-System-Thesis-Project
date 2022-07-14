@@ -8,4 +8,5 @@ import java.util.List;
 public interface IPersonHistoryService {
     PersonHistory savePersonHistory(Person person);
     List<PersonHistory> getHistoryOfPersons();
+    List<PersonHistory> getHistoryByPersonId(Long id);
 }

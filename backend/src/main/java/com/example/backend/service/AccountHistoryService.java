@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountHistoryService implements IAccountHistoryService{
@@ -22,6 +24,13 @@ public class AccountHistoryService implements IAccountHistoryService{
                 account.getBankCode(), account.getCurrency(), account.getPersonID(), account.getStatus(),
                 account.getNextStatus(), account.getAccountStatus(), account.getId());
         return accountHistoryRepository.save(accountHistory);
+    }
+
+    @Override
+    public List<AccountHistory> getHistoryByAccountId(Long accountId){
+        return accountHistoryRepository.findAll().stream()
+                .filter(accountHistory -> Objects.equals(accountHistory.getAccountID(), accountId))
+                .collect(Collectors.toList());
     }
 
     @Override

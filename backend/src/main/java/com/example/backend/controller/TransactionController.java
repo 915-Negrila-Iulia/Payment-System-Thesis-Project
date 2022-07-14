@@ -37,7 +37,7 @@ public class TransactionController {
         transactionDetails.setStatus(StatusEnum.APPROVE);
         transactionDetails.setNextStatus(StatusEnum.ACTIVE);
         Transaction transaction = transactionService.saveTransaction(transactionDetails);
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(transaction.getId(),ObjectTypeEnum.TRANSACTION,OperationEnum.CREATE,currentUserId);
         auditService.saveAudit(audit);
         return transaction;
@@ -51,7 +51,7 @@ public class TransactionController {
         transaction.setNextStatus(StatusEnum.ACTIVE);
         Transaction activeTransaction = transactionService.saveTransaction(transaction);
         balanceService.updateTotalAmount(transaction.getId());
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(transaction.getId(),ObjectTypeEnum.TRANSACTION,OperationEnum.APPROVE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(activeTransaction);
@@ -63,7 +63,7 @@ public class TransactionController {
         Double amount = transactionDetails.getAmount();
         Transaction transaction = transactionService.depositTransaction(accountId, amount);
         balanceService.updateAvailableAmount(accountId, transaction.getId());
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(transaction.getId(),ObjectTypeEnum.TRANSACTION,OperationEnum.CREATE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(transaction);
@@ -75,7 +75,7 @@ public class TransactionController {
         Double amount = transactionDetails.getAmount();
         Transaction transaction = transactionService.withdrawalTransaction(accountId, amount);
         balanceService.updateAvailableAmount(accountId, transaction.getId());
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(transaction.getId(),ObjectTypeEnum.TRANSACTION,OperationEnum.CREATE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(transaction);
@@ -88,7 +88,7 @@ public class TransactionController {
         Double amount = transactionDetails.getAmount();
         Transaction transaction = transactionService.transferTransaction(accountId, targetId, amount);
         balanceService.updateAvailableAmount(accountId, transaction.getId());
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(transaction.getId(),ObjectTypeEnum.TRANSACTION,OperationEnum.CREATE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(transaction);

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonHistoryService implements IPersonHistoryService{
@@ -26,6 +28,13 @@ public class PersonHistoryService implements IPersonHistoryService{
                 person.getDateOfBirth(), person.getPhoneNumber(), person.getUserID(), person.getStatus(),
                 person.getNextStatus(), person.getId());
         return personHistoryRepository.save(personHistory);
+    }
+
+    @Override
+    public List<PersonHistory> getHistoryByPersonId(Long personId){
+        return personHistoryRepository.findAll().stream()
+                .filter(personHistory -> Objects.equals(personHistory.getPersonID(), personId))
+                .collect(Collectors.toList());
     }
 
     @Override

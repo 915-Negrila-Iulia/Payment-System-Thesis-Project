@@ -37,12 +37,18 @@ public class PersonController {
         return personHistoryService.getHistoryOfPersons();
     }
 
+    @GetMapping("/history/{personId}")
+    public List<PersonHistory> getHistoryOfPerson(@PathVariable Long personId){
+        return personHistoryService.getHistoryByPersonId(personId);
+    }
+
     @PostMapping()
     public Person createPerson(@RequestBody Person personalInfo){
         personalInfo.setStatus(StatusEnum.APPROVE);
         personalInfo.setNextStatus(StatusEnum.ACTIVE);
         Person person = personService.savePerson(personalInfo);
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        personHistoryService.savePersonHistory(personalInfo);
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.CREATE,currentUserId);
         auditService.saveAudit(audit);
         return person;
@@ -72,7 +78,7 @@ public class PersonController {
         person.setStatus(StatusEnum.APPROVE);
         person.setNextStatus(StatusEnum.ACTIVE);
         Person updatedPerson = personService.savePerson(person);
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.UPDATE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(updatedPerson);
@@ -86,7 +92,7 @@ public class PersonController {
         person.setStatus(StatusEnum.ACTIVE);
         person.setNextStatus(StatusEnum.ACTIVE);
         Person activePerson = personService.savePerson(person);
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.APPROVE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(activePerson);

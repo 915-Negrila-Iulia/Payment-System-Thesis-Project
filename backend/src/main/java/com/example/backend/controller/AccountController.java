@@ -38,13 +38,19 @@ public class AccountController {
         return accountHistoryService.getHistoryOfAccounts();
     }
 
+    @GetMapping("/history/{accountId}")
+    public List<AccountHistory> getHistoryOfAccount(@PathVariable Long accountId){
+        return accountHistoryService.getHistoryByAccountId(accountId);
+    }
+
     @PostMapping()
     public Account createAccount(@RequestBody Account accountDetails){
         accountDetails.setStatus(StatusEnum.APPROVE);
         accountDetails.setNextStatus(StatusEnum.ACTIVE);
         accountDetails.setAccountStatus(AccountStatusEnum.CLOSED);
         Account account = accountService.saveAccount(accountDetails);
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        accountHistoryService.saveAccountHistory(accountDetails);
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(account.getId(),ObjectTypeEnum.ACCOUNT,OperationEnum.CREATE,currentUserId);
         auditService.saveAudit(audit);
         return account;
@@ -64,7 +70,7 @@ public class AccountController {
         account.setStatus(StatusEnum.APPROVE);
         account.setNextStatus(StatusEnum.ACTIVE);
         Account updatedAccount = accountService.saveAccount(account);
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(account.getId(), ObjectTypeEnum.ACCOUNT,OperationEnum.UPDATE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(updatedAccount);
@@ -78,7 +84,7 @@ public class AccountController {
         account.setStatus(StatusEnum.ACTIVE);
         account.setNextStatus(StatusEnum.ACTIVE);
         Account activeAccount = accountService.saveAccount(account);
-        Long currentUserId = Long.parseLong(this.authController.currentUser());
+        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(account.getId(),ObjectTypeEnum.ACCOUNT,OperationEnum.APPROVE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(activeAccount);

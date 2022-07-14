@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.model.Account;
+import com.example.backend.model.User;
 
 import java.util.List;
 import java.util.Optional;

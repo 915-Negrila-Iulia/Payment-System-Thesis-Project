@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 })
 export class PersonsHomeComponent implements OnInit {
 
-  show: string | undefined;
+  show: string = "personsList";
 
   constructor(private router: Router) { }
 

@@ -52,4 +52,8 @@ export class PersonsListComponent implements OnInit {
     );
   }
 
+  rejectPerson(id: number | undefined){
+    
+  }
+
 }

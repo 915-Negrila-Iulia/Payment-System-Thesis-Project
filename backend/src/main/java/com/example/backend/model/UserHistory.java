@@ -52,4 +52,8 @@ public class UserHistory {
         this.nextStatus = nextStatus;
         this.userID = userID;
     }
+
+    public UserHistory(String email) {
+        this.email = email;
+    }
 }

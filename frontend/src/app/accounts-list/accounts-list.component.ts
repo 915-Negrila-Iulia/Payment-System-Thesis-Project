@@ -58,6 +58,10 @@ export class AccountsListComponent implements OnInit, OnChanges {
     );
   }
 
+  rejectAccount(id: number | undefined){
+    
+  }
+
   selectAccount(id: any){
     this.selectedAccountId = id;
   }

@@ -4,4 +4,5 @@ export class User {
     email: string | undefined;
     password: string | undefined;
     status= 'APPROVE';
+    nextStatus= 'ACTIVE';
 }

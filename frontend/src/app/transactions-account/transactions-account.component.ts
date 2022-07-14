@@ -41,6 +41,7 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
     this.transaction = this.transactionForm.value;
     this.transaction.accountID = this.accountId;
     this.transaction.status = "APPROVE";
+    this.transaction.nextStatus = "ACTIVE";
     console.log(this.transaction);
     if(actionPerformed === "DEPOSIT"){
       this.transactionService.deposit(this.transaction).subscribe(data => {

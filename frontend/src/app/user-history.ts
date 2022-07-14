@@ -4,6 +4,7 @@ export class UserHistory {
     email: string | undefined;
     password: string | undefined;
     status: string | undefined;
+    nextStatus: string | undefined;
     userID: number | undefined;
     timestamp: Date | undefined;
 }

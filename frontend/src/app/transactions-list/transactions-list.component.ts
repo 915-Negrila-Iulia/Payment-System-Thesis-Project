@@ -30,6 +30,10 @@ export class TransactionsListComponent implements OnInit {
     },
     error => console.log(error)
     );
-    }
+  }
+
+  rejectTransaction(id: number | undefined){
+    
+  }
 
 }
