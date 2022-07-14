@@ -4,5 +4,6 @@ public enum OperationEnum {
     CREATE,
     UPDATE,
     APPROVE,
+    REJECT,
     DELETE
 }

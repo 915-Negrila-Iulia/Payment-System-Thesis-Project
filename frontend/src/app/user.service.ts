@@ -40,6 +40,10 @@ export class UserService {
     return this.httpClient.put<User>(this.baseUrl+"/users/"+`${id}`,user);
   }
 
+  deleteUser(id: number | undefined){
+    return this.httpClient.put<User>(this.baseUrl+"/users/delete/"+`${id}`,null);
+  }
+
   approveUser(id: number | undefined){
     return this.httpClient.put<User>(this.baseUrl+"/users/approve/"+`${id}`,null);
   }

@@ -81,8 +81,7 @@ public class UserController {
         User user = userService.findUserById(id)
                 .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
         userHistoryService.saveUserHistory(user);
-        user.setStatus(StatusEnum.ACTIVE);
-        user.setNextStatus(StatusEnum.ACTIVE);
+        user.setStatus(user.getNextStatus());
         User activeUser = userService.saveUser(user);
         Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.APPROVE,currentUserId);
@@ -108,10 +107,22 @@ public class UserController {
         }
         User rejectedUser = userService.saveUser(user);
         Long currentUserId = this.authController.currentUser().getId();
-        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.APPROVE,currentUserId);
+        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.REJECT,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(rejectedUser);
     }
 
-    //todo: delete user => inactive
+    @PutMapping("users/delete/{id}")
+    public ResponseEntity<User> deleteUser(@PathVariable Long id){
+        User user = userService.findUserById(id)
+                .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
+        userHistoryService.saveUserHistory(user);
+        user.setStatus(StatusEnum.APPROVE);
+        user.setNextStatus(StatusEnum.DELETE);
+        User deletedUser = userService.saveUser(user);
+        Long currentUserId = this.authController.currentUser().getId();
+        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.DELETE,currentUserId);
+        auditService.saveAudit(audit);
+        return ResponseEntity.ok(deletedUser);
+    }
 }

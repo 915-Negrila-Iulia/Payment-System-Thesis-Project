@@ -71,4 +71,12 @@ public class PersonHistory {
         this.nextStatus = nextStatus;
         this.personID = personID;
     }
+
+    public PersonHistory(String firstName, String lastName, String address, LocalDate dateOfBirth, String phoneNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.dateOfBirth = dateOfBirth;
+        this.phoneNumber = phoneNumber;
+    }
 }

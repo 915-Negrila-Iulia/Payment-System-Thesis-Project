@@ -40,6 +40,13 @@ export class PersonsListComponent implements OnInit {
     );
   }
 
+  deletePerson(id: any){
+    this.personService.deletePerson(id).subscribe(data => {
+     console.log(data)
+    },
+    error => console.log(error))
+  }
+
   getPersonById(id: any){
     return this.persons.filter( person => person.id === id)[0];
   }
@@ -53,7 +60,10 @@ export class PersonsListComponent implements OnInit {
   }
 
   rejectPerson(id: number | undefined){
-    
+    this.personService.rejectPerson(id).subscribe(data => {
+      console.log(data)
+     },
+     error => console.log(error))
   }
 
 }

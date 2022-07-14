@@ -89,12 +89,47 @@ public class PersonController {
         Person person = personService.findPersonById(id)
                 .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
         personHistoryService.savePersonHistory(person);
-        person.setStatus(StatusEnum.ACTIVE);
-        person.setNextStatus(StatusEnum.ACTIVE);
+        person.setStatus(person.getNextStatus());
         Person activePerson = personService.savePerson(person);
         Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.APPROVE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(activePerson);
+    }
+
+    @PutMapping("/reject/{id}")
+    public ResponseEntity<Person> rejectPerson(@PathVariable Long id){
+        Person person = personService.findPersonById(id)
+                .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
+        PersonHistory lastVersion = personHistoryService.getLastVersionOfPerson(id);
+        personHistoryService.savePersonHistory(person);
+        if(personHistoryService.getHistoryByPersonId(id).size() <= 2){
+            // person will be deleted
+            person.setStatus(StatusEnum.DELETE);
+            person.setNextStatus(StatusEnum.DELETE);
+        }
+        else{
+            // person will have changes undone
+            personService.undonePersonChanges(person,lastVersion);
+        }
+        Person rejectedPerson = personService.savePerson(person);
+        Long currentUserId = this.authController.currentUser().getId();
+        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.REJECT,currentUserId);
+        auditService.saveAudit(audit);
+        return ResponseEntity.ok(rejectedPerson);
+    }
+
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<Person> deletePerson(@PathVariable Long id){
+        Person person = personService.findPersonById(id)
+                .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
+        personHistoryService.savePersonHistory(person);
+        person.setStatus(StatusEnum.APPROVE);
+        person.setNextStatus(StatusEnum.DELETE);
+        Person deletedPerson = personService.savePerson(person);
+        Long currentUserId = this.authController.currentUser().getId();
+        Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.DELETE,currentUserId);
+        auditService.saveAudit(audit);
+        return ResponseEntity.ok(deletedPerson);
     }
 }
