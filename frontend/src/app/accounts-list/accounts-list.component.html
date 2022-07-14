@@ -9,7 +9,7 @@
               <th>bank code</th>
               <th>currency</th>
               <th>account status</th>
-              <th>person id</th>
+              <th>person</th>
               <th>status</th>
               <th>next status</th>
               <th colspan="6">Actions</th>
@@ -21,7 +21,7 @@
             <td class="td-input"><input type="text" [(ngModel)]="accounts[i].bankCode" #bankCode="ngModel"></td>
             <td class="td-input"><input type="text" [(ngModel)]="accounts[i].currency" #currency="ngModel"></td>
             <td class="td-input"><input type="text" [(ngModel)]="accounts[i].accountStatus" #accountStatus="ngModel"></td>
-            <td>{{item.personID}}</td>
+            <td>{{getPersonDetails(item.personID)}}</td>
             <td>{{item.status}}</td>
             <td>{{item.nextStatus}}</td>
             <td class="td-button"><button class="updateButton" (click)="updateAccount(item.id,item.iban,countryCode,bankCode,currency,accountStatus,item.personID,item.status)"

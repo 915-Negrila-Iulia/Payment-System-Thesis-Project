@@ -28,6 +28,10 @@ export class UserService {
     return this.httpClient.get<User>(this.baseUrl+"/current-user");
   }
 
+  getUserById(id: number | undefined){
+    return this.httpClient.get<User>(this.baseUrl+"/users/"+`${id}`);
+  }
+
   getUserWhoMadeChanges(objectId: number | undefined, objectType: string | undefined){
     return this.httpClient.get<User>(this.baseUrl+"/user-audit/"+`${objectId}/${objectType}`);
   }

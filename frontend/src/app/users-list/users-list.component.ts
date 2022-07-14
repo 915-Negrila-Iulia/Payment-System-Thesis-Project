@@ -19,7 +19,6 @@ export class UsersListComponent implements OnInit {
     this.getUsers();
   }
 
-
   getUsers(){
     this.userService.getAllUsers().subscribe(data => {
       this.users = data;
@@ -37,6 +36,7 @@ export class UsersListComponent implements OnInit {
     },
     error => console.log(error)
     );
+    window.location.reload();
   }
 
   deleteUser(id: any){
@@ -44,9 +44,10 @@ export class UsersListComponent implements OnInit {
       console.log(data)
     },
     error => console.log(error))
+    window.location.reload();
   }
 
-  getUserById(id: any){
+  filterById(id: any){
     return this.users.filter( user => user.id === id)[0];
   }
 
@@ -56,6 +57,7 @@ export class UsersListComponent implements OnInit {
     },
     error => console.log(error)
     );
+    window.location.reload();
   }
 
   rejectUser(id: any){
@@ -63,6 +65,7 @@ export class UsersListComponent implements OnInit {
       console.log(data);
     },
     error => console.log(error))
+    window.location.reload();
   }
 
 }

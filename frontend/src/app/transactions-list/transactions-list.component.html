@@ -4,8 +4,8 @@
       <table id='transactionsTable'>
           <tr>
               <th>#</th>
-              <th>accountID</th>
-              <th>targetID</th>
+              <th>account iban</th>
+              <th>target iban</th>
               <th>type</th>
               <th>amount</th>
               <th>action</th>
@@ -16,8 +16,8 @@
           </tr>
           <tr *ngFor="let item of transactions; let i = index;">
             <td>{{i+1}}</td>
-            <td>{{item.accountID}}</td>
-            <td>{{item.targetAccountID}}</td>
+            <td>{{getIbanAccount(item.accountID)}}</td>
+            <td>{{getIbanAccount(item.targetAccountID)}}</td>
             <td>{{item.type}}</td>
             <td>{{item.amount}}</td>
             <td>{{item.action}}</td>

@@ -21,4 +21,9 @@ public class AuditController {
     public List<Audit> getAudit(){
         return auditService.getAudit();
     }
+
+    @GetMapping("/{id}/{type}")
+    public List<Audit> getAuditOfObject(@PathVariable Long id, @PathVariable ObjectTypeEnum type){
+        return auditService.getAuditOfObject(id,type);
+    }
 }

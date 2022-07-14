@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Account } from '../account';
+import { AccountService } from '../account.service';
 import { Transaction } from '../transaction';
 import { TransactionService } from '../transaction.service';
 
@@ -11,17 +13,34 @@ export class TransactionsListComponent implements OnInit {
 
   transactions: Transaction[] = [];
   transaction: Transaction = new Transaction();
+  accounts: Account[] = [];
 
-  constructor(private transactionService: TransactionService) { }
+  constructor(private transactionService: TransactionService, private accountService: AccountService) { }
 
   ngOnInit(): void {
     this.getTransactions();
+    this.accountService.getAllAccounts().subscribe(data => {
+      this.accounts = data;
+    })
   }
 
   getTransactions(){
     this.transactionService.getAllTransactions().subscribe(data => {
       this.transactions = data;
     })
+  }
+
+  getIbanAccount(id: number | undefined){
+    if(this.accounts){
+      let account = this.accounts.filter(acc => acc.id === id)[0];
+      if(account){
+        return account.iban;
+      }
+      return '';
+    }
+    else{
+      return '';
+    }
   }
 
   approveTransaction(id: number | undefined){

@@ -6,6 +6,7 @@ import com.example.backend.service.IPersonHistoryService;
 import com.example.backend.service.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,9 @@ public class PersonController {
     public List<Person> getPersons(){
         return personService.getAllPersons();
     }
+
+    @GetMapping("/{id}")
+    public Person getPersonById(@PathVariable Long id) {return personService.findPersonById(id).get();}
 
     @GetMapping("/history")
     public List<PersonHistory> getHistoryOfPersons() {

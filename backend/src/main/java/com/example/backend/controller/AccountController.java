@@ -37,6 +37,11 @@ public class AccountController {
         return accountService.getAllAccounts();
     }
 
+    @GetMapping("/{id}")
+    public Optional<Account> GetAccountById(@PathVariable Long id){
+        return accountService.findAccountById(id);
+    }
+
     @GetMapping("/history")
     public List<AccountHistory> getHistoryOfAccounts() {
         return accountHistoryService.getHistoryOfAccounts();
@@ -128,10 +133,4 @@ public class AccountController {
         auditService.saveAudit(audit);
         return ResponseEntity.ok(deletedAccount);
     }
-
-    @GetMapping("/{id}")
-    public Optional<Account> GetAccountById(@PathVariable Long id){
-        return accountService.findAccountById(id);
-    }
-
 }

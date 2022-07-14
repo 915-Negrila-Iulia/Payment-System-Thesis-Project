@@ -32,6 +32,9 @@ public class TransactionController {
         return transactionService.getAllTransactions();
     }
 
+    @GetMapping("/{id}")
+    public Transaction getTransactionById(@PathVariable Long id) {return transactionService.findTransactionById(id).get();}
+
     @PostMapping()
     public Transaction createTransaction(@RequestBody Transaction transactionDetails){
         transactionDetails.setStatus(StatusEnum.APPROVE);

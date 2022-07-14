@@ -74,4 +74,5 @@ public class AuthController {
     public User currentUser() {
         return this.userRepository.findById(this.currentUser).get();
     }
+
 }

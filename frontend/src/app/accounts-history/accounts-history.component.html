@@ -10,7 +10,7 @@
             <th>bank code</th>
             <th>currency</th>
             <th>account status</th>
-            <th>person id</th>
+            <th>person</th>
             <th>status</th>
             <th>next status</th>
             <th>timestamp</th>
@@ -23,7 +23,7 @@
             <td>{{item.bankCode}}</td>
             <td>{{item.currency}}</td>
             <td>{{item.accountStatus}}</td>
-            <td>{{item.personID}}</td>
+            <td>{{getPersonDetails(item.personID)}}</td>
             <td>{{item.status}}</td>
             <td>{{item.nextStatus}}</td>
             <td>{{item.timestamp}}</td>
