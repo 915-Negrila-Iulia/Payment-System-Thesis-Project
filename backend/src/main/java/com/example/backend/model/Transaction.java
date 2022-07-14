@@ -46,17 +46,23 @@ public class Transaction {
     @ColumnDefault(value = "APPROVE")
     private StatusEnum status;
 
+    @Column(name = "next_status")
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault(value = "ACTIVE")
+    private StatusEnum nextStatus;
+
     @Column(name = "timestamp")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
     private LocalDateTime timestamp;
 
     public Transaction(TypeTransactionEnum type, ActionTransactionEnum action, Double amount, Long accountID,
-                       StatusEnum status) {
+                       StatusEnum status, StatusEnum nextStatus) {
         this.type = type;
         this.action = action;
         this.amount = amount;
         this.accountID = accountID;
         this.status = status;
+        this.nextStatus = nextStatus;
     }
 }

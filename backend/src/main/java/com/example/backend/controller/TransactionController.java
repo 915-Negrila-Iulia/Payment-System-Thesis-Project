@@ -35,6 +35,7 @@ public class TransactionController {
     @PostMapping()
     public Transaction createTransaction(@RequestBody Transaction transactionDetails){
         transactionDetails.setStatus(StatusEnum.APPROVE);
+        transactionDetails.setNextStatus(StatusEnum.ACTIVE);
         Transaction transaction = transactionService.saveTransaction(transactionDetails);
         Long currentUserId = Long.parseLong(this.authController.currentUser());
         Audit audit = new Audit(transaction.getId(),ObjectTypeEnum.TRANSACTION,OperationEnum.CREATE,currentUserId);
@@ -47,6 +48,7 @@ public class TransactionController {
         Transaction transaction = transactionService.findTransactionById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
         transaction.setStatus(StatusEnum.ACTIVE);
+        transaction.setNextStatus(StatusEnum.ACTIVE);
         Transaction activeTransaction = transactionService.saveTransaction(transaction);
         balanceService.updateTotalAmount(transaction.getId());
         Long currentUserId = Long.parseLong(this.authController.currentUser());

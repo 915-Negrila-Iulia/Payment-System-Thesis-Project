@@ -57,6 +57,7 @@ public class UserController {
         user.setUsername(userDetails.getUsername());
         user.setEmail(userDetails.getEmail());
         user.setStatus(StatusEnum.APPROVE);
+        user.setNextStatus(StatusEnum.ACTIVE);
         User updatedUser = userService.saveUser(user);
         Long currentUserId = Long.parseLong(this.authController.currentUser());
         Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.UPDATE,currentUserId);
@@ -70,6 +71,7 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
         userHistoryService.saveUserHistory(user);
         user.setStatus(StatusEnum.ACTIVE);
+        user.setNextStatus(StatusEnum.ACTIVE);
         User activeUser = userService.saveUser(user);
         Long currentUserId = Long.parseLong(this.authController.currentUser());
         Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.APPROVE,currentUserId);

@@ -23,7 +23,7 @@ public class UserHistoryService implements IUserHistoryService{
     @Override
     public UserHistory saveUserHistory(User user) {
         UserHistory userHistory = new UserHistory(user.getUsername(),user.getEmail(),
-                user.getPassword(), user.getStatus(), user.getId());
+                user.getPassword(), user.getStatus(), user.getNextStatus(), user.getId());
         return userHistoryRepository.save(userHistory);
     }
 

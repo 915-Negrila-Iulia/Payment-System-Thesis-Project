@@ -40,6 +40,11 @@ public class AccountHistory {
     @ColumnDefault(value = "APPROVE")
     private StatusEnum status;
 
+    @Column(name = "next_status")
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault(value = "ACTIVE")
+    private StatusEnum nextStatus;
+
     @Column(name = "account_status")
     @Enumerated(EnumType.STRING)
     @ColumnDefault(value = "OPEN")
@@ -54,13 +59,14 @@ public class AccountHistory {
     private LocalDateTime timestamp;
 
     public AccountHistory(String iban, String countryCode, String bankCode, String currency, Long personID,
-                          StatusEnum status, AccountStatusEnum accountStatus, Long accountID) {
+                          StatusEnum status, StatusEnum nextStatus, AccountStatusEnum accountStatus, Long accountID) {
         this.iban = iban;
         this.countryCode = countryCode;
         this.bankCode = bankCode;
         this.currency = currency;
         this.personID = personID;
         this.status = status;
+        this.nextStatus = nextStatus;
         this.accountStatus = accountStatus;
         this.accountID = accountID;
     }

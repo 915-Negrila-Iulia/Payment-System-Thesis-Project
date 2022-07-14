@@ -40,6 +40,7 @@ public class PersonController {
     @PostMapping()
     public Person createPerson(@RequestBody Person personalInfo){
         personalInfo.setStatus(StatusEnum.APPROVE);
+        personalInfo.setNextStatus(StatusEnum.ACTIVE);
         Person person = personService.savePerson(personalInfo);
         Long currentUserId = Long.parseLong(this.authController.currentUser());
         Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.CREATE,currentUserId);
@@ -69,6 +70,7 @@ public class PersonController {
         person.setPhoneNumber(details.getPhoneNumber());
         person.setUserID(details.getUserID());
         person.setStatus(StatusEnum.APPROVE);
+        person.setNextStatus(StatusEnum.ACTIVE);
         Person updatedPerson = personService.savePerson(person);
         Long currentUserId = Long.parseLong(this.authController.currentUser());
         Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.UPDATE,currentUserId);
@@ -82,6 +84,7 @@ public class PersonController {
                 .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
         personHistoryService.savePersonHistory(person);
         person.setStatus(StatusEnum.ACTIVE);
+        person.setNextStatus(StatusEnum.ACTIVE);
         Person activePerson = personService.savePerson(person);
         Long currentUserId = Long.parseLong(this.authController.currentUser());
         Audit audit = new Audit(person.getId(),ObjectTypeEnum.PERSON,OperationEnum.APPROVE,currentUserId);

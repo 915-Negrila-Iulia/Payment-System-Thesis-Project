@@ -46,6 +46,11 @@ public class PersonHistory {
     @ColumnDefault(value = "APPROVE")
     private StatusEnum status;
 
+    @Column(name = "next_status")
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault(value = "ACTIVE")
+    private StatusEnum nextStatus;
+
     @Column(name = "person_id")
     private Long personID;
 
@@ -54,8 +59,8 @@ public class PersonHistory {
     @CreationTimestamp
     private LocalDateTime timestamp;
 
-    public PersonHistory(String firstName, String lastName, String address,
-                         LocalDate dateOfBirth, String phoneNumber, Long userID, StatusEnum status, Long personID) {
+    public PersonHistory(String firstName, String lastName, String address, LocalDate dateOfBirth, String phoneNumber,
+                         Long userID, StatusEnum status, StatusEnum nextStatus, Long personID) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -63,6 +68,7 @@ public class PersonHistory {
         this.phoneNumber = phoneNumber;
         this.userID = userID;
         this.status = status;
+        this.nextStatus = nextStatus;
         this.personID = personID;
     }
 }

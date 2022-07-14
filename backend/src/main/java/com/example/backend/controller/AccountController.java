@@ -41,6 +41,7 @@ public class AccountController {
     @PostMapping()
     public Account createAccount(@RequestBody Account accountDetails){
         accountDetails.setStatus(StatusEnum.APPROVE);
+        accountDetails.setNextStatus(StatusEnum.ACTIVE);
         accountDetails.setAccountStatus(AccountStatusEnum.CLOSED);
         Account account = accountService.saveAccount(accountDetails);
         Long currentUserId = Long.parseLong(this.authController.currentUser());
@@ -61,6 +62,7 @@ public class AccountController {
         account.setAccountStatus(accountDetails.getAccountStatus());
         account.setPersonID(accountDetails.getPersonID());
         account.setStatus(StatusEnum.APPROVE);
+        account.setNextStatus(StatusEnum.ACTIVE);
         Account updatedAccount = accountService.saveAccount(account);
         Long currentUserId = Long.parseLong(this.authController.currentUser());
         Audit audit = new Audit(account.getId(), ObjectTypeEnum.ACCOUNT,OperationEnum.UPDATE,currentUserId);
@@ -74,6 +76,7 @@ public class AccountController {
                 .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
         accountHistoryService.saveAccountHistory(account);
         account.setStatus(StatusEnum.ACTIVE);
+        account.setNextStatus(StatusEnum.ACTIVE);
         Account activeAccount = accountService.saveAccount(account);
         Long currentUserId = Long.parseLong(this.authController.currentUser());
         Audit audit = new Audit(account.getId(),ObjectTypeEnum.ACCOUNT,OperationEnum.APPROVE,currentUserId);

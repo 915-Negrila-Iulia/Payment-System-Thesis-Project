@@ -18,8 +18,9 @@ public class AccountHistoryService implements IAccountHistoryService{
 
     @Override
     public AccountHistory saveAccountHistory(Account account) {
-        AccountHistory accountHistory = new AccountHistory(account.getIban(), account.getCountryCode(), account.getBankCode(),
-                account.getCurrency(), account.getPersonID(), account.getStatus(), account.getAccountStatus(), account.getId());
+        AccountHistory accountHistory = new AccountHistory(account.getIban(), account.getCountryCode(),
+                account.getBankCode(), account.getCurrency(), account.getPersonID(), account.getStatus(),
+                account.getNextStatus(), account.getAccountStatus(), account.getId());
         return accountHistoryRepository.save(accountHistory);
     }
 

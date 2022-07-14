@@ -60,7 +60,8 @@ public class AuthController {
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()),
-                StatusEnum.APPROVE);
+                StatusEnum.APPROVE,
+                StatusEnum.ACTIVE);
         userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
