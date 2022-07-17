@@ -1,5 +1,7 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { SelectMultipleControlValueAccessor } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuditService } from '../audit.service';
 import { User } from '../user';
 import { UserService } from '../user.service';
 
@@ -12,17 +14,33 @@ export class UsersListComponent implements OnInit {
 
   users: User[] = [];
   user: User = new User();
+  modifierUserID: number | undefined;
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private auditService: AuditService) { }
 
   ngOnInit(): void {
     this.getUsers();
+  }
+
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
   }
 
   getUsers(){
     this.userService.getAllUsers().subscribe(data => {
       this.users = data;
     })
+  }
+
+  getCurrentUser(){
+    return sessionStorage.getItem('userID');
+  }
+
+  getUserWhoMadeChanges(id: any){
+    this.userService.getUserWhoMadeChanges(id,"USER").subscribe(data => {
+        this.modifierUserID = data.id;
+    });
+    return this.modifierUserID?.toString();
   }
 
   updateUser(id: any, username: any, email: any, password: any, status: any){
@@ -32,7 +50,7 @@ export class UsersListComponent implements OnInit {
     this.user.password = password;
     this.user.status = status;
     this.userService.updateUser(id,this.user).subscribe(data => {
-      console.log(data);
+      //console.log(data);
     },
     error => console.log(error)
     );
@@ -52,12 +70,17 @@ export class UsersListComponent implements OnInit {
   }
 
   approveUser(id: any){
-    this.userService.approveUser(id).subscribe(data => {
-      console.log(data);
-    },
-    error => console.log(error)
-    );
-    window.location.reload();
+    console.log(this.getUserWhoMadeChanges(id))
+    console.log("sess"+this.getCurrentUser())
+    //if(this.getUserWhoMadeChanges(id) && this.getUserWhoMadeChanges(id) !== this.getCurrentUser()){
+      this.userService.approveUser(id).subscribe(data => {
+        //console.log(data);
+      },
+      error => console.log(error)
+      );
+    //}
+    console.log(this.getCurrentUser());
+    //window.location.reload();
   }
 
   rejectUser(id: any){

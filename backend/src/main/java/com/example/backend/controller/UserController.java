@@ -64,12 +64,8 @@ public class UserController {
      * @param userDetails updates to be done on the user
      * @return status set to 'OK' and the updated user
      */
-    @PutMapping("/users/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails){
-        System.out.println("---------update----------");
-        System.out.println(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER));
-        System.out.println(authController.currentUser().getId());
-        System.out.println("-------------------");
+    @PutMapping("/users/{id}/{currentUserId}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @PathVariable Long currentUserId, @RequestBody User userDetails){
         User user = userService.findUserById(id)
                 .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
         userHistoryService.saveUserHistory(user);
@@ -78,21 +74,19 @@ public class UserController {
         user.setStatus(StatusEnum.APPROVE);
         user.setNextStatus(StatusEnum.ACTIVE);
         User updatedUser = userService.saveUser(user);
-        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.UPDATE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(updatedUser);
     }
 
-    @PutMapping("users/approve/{id}")
-    public ResponseEntity<User> approveUser(@PathVariable Long id){
-        if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), authController.currentUser().getId())) {
+    @PutMapping("users/approve/{id}/{currentUserId}")
+    public ResponseEntity<User> approveUser(@PathVariable Long id, @PathVariable Long currentUserId){
+        if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), currentUserId)) {
             User user = userService.findUserById(id)
                     .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
             userHistoryService.saveUserHistory(user);
             user.setStatus(user.getNextStatus());
             User activeUser = userService.saveUser(user);
-            Long currentUserId = this.authController.currentUser().getId();
             Audit audit = new Audit(user.getId(), ObjectTypeEnum.USER, OperationEnum.APPROVE, currentUserId);
             auditService.saveAudit(audit);
             return ResponseEntity.ok(activeUser);
@@ -100,13 +94,9 @@ public class UserController {
         return null;
     }
 
-    @PutMapping("users/reject/{id}")
-    public ResponseEntity<User> rejectUser(@PathVariable Long id){
-        System.out.println("---------reject----------");
-        System.out.println(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER));
-        System.out.println(authController.currentUser().getId());
-        System.out.println("-------------------");
-        if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), authController.currentUser().getId())) {
+    @PutMapping("users/reject/{id}/{currentUserId}")
+    public ResponseEntity<User> rejectUser(@PathVariable Long id, @PathVariable Long currentUserId){
+        if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), currentUserId)) {
             User user = userService.findUserById(id)
                     .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
             UserHistory lastVersion = userHistoryService.getLastVersionOfUser(id);
@@ -121,7 +111,6 @@ public class UserController {
                 System.out.println(lastVersion.getEmail());
             }
             User rejectedUser = userService.saveUser(user);
-            Long currentUserId = this.authController.currentUser().getId();
             Audit audit = new Audit(user.getId(), ObjectTypeEnum.USER, OperationEnum.REJECT, currentUserId);
             auditService.saveAudit(audit);
             return ResponseEntity.ok(rejectedUser);
@@ -129,15 +118,14 @@ public class UserController {
         return null;
     }
 
-    @PutMapping("users/delete/{id}")
-    public ResponseEntity<User> deleteUser(@PathVariable Long id){
+    @PutMapping("users/delete/{id}/{currentUserId}")
+    public ResponseEntity<User> deleteUser(@PathVariable Long id, @PathVariable Long currentUserId){
         User user = userService.findUserById(id)
                 .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
         userHistoryService.saveUserHistory(user);
         user.setStatus(StatusEnum.APPROVE);
         user.setNextStatus(StatusEnum.DELETE);
         User deletedUser = userService.saveUser(user);
-        Long currentUserId = this.authController.currentUser().getId();
         Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.DELETE,currentUserId);
         auditService.saveAudit(audit);
         return ResponseEntity.ok(deletedUser);

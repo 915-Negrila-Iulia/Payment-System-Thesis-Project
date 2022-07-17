@@ -41,7 +41,7 @@ export class UserService {
   }
 
   updateUser(id: number | undefined, user: User){
-    return this.httpClient.put<User>(this.baseUrl+"/users/"+`${id}`,user);
+    return this.httpClient.put<User>(this.baseUrl+"/users/"+`${id}/${sessionStorage.getItem('userID')}`,user);
   }
 
   deleteUser(id: number | undefined){
@@ -49,7 +49,7 @@ export class UserService {
   }
 
   approveUser(id: number | undefined){
-    return this.httpClient.put<User>(this.baseUrl+"/users/approve/"+`${id}`,null);
+    return this.httpClient.put<User>(this.baseUrl+"/users/approve/"+`${id}/${sessionStorage.getItem('userID')}`,null);
   }
 
   rejectUser(id: number | undefined){
