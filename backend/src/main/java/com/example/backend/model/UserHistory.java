@@ -43,6 +43,7 @@ public class UserHistory {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
     private LocalDateTime timestamp;
+    //java util date -> Date
 
     public UserHistory(String username, String email, String password, StatusEnum status, StatusEnum nextStatus, Long userID) {
         this.username = username;
