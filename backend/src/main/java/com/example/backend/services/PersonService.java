@@ -13,6 +13,7 @@ import com.example.backend.services.interfaces.IPersonHistoryService;
 import com.example.backend.services.interfaces.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -82,6 +83,7 @@ public class PersonService implements IPersonService {
      * @param currentUserId id of user performing the creation
      * @return person created
      */
+    @Transactional
     @Override
     public Person createPerson(Person personalInfo, Long currentUserId) {
         personalInfo.setStatus(StatusEnum.APPROVE);
@@ -105,6 +107,7 @@ public class PersonService implements IPersonService {
      * @param details updates to be done on the person
      * @return the updated person
      */
+    @Transactional
     @Override
     public Person updatePerson(Long id, Long currentUserId, Person details) {
         Person person = personRepository.findById(id)
@@ -135,6 +138,7 @@ public class PersonService implements IPersonService {
      * @param currentUserId id of user performing the approval
      * @return the approved person
      */
+    @Transactional
     @Override
     public Person approvePerson(Long id, Long currentUserId) {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.PERSON), currentUserId)) {
@@ -161,6 +165,7 @@ public class PersonService implements IPersonService {
      * @param currentUserId id of user performing the rejection
      * @return the rejected person
      */
+    @Transactional
     @Override
     public Person rejectPerson(Long id, Long currentUserId) {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.PERSON), currentUserId)) {
@@ -196,6 +201,7 @@ public class PersonService implements IPersonService {
      * @param currentUserId id of user performing the deletion
      * @return the deleted person
      */
+    @Transactional
     @Override
     public Person deletePerson(Long id, Long currentUserId) {
         Person person = personRepository.findById(id)

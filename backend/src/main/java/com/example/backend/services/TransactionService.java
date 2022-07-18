@@ -8,6 +8,7 @@ import com.example.backend.repositories.ITransactionRepository;
 import com.example.backend.services.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -64,6 +65,7 @@ public class TransactionService implements ITransactionService {
      * @param currentUserId id of user performing the transaction
      * @return created transaction
      */
+    @Transactional
     @Override
     public Transaction depositTransaction(Transaction transactionDetails, Long currentUserId){
         Long accountId = transactionDetails.getAccountID();
@@ -91,6 +93,7 @@ public class TransactionService implements ITransactionService {
      * @param currentUserId id of user performing the transaction
      * @return created transaction
      */
+    @Transactional
     @Override
     public Transaction withdrawalTransaction(Transaction transactionDetails, Long currentUserId) {
         Long accountId = transactionDetails.getAccountID();
@@ -118,6 +121,7 @@ public class TransactionService implements ITransactionService {
      * @param currentUserId id of user performing the transaction
      * @return created transaction
      */
+    @Transactional
     @Override
     public Transaction transferTransaction(Transaction transactionDetails, Long currentUserId) {
         Long accountId = transactionDetails.getAccountID();
@@ -137,6 +141,7 @@ public class TransactionService implements ITransactionService {
         return null;
     }
 
+    @Transactional
     @Override
     public Transaction createTransaction(Transaction transactionDetails, Long currentUserId) {
         transactionDetails.setStatus(StatusEnum.APPROVE);
@@ -184,6 +189,7 @@ public class TransactionService implements ITransactionService {
      * @param currentUserId id of user performing the rejection
      * @return the rejected transaction
      */
+    @Transactional
     @Override
     public Transaction rejectTransaction(Long id, Long currentUserId) {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.TRANSACTION), currentUserId)) {

@@ -13,6 +13,7 @@ import com.example.backend.services.interfaces.IAuditService;
 import com.example.backend.services.interfaces.IBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -97,6 +98,7 @@ public class AccountService implements IAccountService {
      * @param currentUserId id of user performing the creation
      * @return person account
      */
+    @Transactional
     @Override
     public Account createAccount(Account accountDetails, Long currentUserId) {
         accountDetails.setStatus(StatusEnum.APPROVE);
@@ -123,6 +125,7 @@ public class AccountService implements IAccountService {
      * @param accountDetails updates to be done on the account
      * @return the updated account
      */
+    @Transactional
     @Override
     public Account updateAccount(Long id, Long currentUserId, Account accountDetails) {
         Account account = accountRepository.findById(id)
@@ -153,6 +156,7 @@ public class AccountService implements IAccountService {
      * @param currentUserId id of user performing the approval
      * @return the approved account
      */
+    @Transactional
     @Override
     public Account approveAccount(Long id, Long currentUserId) {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.ACCOUNT), currentUserId)) {
@@ -179,6 +183,7 @@ public class AccountService implements IAccountService {
      * @param currentUserId id of user performing the rejection
      * @return the rejected account
      */
+    @Transactional
     @Override
     public Account rejectAccount(Long id, Long currentUserId) {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.ACCOUNT), currentUserId)) {
@@ -214,6 +219,7 @@ public class AccountService implements IAccountService {
      * @param currentUserId id of user performing the deletion
      * @return the deleted account
      */
+    @Transactional
     @Override
     public Account deleteAccount(Long id, Long currentUserId) {
         Account account = accountRepository.findById(id)

@@ -11,6 +11,7 @@ import com.example.backend.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -83,6 +84,7 @@ public class UserService implements IUserService {
      * @param signUpRequest details of user that is created
      * @param currentUserId id of user performing the registration
      */
+    @Transactional
     @Override
     public void signupUser(SignupRequest signUpRequest, Long currentUserId) {
         // Create new user's account
@@ -109,6 +111,7 @@ public class UserService implements IUserService {
      * @param userDetails updates to be done on the user
      * @return the updated user
      */
+    @Transactional
     @Override
     public User updateUser(Long id, Long currentUserId, User userDetails) {
         User user = userRepository.findById(id)
@@ -135,6 +138,7 @@ public class UserService implements IUserService {
      * @param currentUserId id of user performing the approval
      * @return the approved user
      */
+    @Transactional
     @Override
     public User approveUser(Long id, Long currentUserId) {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), currentUserId)) {
@@ -161,6 +165,7 @@ public class UserService implements IUserService {
      * @param currentUserId id of user performing the rejection
      * @return the rejected user
      */
+    @Transactional
     @Override
     public User rejectUser(Long id, Long currentUserId) {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), currentUserId)) {
@@ -197,6 +202,7 @@ public class UserService implements IUserService {
      * @param currentUserId id of user performing the deletion
      * @return the deleted user
      */
+    @Transactional
     @Override
     public User deleteUser(Long id, Long currentUserId) {
         User user = userRepository.findById(id)
