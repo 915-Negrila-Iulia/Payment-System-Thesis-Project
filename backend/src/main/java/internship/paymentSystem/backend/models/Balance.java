@@ -1,4 +1,4 @@
-package com.example.backend.models;
+package internship.paymentSystem.backend.models;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

@@ -1,8 +1,8 @@
-package com.example.backend.jwt;
+package internship.paymentSystem.backend.jwt;
 
 import java.util.Date;
 
-import com.example.backend.services.UserDetailsImpl;
+import internship.paymentSystem.backend.services.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

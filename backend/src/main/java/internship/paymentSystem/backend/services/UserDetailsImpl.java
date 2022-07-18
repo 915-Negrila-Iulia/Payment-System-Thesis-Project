@@ -1,9 +1,9 @@
-package com.example.backend.services;
+package internship.paymentSystem.backend.services;
 
 import java.util.Collection;
 import java.util.Objects;
 
-import com.example.backend.models.User;
+import internship.paymentSystem.backend.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;

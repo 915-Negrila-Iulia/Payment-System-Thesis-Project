@@ -1,8 +1,8 @@
-package com.example.backend.services.interfaces;
+package internship.paymentSystem.backend.services.interfaces;
 
-import com.example.backend.models.SignupRequest;
-import com.example.backend.models.User;
-import com.example.backend.models.UserHistory;
+import internship.paymentSystem.backend.models.SignupRequest;
+import internship.paymentSystem.backend.models.User;
+import internship.paymentSystem.backend.models.UserHistory;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,5 +33,5 @@ public interface IUserService {
 
     User deleteUser(Long id, Long currentUserId);
 
-    void signupUser(SignupRequest signUpRequest,  Long currentUserId);
+    void signupUser(SignupRequest signUpRequest, Long currentUserId);
 }

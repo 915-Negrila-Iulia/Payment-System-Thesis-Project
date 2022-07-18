@@ -1,11 +1,11 @@
-package com.example.backend.services;
+package internship.paymentSystem.backend.services;
 
-import com.example.backend.models.enumerations.ActionTransactionEnum;
-import com.example.backend.models.Balance;
-import com.example.backend.models.Transaction;
-import com.example.backend.repositories.IBalanceRepository;
-import com.example.backend.repositories.ITransactionRepository;
-import com.example.backend.services.interfaces.IBalanceService;
+import internship.paymentSystem.backend.models.enumerations.ActionTransactionEnum;
+import internship.paymentSystem.backend.models.Balance;
+import internship.paymentSystem.backend.models.Transaction;
+import internship.paymentSystem.backend.repositories.IBalanceRepository;
+import internship.paymentSystem.backend.repositories.ITransactionRepository;
+import internship.paymentSystem.backend.services.interfaces.IBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

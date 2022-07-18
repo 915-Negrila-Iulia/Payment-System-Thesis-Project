@@ -1,6 +1,6 @@
-package com.example.backend.repositories;
+package internship.paymentSystem.backend.repositories;
 
-import com.example.backend.models.PersonHistory;
+import internship.paymentSystem.backend.models.PersonHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

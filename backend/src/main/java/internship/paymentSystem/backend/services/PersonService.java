@@ -1,16 +1,15 @@
-package com.example.backend.services;
+package internship.paymentSystem.backend.services;
 
-import com.example.backend.models.Audit;
-import com.example.backend.models.Person;
-import com.example.backend.models.PersonHistory;
-import com.example.backend.models.UserHistory;
-import com.example.backend.models.enumerations.ObjectTypeEnum;
-import com.example.backend.models.enumerations.OperationEnum;
-import com.example.backend.models.enumerations.StatusEnum;
-import com.example.backend.repositories.IPersonRepository;
-import com.example.backend.services.interfaces.IAuditService;
-import com.example.backend.services.interfaces.IPersonHistoryService;
-import com.example.backend.services.interfaces.IPersonService;
+import internship.paymentSystem.backend.models.Audit;
+import internship.paymentSystem.backend.models.Person;
+import internship.paymentSystem.backend.models.PersonHistory;
+import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
+import internship.paymentSystem.backend.models.enumerations.OperationEnum;
+import internship.paymentSystem.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.repositories.IPersonRepository;
+import internship.paymentSystem.backend.services.interfaces.IAuditService;
+import internship.paymentSystem.backend.services.interfaces.IPersonHistoryService;
+import internship.paymentSystem.backend.services.interfaces.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

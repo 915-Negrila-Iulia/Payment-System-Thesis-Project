@@ -1,8 +1,8 @@
-package com.example.backend.models;
+package internship.paymentSystem.backend.models;
 
-import com.example.backend.models.bases.AccountEntity;
-import com.example.backend.models.enumerations.AccountStatusEnum;
-import com.example.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.models.bases.AccountEntity;
+import internship.paymentSystem.backend.models.enumerations.AccountStatusEnum;
+import internship.paymentSystem.backend.models.enumerations.StatusEnum;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;

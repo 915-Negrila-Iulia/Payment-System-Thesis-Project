@@ -1,12 +1,7 @@
-package com.example.backend.controllers;
+package internship.paymentSystem.backend.controllers;
 
-import com.example.backend.models.*;
-import com.example.backend.models.enumerations.ObjectTypeEnum;
-import com.example.backend.models.enumerations.OperationEnum;
-import com.example.backend.models.enumerations.StatusEnum;
-import com.example.backend.services.interfaces.IAuditService;
-import com.example.backend.services.interfaces.IBalanceService;
-import com.example.backend.services.interfaces.ITransactionService;
+import internship.paymentSystem.backend.services.interfaces.ITransactionService;
+import internship.paymentSystem.backend.models.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,9 +1,7 @@
-package com.example.backend.services.interfaces;
+package internship.paymentSystem.backend.services.interfaces;
 
-import com.example.backend.models.Person;
-import com.example.backend.models.PersonHistory;
-import com.example.backend.models.User;
-import com.example.backend.models.UserHistory;
+import internship.paymentSystem.backend.models.Person;
+import internship.paymentSystem.backend.models.PersonHistory;
 
 import java.util.List;
 import java.util.Optional;

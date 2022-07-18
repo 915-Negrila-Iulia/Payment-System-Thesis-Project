@@ -1,9 +1,9 @@
-package com.example.backend.services;
+package internship.paymentSystem.backend.services;
 
-import com.example.backend.models.Audit;
-import com.example.backend.models.enumerations.ObjectTypeEnum;
-import com.example.backend.repositories.IAuditRepository;
-import com.example.backend.services.interfaces.IAuditService;
+import internship.paymentSystem.backend.models.Audit;
+import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
+import internship.paymentSystem.backend.repositories.IAuditRepository;
+import internship.paymentSystem.backend.services.interfaces.IAuditService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

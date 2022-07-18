@@ -1,6 +1,6 @@
-package com.example.backend.models.bases;
+package internship.paymentSystem.backend.models.bases;
 
-import com.example.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.models.enumerations.StatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

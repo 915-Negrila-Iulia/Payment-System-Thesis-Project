@@ -1,7 +1,7 @@
-package com.example.backend.services;
+package internship.paymentSystem.backend.services;
 
-import com.example.backend.models.User;
-import com.example.backend.repositories.IUserRepository;
+import internship.paymentSystem.backend.models.User;
+import internship.paymentSystem.backend.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

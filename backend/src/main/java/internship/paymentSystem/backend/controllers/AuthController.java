@@ -1,19 +1,18 @@
-package com.example.backend.controllers;
+package internship.paymentSystem.backend.controllers;
 
-import com.example.backend.jwt.JwtUtils;
-import com.example.backend.models.*;
-import com.example.backend.models.enumerations.StatusEnum;
-import com.example.backend.repositories.IUserRepository;
-import com.example.backend.services.interfaces.IUserHistoryService;
-import com.example.backend.services.UserDetailsImpl;
-import com.example.backend.services.interfaces.IUserService;
+import internship.paymentSystem.backend.jwt.JwtUtils;
+import internship.paymentSystem.backend.models.JwtResponse;
+import internship.paymentSystem.backend.models.LoginRequest;
+import internship.paymentSystem.backend.models.MessageResponse;
+import internship.paymentSystem.backend.models.SignupRequest;
+import internship.paymentSystem.backend.services.UserDetailsImpl;
+import internship.paymentSystem.backend.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

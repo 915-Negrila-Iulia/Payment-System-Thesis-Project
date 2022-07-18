@@ -1,7 +1,7 @@
-package com.example.backend.services.interfaces;
+package internship.paymentSystem.backend.services.interfaces;
 
-import com.example.backend.models.Audit;
-import com.example.backend.models.enumerations.ObjectTypeEnum;
+import internship.paymentSystem.backend.models.Audit;
+import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
 
 import java.util.List;
 

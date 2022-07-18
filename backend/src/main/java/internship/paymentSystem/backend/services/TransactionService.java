@@ -1,11 +1,10 @@
-package com.example.backend.services;
+package internship.paymentSystem.backend.services;
 
-import com.example.backend.models.Audit;
-import com.example.backend.models.bases.BaseEntity;
-import com.example.backend.models.enumerations.*;
-import com.example.backend.models.Transaction;
-import com.example.backend.repositories.ITransactionRepository;
-import com.example.backend.services.interfaces.*;
+import internship.paymentSystem.backend.models.Audit;
+import internship.paymentSystem.backend.models.Transaction;
+import internship.paymentSystem.backend.models.enumerations.*;
+import internship.paymentSystem.backend.repositories.ITransactionRepository;
+import internship.paymentSystem.backend.services.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class TransactionService implements ITransactionService {

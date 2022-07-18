@@ -1,7 +1,7 @@
-package com.example.backend.models;
+package internship.paymentSystem.backend.models;
 
-import com.example.backend.models.enumerations.ObjectTypeEnum;
-import com.example.backend.models.enumerations.OperationEnum;
+import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
+import internship.paymentSystem.backend.models.enumerations.OperationEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

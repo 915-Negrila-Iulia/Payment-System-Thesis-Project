@@ -1,4 +1,4 @@
-package com.example.backend.models.enumerations;
+package internship.paymentSystem.backend.models.enumerations;
 
 public enum StatusEnum {
     ACTIVE,

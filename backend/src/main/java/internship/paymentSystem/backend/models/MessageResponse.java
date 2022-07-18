@@ -1,4 +1,4 @@
-package com.example.backend.models;
+package internship.paymentSystem.backend.models;
 
 public class MessageResponse {
     private String message;

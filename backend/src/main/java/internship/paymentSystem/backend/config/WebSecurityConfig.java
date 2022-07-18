@@ -1,7 +1,7 @@
-package com.example.backend.config;
+package internship.paymentSystem.backend.config;
 
-import com.example.backend.jwt.AuthTokenFilter;
-import com.example.backend.services.UserDetailsServiceImpl;
+import internship.paymentSystem.backend.jwt.AuthTokenFilter;
+import internship.paymentSystem.backend.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

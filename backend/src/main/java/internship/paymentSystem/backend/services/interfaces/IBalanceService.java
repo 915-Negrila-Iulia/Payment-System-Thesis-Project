@@ -1,6 +1,6 @@
-package com.example.backend.services.interfaces;
+package internship.paymentSystem.backend.services.interfaces;
 
-import com.example.backend.models.Balance;
+import internship.paymentSystem.backend.models.Balance;
 
 import java.util.List;
 

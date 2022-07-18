@@ -1,13 +1,16 @@
-package com.example.backend.services;
+package internship.paymentSystem.backend.services;
 
-import com.example.backend.models.*;
-import com.example.backend.models.enumerations.ObjectTypeEnum;
-import com.example.backend.models.enumerations.OperationEnum;
-import com.example.backend.models.enumerations.StatusEnum;
-import com.example.backend.repositories.IUserRepository;
-import com.example.backend.services.interfaces.IAuditService;
-import com.example.backend.services.interfaces.IUserHistoryService;
-import com.example.backend.services.interfaces.IUserService;
+import internship.paymentSystem.backend.models.Audit;
+import internship.paymentSystem.backend.models.User;
+import internship.paymentSystem.backend.models.UserHistory;
+import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
+import internship.paymentSystem.backend.models.enumerations.OperationEnum;
+import internship.paymentSystem.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.repositories.IUserRepository;
+import internship.paymentSystem.backend.services.interfaces.IAuditService;
+import internship.paymentSystem.backend.services.interfaces.IUserHistoryService;
+import internship.paymentSystem.backend.services.interfaces.IUserService;
+import internship.paymentSystem.backend.models.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

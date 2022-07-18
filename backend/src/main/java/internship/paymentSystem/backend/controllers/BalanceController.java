@@ -1,7 +1,7 @@
-package com.example.backend.controllers;
+package internship.paymentSystem.backend.controllers;
 
-import com.example.backend.models.*;
-import com.example.backend.services.interfaces.IBalanceService;
+import internship.paymentSystem.backend.services.interfaces.IBalanceService;
+import internship.paymentSystem.backend.models.Balance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

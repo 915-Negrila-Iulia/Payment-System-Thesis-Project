@@ -1,7 +1,7 @@
-package com.example.backend.models;
+package internship.paymentSystem.backend.models;
 
-import com.example.backend.models.bases.BaseEntity;
-import com.example.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.models.bases.BaseEntity;
+import internship.paymentSystem.backend.models.enumerations.StatusEnum;
 import lombok.*;
 
 import javax.persistence.*;

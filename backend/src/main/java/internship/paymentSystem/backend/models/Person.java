@@ -1,6 +1,6 @@
-package com.example.backend.models;
+package internship.paymentSystem.backend.models;
 
-import com.example.backend.models.bases.PersonEntity;
+import internship.paymentSystem.backend.models.bases.PersonEntity;
 import lombok.*;
 
 import javax.persistence.*;

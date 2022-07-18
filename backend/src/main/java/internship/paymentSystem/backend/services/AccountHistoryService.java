@@ -1,9 +1,9 @@
-package com.example.backend.services;
+package internship.paymentSystem.backend.services;
 
-import com.example.backend.models.Account;
-import com.example.backend.models.AccountHistory;
-import com.example.backend.repositories.IAccountHistoryRepository;
-import com.example.backend.services.interfaces.IAccountHistoryService;
+import internship.paymentSystem.backend.models.Account;
+import internship.paymentSystem.backend.models.AccountHistory;
+import internship.paymentSystem.backend.repositories.IAccountHistoryRepository;
+import internship.paymentSystem.backend.services.interfaces.IAccountHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

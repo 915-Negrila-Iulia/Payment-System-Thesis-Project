@@ -1,7 +1,7 @@
-package com.example.backend.models.bases;
+package internship.paymentSystem.backend.models.bases;
 
-import com.example.backend.models.enumerations.AccountStatusEnum;
-import com.example.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.models.enumerations.AccountStatusEnum;
+import internship.paymentSystem.backend.models.enumerations.StatusEnum;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 

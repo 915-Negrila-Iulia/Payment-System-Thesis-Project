@@ -1,4 +1,4 @@
-package com.example.backend;
+package internship.paymentSystem.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
