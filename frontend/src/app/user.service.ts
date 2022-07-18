@@ -17,7 +17,7 @@ export class UserService {
   }
 
   register(user: User){
-    return this.httpClient.post<User>(this.baseUrl+"/signup", user);
+    return this.httpClient.post<User>(this.baseUrl+`/signup/${sessionStorage.getItem('userID')}`, user);
   }
 
   getAllUsers(){
@@ -32,10 +32,6 @@ export class UserService {
     return this.httpClient.get<User>(this.baseUrl+"/users/"+`${id}`);
   }
 
-  getUserWhoMadeChanges(objectId: number | undefined, objectType: string | undefined){
-    return this.httpClient.get<User>(this.baseUrl+"/user-audit/"+`${objectId}/${objectType}`);
-  }
-
   getHistoryOfUsers(){
     return this.httpClient.get<UserHistory[]>(this.baseUrl+"/users/history");
   }
@@ -45,7 +41,7 @@ export class UserService {
   }
 
   deleteUser(id: number | undefined){
-    return this.httpClient.put<User>(this.baseUrl+"/users/delete/"+`${id}`,null);
+    return this.httpClient.put<User>(this.baseUrl+"/users/delete/"+`${id}/${sessionStorage.getItem('userID')}`,null);
   }
 
   approveUser(id: number | undefined){
@@ -53,6 +49,6 @@ export class UserService {
   }
 
   rejectUser(id: number | undefined){
-    return this.httpClient.put<User>(this.baseUrl+"/users/reject/"+`${id}`,null);
+    return this.httpClient.put<User>(this.baseUrl+"/users/reject/"+`${id}/${sessionStorage.getItem('userID')}`,null);
   }
 }
