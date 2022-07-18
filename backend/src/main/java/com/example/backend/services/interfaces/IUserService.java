@@ -1,5 +1,6 @@
 package com.example.backend.services.interfaces;
 
+import com.example.backend.models.SignupRequest;
 import com.example.backend.models.User;
 import com.example.backend.models.UserHistory;
 
@@ -20,4 +21,17 @@ public interface IUserService {
 
     User undoneUserChanges(User user, UserHistory lastVersion);
 
+    List<UserHistory> getHistoryOfUsers();
+
+    List<UserHistory> getHistoryByUserId(Long userId);
+
+    User updateUser(Long id, Long currentUserId, User userDetails);
+
+    User approveUser(Long id, Long currentUserId);
+
+    User rejectUser(Long id, Long currentUserId);
+
+    User deleteUser(Long id, Long currentUserId);
+
+    void signupUser(SignupRequest signUpRequest,  Long currentUserId);
 }

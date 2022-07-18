@@ -6,6 +6,7 @@ import com.example.backend.models.enumerations.StatusEnum;
 import com.example.backend.repositories.IUserRepository;
 import com.example.backend.services.interfaces.IUserHistoryService;
 import com.example.backend.services.UserDetailsImpl;
+import com.example.backend.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,11 +25,9 @@ public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
-    IUserRepository userRepository;
+    IUserService userService;
     @Autowired
     IUserHistoryService userHistoryService;
-    @Autowired
-    PasswordEncoder encoder;
     @Autowired
     JwtUtils jwtUtils;
     private Long currentUser;
@@ -49,32 +48,15 @@ public class AuthController {
                 userDetails.getEmail()));
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
-        }
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
-        }
-        // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()),
-                StatusEnum.APPROVE,
-                StatusEnum.ACTIVE);
-        userRepository.save(user);
-        userHistoryService.saveUserHistory(user);
+    @PostMapping("/signup/{currentUserId}")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, @PathVariable Long currentUserId) {
+        userService.signupUser(signUpRequest,currentUserId);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
     @GetMapping("/current-user")
     public User currentUser() {
-        return this.userRepository.findById(this.currentUser).get();
+        return userService.findUserById(this.currentUser).get();
     }
 
 }
