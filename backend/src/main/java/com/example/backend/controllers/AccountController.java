@@ -23,18 +23,6 @@ public class AccountController {
     @Autowired
     IAccountService accountService;
 
-    @Autowired
-    IAccountHistoryService accountHistoryService;
-
-    @Autowired
-    IBalanceService balanceService;
-
-    @Autowired
-    IAuditService auditService;
-
-    @Autowired
-    AuthController authController;
-
     @GetMapping()
     public List<Account> getAccounts(){
         return accountService.getAllAccounts();
@@ -47,93 +35,40 @@ public class AccountController {
 
     @GetMapping("/history")
     public List<AccountHistory> getHistoryOfAccounts() {
-        return accountHistoryService.getHistoryOfAccounts();
+        return accountService.getHistoryOfAccounts();
     }
 
     @GetMapping("/history/{accountId}")
     public List<AccountHistory> getHistoryOfAccount(@PathVariable Long accountId){
-        return accountHistoryService.getHistoryByAccountId(accountId);
+        return accountService.getHistoryByAccountId(accountId);
     }
 
-    @PostMapping()
-    public Account createAccount(@RequestBody Account accountDetails){
-        accountDetails.setStatus(StatusEnum.APPROVE);
-        accountDetails.setNextStatus(StatusEnum.ACTIVE);
-        Account account = accountService.saveAccount(accountDetails);
-        balanceService.createInitialBalance(account.getId());
-        accountHistoryService.saveAccountHistory(accountDetails);
-        Long currentUserId = this.authController.currentUser().getId();
-        Audit audit = new Audit(account.getId(), ObjectTypeEnum.ACCOUNT, OperationEnum.CREATE,currentUserId);
-        auditService.saveAudit(audit);
-        return account;
+    @PostMapping("/{currentUserId}")
+    public Account createAccount(@RequestBody Account accountDetails, @PathVariable Long currentUserId){
+        return accountService.createAccount(accountDetails,currentUserId);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @RequestBody Account accountDetails){
-        Account account = accountService.findAccountById(id)
-                .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
-        accountHistoryService.saveAccountHistory(account);
-        account.setIban(accountDetails.getIban());
-        account.setCountryCode(accountDetails.getCountryCode());
-        account.setBankCode(accountDetails.getBankCode());
-        account.setCurrency(accountDetails.getCurrency());
-        account.setAccountStatus(accountDetails.getAccountStatus());
-        account.setPersonID(accountDetails.getPersonID());
-        account.setStatus(StatusEnum.APPROVE);
-        account.setNextStatus(StatusEnum.ACTIVE);
-        Account updatedAccount = accountService.saveAccount(account);
-        Long currentUserId = this.authController.currentUser().getId();
-        Audit audit = new Audit(account.getId(), ObjectTypeEnum.ACCOUNT,OperationEnum.UPDATE,currentUserId);
-        auditService.saveAudit(audit);
+    @PutMapping("/{id}/{currentUserId}")
+    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @PathVariable Long currentUserId, @RequestBody Account accountDetails){
+        Account updatedAccount = accountService.updateAccount(id,currentUserId,accountDetails);
         return ResponseEntity.ok(updatedAccount);
     }
 
-    @PutMapping("/approve/{id}")
-    public ResponseEntity<Account> approveAccount(@PathVariable Long id){
-        Account account = accountService.findAccountById(id)
-                .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
-        accountHistoryService.saveAccountHistory(account);
-        account.setStatus(account.getNextStatus());
-        Account activeAccount = accountService.saveAccount(account);
-        Long currentUserId = this.authController.currentUser().getId();
-        Audit audit = new Audit(account.getId(),ObjectTypeEnum.ACCOUNT,OperationEnum.APPROVE,currentUserId);
-        auditService.saveAudit(audit);
+    @PutMapping("/approve/{id}/{currentUserId}")
+    public ResponseEntity<Account> approveAccount(@PathVariable Long id, @PathVariable Long currentUserId){
+        Account activeAccount = accountService.approveAccount(id,currentUserId);
         return ResponseEntity.ok(activeAccount);
     }
 
-    @PutMapping("/reject/{id}")
-    public ResponseEntity<Account> rejectAccount(@PathVariable Long id){
-        Account account = accountService.findAccountById(id)
-                .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
-        AccountHistory lastVersion = accountHistoryService.getLastVersionOfAccount(id);
-        accountHistoryService.saveAccountHistory(account);
-        if(accountHistoryService.getHistoryByAccountId(id).size() <= 2){
-            // account will be deleted
-            account.setStatus(StatusEnum.DELETE);
-            account.setNextStatus(StatusEnum.DELETE);
-        }
-        else{
-            // account will have changes undone
-            accountService.undoneAccountChanges(account,lastVersion);
-        }
-        Account rejectedAccount = accountService.saveAccount(account);
-        Long currentUserId = this.authController.currentUser().getId();
-        Audit audit = new Audit(account.getId(),ObjectTypeEnum.ACCOUNT,OperationEnum.REJECT,currentUserId);
-        auditService.saveAudit(audit);
+    @PutMapping("/reject/{id}/{currentUserId}")
+    public ResponseEntity<Account> rejectAccount(@PathVariable Long id, @PathVariable Long currentUserId){
+        Account rejectedAccount = accountService.rejectAccount(id,currentUserId);
         return ResponseEntity.ok(rejectedAccount);
     }
 
-    @PutMapping("/delete/{id}")
-    public ResponseEntity<Account> deleteAccount(@PathVariable Long id){
-        Account account = accountService.findAccountById(id)
-                .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
-        accountHistoryService.saveAccountHistory(account);
-        account.setStatus(StatusEnum.APPROVE);
-        account.setNextStatus(StatusEnum.DELETE);
-        Account deletedAccount = accountService.saveAccount(account);
-        Long currentUserId = this.authController.currentUser().getId();
-        Audit audit = new Audit(account.getId(),ObjectTypeEnum.ACCOUNT,OperationEnum.DELETE,currentUserId);
-        auditService.saveAudit(audit);
+    @PutMapping("/delete/{id}/{currentUserId}")
+    public ResponseEntity<Account> deleteAccount(@PathVariable Long id, @PathVariable Long currentUserId){
+        Account deletedAccount = accountService.deleteAccount(id,currentUserId);
         return ResponseEntity.ok(deletedAccount);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.backend.services.interfaces;
 
+import com.example.backend.models.Account;
 import com.example.backend.models.Transaction;
 
 import java.util.List;
@@ -13,10 +14,16 @@ public interface ITransactionService {
 
     List<Transaction> getAllTransactions();
 
-    Transaction depositTransaction(Long accountId, Double amount);
+    Transaction depositTransaction(Transaction transactionDetails, Long currentUserId);
 
-    Transaction withdrawalTransaction(Long accountId, Double amount);
+    Transaction withdrawalTransaction(Transaction transactionDetails, Long currentUserId);
 
-    Transaction transferTransaction(Long accountId, Long targetId, Double amount);
+    Transaction transferTransaction(Transaction transactionDetails, Long currentUserId);
+
+    Transaction createTransaction(Transaction transaction, Long currentUserId);
+
+    Transaction approveTransaction(Long id, Long currentUserId);
+
+    Transaction rejectTransaction(Long id, Long currentUserId);
 
 }

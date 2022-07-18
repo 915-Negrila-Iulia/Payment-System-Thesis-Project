@@ -74,6 +74,15 @@ public class UserService implements IUserService {
         return userHistoryService.getHistoryByUserId(userId);
     }
 
+    /**
+     * Create user
+     * Add a new record in 'UserHistory' table containing the initial state of the user
+     * Add a new record in 'User' table
+     * Change 'Status' to 'APPROVE' and 'NextStatus' to 'ACTIVE'
+     * Update 'Audit' table
+     * @param signUpRequest details of user that is created
+     * @param currentUserId id of user performing the registration
+     */
     @Override
     public void signupUser(SignupRequest signUpRequest, Long currentUserId) {
         // Create new user's account
@@ -116,7 +125,7 @@ public class UserService implements IUserService {
     }
 
     /**
-     * Approve user changes
+     * Approve user's changes
      * Check if the user exists by using the given id and throw an exception otherwise
      * Check if user that wants to approve changes is not the same one that made them previously
      * Add a new record in 'UserHistory' table containing the previous state of the user
@@ -142,7 +151,7 @@ public class UserService implements IUserService {
     }
 
     /**
-     * Reject user changes
+     * Reject user's changes
      * Check if the user exists by using the given id and throw an exception otherwise
      * Check if user that wants to reject changes is not the same one that made them previously
      * Add a new record in 'UserHistory' table containing the previous state of the user
@@ -182,7 +191,7 @@ public class UserService implements IUserService {
      * Check if the user exists by using the given id
      * And throw an exception otherwise
      * Add a new record in 'UserHistory' table containing the previous state of the user
-     * 'Status' and 'NextStatus' to 'DELETE'
+     * Change 'Status' and 'NextStatus' to 'DELETE'
      * Update 'Audit' table
      * @param id of the user that is deleted
      * @param currentUserId id of user performing the deletion

@@ -22,15 +22,15 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api")
 public class AuthController {
+
     @Autowired
     AuthenticationManager authenticationManager;
+
     @Autowired
     IUserService userService;
-    @Autowired
-    IUserHistoryService userHistoryService;
+
     @Autowired
     JwtUtils jwtUtils;
-    private Long currentUser;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -40,7 +40,6 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        this.currentUser = userDetails.getId();
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
@@ -52,11 +51,6 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, @PathVariable Long currentUserId) {
         userService.signupUser(signUpRequest,currentUserId);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-    }
-
-    @GetMapping("/current-user")
-    public User currentUser() {
-        return userService.findUserById(this.currentUser).get();
     }
 
 }

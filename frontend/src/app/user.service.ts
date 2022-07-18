@@ -9,6 +9,7 @@ import { UserHistory } from './user-history';
 export class UserService {
 
   baseUrl = 'http://localhost:8080/api';
+  currentUserId = sessionStorage.getItem('userID');
 
   constructor(private httpClient: HttpClient) { }
 
@@ -17,15 +18,11 @@ export class UserService {
   }
 
   register(user: User){
-    return this.httpClient.post<User>(this.baseUrl+`/signup/${sessionStorage.getItem('userID')}`, user);
+    return this.httpClient.post<User>(this.baseUrl+`/signup/${this.currentUserId}`, user);
   }
 
   getAllUsers(){
     return this.httpClient.get<User[]>(this.baseUrl+"/users");
-  }
-
-  getCurrentUser(){
-    return this.httpClient.get<User>(this.baseUrl+"/current-user");
   }
 
   getUserById(id: number | undefined){
@@ -37,18 +34,18 @@ export class UserService {
   }
 
   updateUser(id: number | undefined, user: User){
-    return this.httpClient.put<User>(this.baseUrl+"/users/"+`${id}/${sessionStorage.getItem('userID')}`,user);
+    return this.httpClient.put<User>(this.baseUrl+"/users/"+`${id}/${this.currentUserId}`,user);
   }
 
   deleteUser(id: number | undefined){
-    return this.httpClient.put<User>(this.baseUrl+"/users/delete/"+`${id}/${sessionStorage.getItem('userID')}`,null);
+    return this.httpClient.put<User>(this.baseUrl+"/users/delete/"+`${id}/${this.currentUserId}`,null);
   }
 
   approveUser(id: number | undefined){
-    return this.httpClient.put<User>(this.baseUrl+"/users/approve/"+`${id}/${sessionStorage.getItem('userID')}`,null);
+    return this.httpClient.put<User>(this.baseUrl+"/users/approve/"+`${id}/${this.currentUserId}`,null);
   }
 
   rejectUser(id: number | undefined){
-    return this.httpClient.put<User>(this.baseUrl+"/users/reject/"+`${id}/${sessionStorage.getItem('userID')}`,null);
+    return this.httpClient.put<User>(this.baseUrl+"/users/reject/"+`${id}/${this.currentUserId}`,null);
   }
 }
