@@ -14,6 +14,7 @@ export class TransactionsListComponent implements OnInit {
   transactions: Transaction[] = [];
   transaction: Transaction = new Transaction();
   accounts: Account[] = [];
+  objectType = 'TRANSACTION';
 
   constructor(private transactionService: TransactionService, private accountService: AccountService) { }
 

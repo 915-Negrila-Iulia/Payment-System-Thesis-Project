@@ -24,6 +24,7 @@ const routes: Routes = [
     { path: 'login-failed', component: LoginFailedComponent },
     { path: 'users-home', component: UsersHomeComponent },
     { path: 'audit-list', component: AuditListComponent },
+    { path: 'audit-list/:id/:obj', component: AuditListComponent },
     { path: 'persons-home', component: PersonsHomeComponent },
     { path: 'accounts-home', component: AccountsHomeComponent },
     { path: 'balances-list', component: BalancesListComponent },

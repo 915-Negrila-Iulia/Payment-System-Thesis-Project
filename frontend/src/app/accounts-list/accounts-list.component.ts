@@ -21,6 +21,7 @@ export class AccountsListComponent implements OnInit, OnChanges {
   showDetails: boolean = false;
   doTransaction: boolean = false;
   persons: Person[] = [];
+  objectType= 'ACCOUNT';
 
   constructor(private accountService: AccountService, private personService: PersonService, private router: Router) { }
 

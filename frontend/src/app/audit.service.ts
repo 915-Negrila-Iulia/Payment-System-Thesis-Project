@@ -15,4 +15,8 @@ export class AuditService {
     return this.httpClient.get<Audit[]>(this.baseUrl);
   }
 
+  getAuditOfObject(id: number, type: string){
+    return this.httpClient.get<Audit[]>(this.baseUrl+`/${id}/${type}`);
+  }
+
 }

@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "balance")
@@ -30,7 +31,7 @@ public class Balance {
     @Column(name = "timestamp")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
-    private LocalDateTime timestamp;
+    private Date timestamp;
 
     public Balance(Double total, Double available, Long accountID) {
         this.total = total;

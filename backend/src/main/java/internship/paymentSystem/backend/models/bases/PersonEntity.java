@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDate;
+import java.util.Date;
 
 @MappedSuperclass
 @Data
@@ -27,7 +28,7 @@ public abstract class PersonEntity extends BaseEntity {
 
     @Column(name = "date_of_birth")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dateOfBirth;
+    private Date dateOfBirth;
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -36,7 +37,7 @@ public abstract class PersonEntity extends BaseEntity {
     private Long userID;
 
     public PersonEntity(StatusEnum status, StatusEnum nextStatus, String firstName, String lastName,
-                        String address, LocalDate dateOfBirth, String phoneNumber, Long userID) {
+                        String address, Date dateOfBirth, String phoneNumber, Long userID) {
         super(status, nextStatus);
         this.firstName = firstName;
         this.lastName = lastName;
@@ -46,7 +47,7 @@ public abstract class PersonEntity extends BaseEntity {
         this.userID = userID;
     }
 
-    public PersonEntity(String firstName, String lastName, String address, LocalDate dateOfBirth, String phoneNumber) {
+    public PersonEntity(String firstName, String lastName, String address, Date dateOfBirth, String phoneNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;

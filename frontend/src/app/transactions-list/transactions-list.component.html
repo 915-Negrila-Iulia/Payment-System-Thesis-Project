@@ -15,7 +15,7 @@
               <th colspan="2">Actions</th>
           </tr>
           <tr *ngFor="let item of transactions; let i = index;">
-            <td>{{i+1}}</td>
+            <td><a [routerLink]="['/audit-list',item.id,objectType]">{{i+1}}</a></td>
             <td>{{getIbanAccount(item.accountID)}}</td>
             <td>{{getIbanAccount(item.targetAccountID)}}</td>
             <td>{{item.type}}</td>
@@ -23,7 +23,7 @@
             <td>{{item.action}}</td>
             <td>{{item.status}}</td>
             <td>{{item.nextStatus}}</td>
-            <td>{{item.timestamp}}</td>
+            <td>{{item.timestamp | date: 'medium'}}</td>
             <td class="td-button"><button class="approveButton" (click)="approveTransaction(item.id)"
               [disabled] = "item.status !== 'APPROVE'">approve</button></td>
             <td class="td-button"><button class="rejectButton" (click)="rejectTransaction(item.id)"

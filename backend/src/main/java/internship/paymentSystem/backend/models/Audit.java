@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "audit")
@@ -39,7 +40,7 @@ public class Audit {
     @Column(name = "timestamp")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
-    private LocalDateTime timestamp;
+    private Date timestamp;
 
     public Audit(Long objectID, ObjectTypeEnum objectType, OperationEnum operation, Long userID) {
         this.objectID = objectID;

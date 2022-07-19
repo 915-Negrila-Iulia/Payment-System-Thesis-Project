@@ -7,7 +7,7 @@
         <p>AccountID: {{accountId}}</p>
         <p>Total: {{currentBalance.total}}</p>
         <p>Available: {{currentBalance.available}}</p>
-        <p>Timestamp: {{currentBalance.timestamp}}</p>
+        <p>Timestamp: {{currentBalance.timestamp | date: 'medium'}}</p>
         <p></p>
     </div>
 </div>

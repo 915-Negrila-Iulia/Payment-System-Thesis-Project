@@ -14,7 +14,7 @@
             <td>{{getIbanAccount(item.accountID)}}</td>
             <td>{{item.available}}</td>
             <td>{{item.total}}</td>
-            <td>{{item.timestamp}}</td>
+            <td>{{item.timestamp | date: 'medium'}}</td>
           </tr>
         </table>
       <br>

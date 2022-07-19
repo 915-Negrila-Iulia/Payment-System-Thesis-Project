@@ -15,6 +15,7 @@ export class PersonsListComponent implements OnInit {
   persons: Person[] = [];
   person: Person = new Person();
   users: User[] = [];
+  objectType = 'PERSON';
 
   constructor(private personService: PersonService, private userService: UserService) { }
 

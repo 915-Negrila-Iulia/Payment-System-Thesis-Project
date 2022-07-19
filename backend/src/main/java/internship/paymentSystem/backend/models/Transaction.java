@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "transaction")
@@ -40,7 +41,7 @@ public class Transaction extends BaseEntity {
     @Column(name = "timestamp")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
-    private LocalDateTime timestamp;
+    private Date timestamp;
 
     public Transaction(TypeTransactionEnum type, ActionTransactionEnum action, Double amount, Long accountID,
                        StatusEnum status, StatusEnum nextStatus) {
