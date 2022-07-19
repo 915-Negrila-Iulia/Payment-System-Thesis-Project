@@ -36,13 +36,6 @@ export class UsersListComponent implements OnInit {
     return sessionStorage.getItem('userID');
   }
 
-  getUserWhoMadeChanges(id: any){
-    this.userService.getUserWhoMadeChanges(id,"USER").subscribe(data => {
-        this.modifierUserID = data.id;
-    });
-    return this.modifierUserID?.toString();
-  }
-
   updateUser(id: any, username: any, email: any, password: any, status: any){
     this.user.id = id;
     this.user.username = username;
@@ -50,7 +43,7 @@ export class UsersListComponent implements OnInit {
     this.user.password = password;
     this.user.status = status;
     this.userService.updateUser(id,this.user).subscribe(data => {
-      //console.log(data);
+      console.log(data);
     },
     error => console.log(error)
     );
@@ -70,17 +63,12 @@ export class UsersListComponent implements OnInit {
   }
 
   approveUser(id: any){
-    console.log(this.getUserWhoMadeChanges(id))
-    console.log("sess"+this.getCurrentUser())
-    //if(this.getUserWhoMadeChanges(id) && this.getUserWhoMadeChanges(id) !== this.getCurrentUser()){
-      this.userService.approveUser(id).subscribe(data => {
-        //console.log(data);
-      },
-      error => console.log(error)
-      );
-    //}
-    console.log(this.getCurrentUser());
-    //window.location.reload();
+    this.userService.approveUser(id).subscribe(data => {
+
+    },
+    error => console.log(error)
+    );
+    window.location.reload();
   }
 
   rejectUser(id: any){

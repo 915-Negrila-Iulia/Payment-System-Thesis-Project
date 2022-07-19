@@ -1,8 +1,8 @@
 <div class="add-account-container">
     <form #myForm="ngForm" class="add-account-form" (ngSubmit) = "onSubmit();  myForm.resetForm()" [formGroup]="addAccountForm">
-        <label for="iban">Iban</label>
+        <!-- <label for="iban">Iban</label>
         <input type="text" id="iban" formControlName="iban">
-        <span *ngIf="iban && iban.invalid && iban.touched">Iban is invalid</span>
+        <span *ngIf="iban && iban.invalid && iban.touched">Iban is invalid</span> -->
         <label for="countryCode">Country code</label>
         <input type="text" id="countryCode" formControlName="countryCode">
         <span *ngIf="countryCode && countryCode.invalid && countryCode.touched">Country code is invalid</span>

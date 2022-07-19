@@ -7,14 +7,14 @@ import { PersonHistory } from './person-history';
   providedIn: 'root'
 })
 export class PersonService {
-
   
   baseUrl = 'http://localhost:8080/api/persons';
+  currentUserId = sessionStorage.getItem('userID');
 
   constructor(private httpClient: HttpClient) { }
 
   addPerson(person: Person){
-    return this.httpClient.post<Person>(this.baseUrl, person);
+    return this.httpClient.post<Person>(this.baseUrl+`/${this.currentUserId}`, person);
   }
 
   getAllPersons(){
@@ -26,18 +26,18 @@ export class PersonService {
   }
 
   updatePerson(id: number | undefined, person: Person){
-    return this.httpClient.put<Person>(this.baseUrl+`/${id}`,person);
+    return this.httpClient.put<Person>(this.baseUrl+`/${id}/${this.currentUserId}`,person);
   }
 
   deletePerson(id: number | undefined){
-    return this.httpClient.put<Person>(this.baseUrl+"/delete/"+`${id}`,null);
+    return this.httpClient.put<Person>(this.baseUrl+"/delete/"+`${id}/${this.currentUserId}`,null);
   }
 
   approvePerson(id: number | undefined){
-    return this.httpClient.put<Person>(this.baseUrl+"/approve/"+`${id}`,null);
+    return this.httpClient.put<Person>(this.baseUrl+"/approve/"+`${id}/${this.currentUserId}`,null);
   }
 
   rejectPerson(id: number | undefined){
-    return this.httpClient.put<Person>(this.baseUrl+"/reject/"+`${id}`,null);
+    return this.httpClient.put<Person>(this.baseUrl+"/reject/"+`${id}/${this.currentUserId}`,null);
   }
 }

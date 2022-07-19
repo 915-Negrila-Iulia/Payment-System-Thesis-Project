@@ -9,11 +9,12 @@ import { AccountHistory } from './account-history';
 export class AccountService {
 
   baseUrl = 'http://localhost:8080/api/accounts';
+  currentUserId = sessionStorage.getItem('userID');
 
   constructor(private httpClient: HttpClient) { }
 
   addAccount(account: Account){
-    return this.httpClient.post<Account>(this.baseUrl, account);
+    return this.httpClient.post<Account>(this.baseUrl+`/${this.currentUserId}`, account);
   }
 
   getAllAccounts(){
@@ -25,19 +26,19 @@ export class AccountService {
   }
 
   updateAccount(id: number | undefined, account: Account){
-    return this.httpClient.put<Account>(this.baseUrl+`/${id}`,account);
+    return this.httpClient.put<Account>(this.baseUrl+`/${id}/${this.currentUserId}`,account);
   }
 
   deleteAccount(id: number | undefined){
-    return this.httpClient.put<Account>(this.baseUrl+"/delete/"+`${id}`,null);
+    return this.httpClient.put<Account>(this.baseUrl+"/delete/"+`${id}/${this.currentUserId}`,null);
   }
 
   approveAccount(id: number | undefined){
-    return this.httpClient.put<Account>(this.baseUrl+"/approve/"+`${id}`,null);
+    return this.httpClient.put<Account>(this.baseUrl+"/approve/"+`${id}/${this.currentUserId}`,null);
   }
 
   rejectAccount(id: number | undefined){
-    return this.httpClient.put<Account>(this.baseUrl+"/reject/"+`${id}`,null);
+    return this.httpClient.put<Account>(this.baseUrl+"/reject/"+`${id}/${this.currentUserId}`,null);
   }
 
   getAccountById(id: number | undefined){

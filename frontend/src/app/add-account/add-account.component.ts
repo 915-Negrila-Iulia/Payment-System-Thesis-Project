@@ -13,7 +13,6 @@ export class AddAccountComponent implements OnInit {
 
   account: Account = new Account();
   addAccountForm = new FormGroup({
-    iban: new FormControl('',[Validators.required]),
     countryCode: new FormControl('',[Validators.required, Validators.pattern('^[A-Z]{3}$')]),
     bankCode: new FormControl('',[Validators.required]),
     currency: new FormControl('',[Validators.required, Validators.pattern('^[A-Z]{3}$')]),
@@ -29,6 +28,7 @@ export class AddAccountComponent implements OnInit {
   onSubmit(){
     this.account = this.addAccountForm.value;
     this.account.status = "APPROVE";
+    this.account.iban = "";
     console.log(this.account);
     this.accountService.addAccount(this.account).subscribe(data => {
       console.log(data);
@@ -40,10 +40,6 @@ export class AddAccountComponent implements OnInit {
       }   
     },
     error => console.log(error));
-  }
-
-  get iban(){
-    return this.addAccountForm.get('iban');
   }
 
   get countryCode(){
