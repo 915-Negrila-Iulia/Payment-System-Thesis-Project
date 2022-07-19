@@ -1,61 +1,38 @@
 
-<div *ngIf="object && objStateDto.type === 'USER'" class="user-container">
-  <div class="user-div">
-      <label for="username">Username</label>
-      <p>{{object.username}}</p>
-      <label for="email">Email</label>
-      <p>{{object.email}}</p>
-      <label for="status">Status</label>
-      <p>{{object.status}}</p>
-      <label for="nextStatus">Next status</label>
-      <p>{{object.nextStatus}}</p>
-      <label for="timestamp">Timestamp</label>
-      <p>{{objStateDto.timestamp | date:'medium'}}</p>
+<div *ngIf="object && objStateDto.type === 'USER'" class="details-container">
+  <div class="details-div">
+      <p> <label for="username">Username</label> {{object.username}}</p>
+      <p> <label for="email">Email</label> {{object.email}}</p>
+      <p> <label for="status">Status</label> {{object.status}}</p>
+      <p> <label for="nextStatus">Next status</label> {{object.nextStatus}}</p>
+      <p> <label for="timestamp">Timestamp</label> {{objStateDto.timestamp | date:'medium'}}</p>
   </div>
 </div>
 
-<div *ngIf="object && objStateDto.type === 'PERSON'" class="person-container">
-  <div class="person-div">
-      <label for="firstName">First name</label>
-      <p>{{object.firstName}}</p>
-      <label for="lastName">Last name</label>
-      <p>{{object.lastName}}</p>
-      <label for="address">Address</label>
-      <p>{{object.address}}</p>
-      <label for="dateOfBirth">Date of birth</label>
-      <p>{{object.dateOfBirth | date}}</p>
-      <label for="phoneNumber">Phone number</label>
-      <p>{{object.phoneNumber}}</p>
-      <label for="userID">User id</label>
-      <p>{{object.userID}}</p>
-      <label for="status">Status</label>
-      <p>{{object.status}}</p>
-      <label for="nextStatus">Next status</label>
-      <p>{{object.nextStatus}}</p>
-      <label for="timestamp">Timestamp</label>
-      <p>{{objStateDto.timestamp | date:'medium'}}</p>
+<div *ngIf="object && objStateDto.type === 'PERSON'" class="details-container">
+  <div class="details-div">
+      <p> <label for="firstName">First name</label> {{object.firstName}}</p>
+      <p> <label for="lastName">Last name</label> {{object.lastName}}</p>
+      <p> <label for="address">Address</label> {{object.address}}</p>
+      <p> <label for="dateOfBirth">Date of birth</label> {{object.dateOfBirth | date}}</p>
+      <p> <label for="phoneNumber">Phone number</label> {{object.phoneNumber}}</p>
+      <p> <label for="userID">User id</label> {{object.userID}}</p>
+      <p> <label for="status">Status</label> {{object.status}}</p>
+      <p> <label for="nextStatus">Next status</label> {{object.nextStatus}}</p>
+      <p> <label for="timestamp">Timestamp</label> {{objStateDto.timestamp | date:'medium'}}</p>
   </div>
 </div>
 
-<div *ngIf="object && objStateDto.type === 'ACCOUNT'" class="account-container">
-  <div class="account-div">
-      <label for="iban">Iban</label>
-      <p>{{object.iban}}</p>
-      <label for="countryCode">Country code</label>
-      <p>{{object.countryCode}}</p>
-      <label for="bankCode">Bank code</label>
-      <p>{{object.bankCode}}</p>
-      <label for="currency">Currency</label>
-      <p>{{object.currency}}</p>
-      <label for="accountStatus">Account status</label>
-      <p>{{object.accountStatus}}</p>
-      <label for="personID">Person id</label>
-      <p>{{object.personID}}</p>
-      <label for="status">Status</label>
-      <p>{{object.status}}</p>
-      <label for="nextStatus">Next status</label>
-      <p>{{object.nextStatus}}</p>
-      <label for="timestamp">Timestamp</label>
-      <p>{{objStateDto.timestamp | date:'medium'}}</p>
+<div *ngIf="object && objStateDto.type === 'ACCOUNT'" class="details-container">
+  <div class="details-div">
+      <p> <label for="iban">Iban</label> {{object.iban}}</p>
+      <p> <label for="countryCode">Country code</label> {{object.countryCode}}</p>
+      <p> <label for="bankCode">Bank code</label> {{object.bankCode}}</p>
+      <p> <label for="currency">Currency</label> {{object.currency}}</p>
+      <p> <label for="accountStatus">Account status</label> {{object.accountStatus}}</p> 
+      <p> <label for="personID">Person id</label> {{object.personID}}</p>
+      <p> <label for="status">Status</label> {{object.status}}</p>
+      <p> <label for="nextStatus">Next status</label> {{object.nextStatus}}</p>
+      <p> <label for="timestamp">Timestamp</label> {{objStateDto.timestamp | date:'medium'}}</p>
   </div>
 </div>
