@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { Audit } from '../audit';
 import { AuditService } from '../audit.service';
 
@@ -14,6 +14,7 @@ export class AuditListComponent implements OnInit, OnDestroy {
   subscribe: any;
   objectId: any;
   objectType: any;
+  historyRoute: any;
 
   constructor(private auditService: AuditService, private activatedRoute: ActivatedRoute) { }
 

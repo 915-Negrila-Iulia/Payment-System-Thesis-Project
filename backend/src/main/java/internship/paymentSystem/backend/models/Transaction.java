@@ -41,7 +41,7 @@ public class Transaction extends BaseEntity {
     @Column(name = "timestamp")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
-    private Date timestamp;
+    private LocalDateTime timestamp;
 
     public Transaction(TypeTransactionEnum type, ActionTransactionEnum action, Double amount, Long accountID,
                        StatusEnum status, StatusEnum nextStatus) {

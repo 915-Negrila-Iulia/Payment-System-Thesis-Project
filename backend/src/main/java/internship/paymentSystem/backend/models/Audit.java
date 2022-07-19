@@ -40,7 +40,7 @@ public class Audit {
     @Column(name = "timestamp")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
-    private Date timestamp;
+    private LocalDateTime timestamp;
 
     public Audit(Long objectID, ObjectTypeEnum objectType, OperationEnum operation, Long userID) {
         this.objectID = objectID;

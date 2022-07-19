@@ -28,6 +28,7 @@ import { BalanceHistoryComponent } from './balance-history/balance-history.compo
 import { TransactionsAccountComponent } from './transactions-account/transactions-account.component';
 import { TransactionsListComponent } from './transactions-list/transactions-list.component';
 import { BalancesListComponent } from './balances-list/balances-list.component';
+import { ObjectStatusHistoryComponent } from './object-status-history/object-status-history.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { BalancesListComponent } from './balances-list/balances-list.component';
     BalanceHistoryComponent,
     TransactionsAccountComponent,
     TransactionsListComponent,
-    BalancesListComponent
+    BalancesListComponent,
+    ObjectStatusHistoryComponent
   ],
   imports: [
     BrowserModule,

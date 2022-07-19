@@ -1,0 +1,61 @@
+
+<div *ngIf="object && objStateDto.type === 'USER'" class="user-container">
+  <div class="user-div">
+      <label for="username">Username</label>
+      <p>{{object.username}}</p>
+      <label for="email">Email</label>
+      <p>{{object.email}}</p>
+      <label for="status">Status</label>
+      <p>{{object.status}}</p>
+      <label for="nextStatus">Next status</label>
+      <p>{{object.nextStatus}}</p>
+      <label for="timestamp">Timestamp</label>
+      <p>{{objStateDto.timestamp | date:'medium'}}</p>
+  </div>
+</div>
+
+<div *ngIf="object && objStateDto.type === 'PERSON'" class="person-container">
+  <div class="person-div">
+      <label for="firstName">First name</label>
+      <p>{{object.firstName}}</p>
+      <label for="lastName">Last name</label>
+      <p>{{object.lastName}}</p>
+      <label for="address">Address</label>
+      <p>{{object.address}}</p>
+      <label for="dateOfBirth">Date of birth</label>
+      <p>{{object.dateOfBirth | date}}</p>
+      <label for="phoneNumber">Phone number</label>
+      <p>{{object.phoneNumber}}</p>
+      <label for="userID">User id</label>
+      <p>{{object.userID}}</p>
+      <label for="status">Status</label>
+      <p>{{object.status}}</p>
+      <label for="nextStatus">Next status</label>
+      <p>{{object.nextStatus}}</p>
+      <label for="timestamp">Timestamp</label>
+      <p>{{objStateDto.timestamp | date:'medium'}}</p>
+  </div>
+</div>
+
+<div *ngIf="object && objStateDto.type === 'ACCOUNT'" class="account-container">
+  <div class="account-div">
+      <label for="iban">Iban</label>
+      <p>{{object.iban}}</p>
+      <label for="countryCode">Country code</label>
+      <p>{{object.countryCode}}</p>
+      <label for="bankCode">Bank code</label>
+      <p>{{object.bankCode}}</p>
+      <label for="currency">Currency</label>
+      <p>{{object.currency}}</p>
+      <label for="accountStatus">Account status</label>
+      <p>{{object.accountStatus}}</p>
+      <label for="personID">Person id</label>
+      <p>{{object.personID}}</p>
+      <label for="status">Status</label>
+      <p>{{object.status}}</p>
+      <label for="nextStatus">Next status</label>
+      <p>{{object.nextStatus}}</p>
+      <label for="timestamp">Timestamp</label>
+      <p>{{objStateDto.timestamp | date:'medium'}}</p>
+  </div>
+</div>

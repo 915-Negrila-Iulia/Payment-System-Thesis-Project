@@ -112,4 +112,5 @@ public class BalanceService implements IBalanceService {
         }
         balanceRepository.save(updatedBalance);
     }
+
 }

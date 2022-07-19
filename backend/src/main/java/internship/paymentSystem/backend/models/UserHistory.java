@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -33,7 +34,7 @@ public class UserHistory extends BaseEntity {
     @Column(name = "timestamp")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
-    private Date timestamp;
+    private LocalDateTime timestamp;
 
     public UserHistory(String username, String email, String password, StatusEnum status, StatusEnum nextStatus, Long userID) {
         super(status, nextStatus);

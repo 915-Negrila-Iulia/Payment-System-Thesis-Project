@@ -31,7 +31,7 @@ public class Balance {
     @Column(name = "timestamp")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
-    private Date timestamp;
+    private LocalDateTime timestamp;
 
     public Balance(Double total, Double available, Long accountID) {
         this.total = total;

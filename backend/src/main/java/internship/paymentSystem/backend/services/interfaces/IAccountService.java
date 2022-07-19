@@ -29,4 +29,5 @@ public interface IAccountService {
     Account rejectAccount(Long id, Long currentUserId);
 
     Account deleteAccount(Long id, Long currentUserId);
+
 }

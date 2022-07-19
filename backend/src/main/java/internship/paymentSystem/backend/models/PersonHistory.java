@@ -26,7 +26,7 @@ public class PersonHistory extends PersonEntity {
     @Column(name = "timestamp")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
-    private Date timestamp;
+    private LocalDateTime timestamp;
 
     public PersonHistory(String firstName, String lastName, String address, Date dateOfBirth, String phoneNumber,
                          Long userID, StatusEnum status, StatusEnum nextStatus, Long personID) {

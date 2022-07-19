@@ -9,6 +9,7 @@ import { BalancesListComponent } from './balances-list/balances-list.component';
 import { HomeComponent } from './home/home.component';
 import { LoginFailedComponent } from './login-failed/login-failed.component';
 import { LoginComponent } from './login/login.component';
+import { ObjectStatusHistoryComponent } from './object-status-history/object-status-history.component';
 import { PersonsHomeComponent } from './persons-home/persons-home.component';
 import { RegisterComponent } from './register/register.component';
 import { TransactionsAccountComponent } from './transactions-account/transactions-account.component';
@@ -29,6 +30,7 @@ const routes: Routes = [
     { path: 'accounts-home', component: AccountsHomeComponent },
     { path: 'balances-list', component: BalancesListComponent },
     { path: 'transactions-list', component: TransactionsListComponent },
+    { path: 'object-status-history/:timestamp/:type', component: ObjectStatusHistoryComponent },
     { path: '**', redirectTo: 'home', pathMatch: 'full' }
   ]}
 ];
