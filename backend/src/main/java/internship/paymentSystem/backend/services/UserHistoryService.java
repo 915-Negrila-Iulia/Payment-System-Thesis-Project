@@ -7,7 +7,9 @@ import internship.paymentSystem.backend.services.interfaces.IUserHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -50,4 +52,11 @@ public class UserHistoryService implements IUserHistoryService {
     public List<UserHistory> getHistoryOfUsers() {
         return userHistoryRepository.findAll();
     }
+
+    @Override
+    public List<UserHistory> getUserState(LocalDateTime timestamp){
+        return userHistoryRepository.findAll().stream()
+                .filter(user -> user.getTimestamp().isEqual(timestamp)).collect(Collectors.toList());
+    }
+
 }

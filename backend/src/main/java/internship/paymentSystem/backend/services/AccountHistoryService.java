@@ -7,7 +7,9 @@ import internship.paymentSystem.backend.services.interfaces.IAccountHistoryServi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -46,4 +48,11 @@ public class AccountHistoryService implements IAccountHistoryService {
                 findLastVersion.getBankCode(), findLastVersion.getCurrency(), findLastVersion.getAccountStatus());
         return lastVersion;
     }
+
+    @Override
+    public List<AccountHistory> getAccountState(LocalDateTime timestamp){
+        return accountHistoryRepository.findAll().stream()
+                .filter(account -> account.getTimestamp().isEqual(timestamp)).collect(Collectors.toList());
+    }
+
 }

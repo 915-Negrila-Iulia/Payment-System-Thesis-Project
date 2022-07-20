@@ -1,5 +1,5 @@
 <div class="container">
-  <h3> Users History </h3>
+  <br><br><br>
   <div class="users-history-container">
     <table id='usersHistoryTable' border='1'>
         <tr>
@@ -18,10 +18,10 @@
           <td>{{item.email}}</td>
           <td>{{item.status}}</td>
           <td>{{item.nextStatus}}</td>
-          <td>{{item.timestamp}}</td>
+          <td>{{item.timestamp | date: 'medium'}}</td>
         </tr>
       </table>
     <br>
-    <button (click)="getUsersHistory()">getHistoryOfUsers</button>
+    <!-- <button (click)="getUsersHistory()">getHistoryOfUsers</button> -->
   </div>
 </div>

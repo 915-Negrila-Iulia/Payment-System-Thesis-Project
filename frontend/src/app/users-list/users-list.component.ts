@@ -15,6 +15,7 @@ export class UsersListComponent implements OnInit {
   users: User[] = [];
   user: User = new User();
   modifierUserID: number | undefined;
+  objectType = 'USER';
 
   constructor(private userService: UserService, private auditService: AuditService) { }
 
@@ -64,7 +65,6 @@ export class UsersListComponent implements OnInit {
 
   approveUser(id: any){
     this.userService.approveUser(id).subscribe(data => {
-
     },
     error => console.log(error)
     );

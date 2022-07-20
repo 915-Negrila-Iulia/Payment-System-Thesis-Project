@@ -3,6 +3,8 @@ package internship.paymentSystem.backend.services.interfaces;
 import internship.paymentSystem.backend.models.Person;
 import internship.paymentSystem.backend.models.PersonHistory;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public interface IPersonHistoryService {
@@ -14,5 +16,7 @@ public interface IPersonHistoryService {
     List<PersonHistory> getHistoryByPersonId(Long id);
 
     PersonHistory getLastVersionOfPerson(Long personId);
+
+    List<PersonHistory> getPersonState(LocalDateTime timestamp);
 
 }

@@ -1,0 +1,31 @@
+.details-container{
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    
+    .details-div{
+        font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 300px;
+        margin: auto;
+        margin-top: 100px;
+        background-color: #f2f2f2; // #b2d9c3;
+        padding: 20px;
+        border-radius: 5px;
+        border-color: #009681;
+        border-style: solid;
+    
+        label{
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        p{
+            height: 25px;
+            border-radius: 5px;
+            border: 0px;
+        }
+    }
+}

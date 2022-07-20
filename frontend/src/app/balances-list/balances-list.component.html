@@ -1,5 +1,5 @@
 <div class="container">
-    <h3> Balances </h3>
+    <br><br><br>
     <div class="balances-list-container">
       <table id='balancesTable'>
           <tr>
@@ -14,10 +14,10 @@
             <td>{{getIbanAccount(item.accountID)}}</td>
             <td>{{item.available}}</td>
             <td>{{item.total}}</td>
-            <td>{{item.timestamp}}</td>
+            <td>{{item.timestamp | date: 'medium'}}</td>
           </tr>
         </table>
       <br>
-      <button (click)="getBalances()">getBalances</button>
+      <!-- <button (click)="getBalances()">getBalances</button> -->
     </div>
   </div>

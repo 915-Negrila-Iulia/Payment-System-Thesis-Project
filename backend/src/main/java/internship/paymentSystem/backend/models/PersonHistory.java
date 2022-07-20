@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "person_history")
@@ -27,13 +28,13 @@ public class PersonHistory extends PersonEntity {
     @CreationTimestamp
     private LocalDateTime timestamp;
 
-    public PersonHistory(String firstName, String lastName, String address, LocalDate dateOfBirth, String phoneNumber,
+    public PersonHistory(String firstName, String lastName, String address, Date dateOfBirth, String phoneNumber,
                          Long userID, StatusEnum status, StatusEnum nextStatus, Long personID) {
         super(status, nextStatus, firstName, lastName, address, dateOfBirth, phoneNumber, userID);
         this.personID = personID;
     }
 
-    public PersonHistory(String firstName, String lastName, String address, LocalDate dateOfBirth, String phoneNumber) {
+    public PersonHistory(String firstName, String lastName, String address, Date dateOfBirth, String phoneNumber) {
         super(firstName, lastName, address, dateOfBirth, phoneNumber);
     }
 

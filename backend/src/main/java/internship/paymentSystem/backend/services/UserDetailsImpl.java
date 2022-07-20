@@ -9,10 +9,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UserDetailsImpl implements UserDetails {
+
     private static final long serialVersionUID = 1L;
+
     private Long id;
     private String username;
     private String email;
+
     @JsonIgnore
     private String password;
     public UserDetailsImpl(Long id, String username, String email, String password) {
@@ -32,6 +35,7 @@ public class UserDetailsImpl implements UserDetails {
     public Long getId() {
         return id;
     }
+
     public String getEmail() {
         return email;
     }
@@ -45,26 +49,32 @@ public class UserDetailsImpl implements UserDetails {
     public String getPassword() {
         return password;
     }
+
     @Override
     public String getUsername() {
         return username;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
+
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
+
     @Override
     public boolean isEnabled() {
         return true;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -74,4 +84,5 @@ public class UserDetailsImpl implements UserDetails {
         UserDetailsImpl user = (UserDetailsImpl) o;
         return Objects.equals(id, user.id);
     }
+
 }

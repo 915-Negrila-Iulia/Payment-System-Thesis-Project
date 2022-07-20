@@ -1,5 +1,5 @@
 <div class="container">
-    <h3> Persons </h3>
+    <br><br><br>
     <div class="persons-list-container">
       <table id='personsTable'>
           <tr>
@@ -15,7 +15,7 @@
               <th colspan="4">Actions</th>
           </tr>
           <tr *ngFor="let item of persons; let i = index;">
-            <td>{{i+1}}</td>
+            <td><a [routerLink]="['/audit-list',item.id,objectType]">{{i+1}}</a></td>
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].firstName" #firstName="ngModel"></td>
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].lastName" #lastName="ngModel"></td>
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].address" #address="ngModel"></td>
@@ -35,6 +35,6 @@
           </tr>
         </table>
       <br>
-      <button (click)="getPersons()">getPersons</button>
+      <!-- <button (click)="getPersons()">getPersons</button> -->
     </div>
   </div>

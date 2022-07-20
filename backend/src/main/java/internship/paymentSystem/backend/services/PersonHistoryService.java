@@ -7,7 +7,9 @@ import internship.paymentSystem.backend.services.interfaces.IPersonHistoryServic
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -52,4 +54,11 @@ public class PersonHistoryService implements IPersonHistoryService {
     public List<PersonHistory> getHistoryOfPersons() {
         return personHistoryRepository.findAll();
     }
+
+    @Override
+    public List<PersonHistory> getPersonState(LocalDateTime timestamp){
+        return personHistoryRepository.findAll().stream()
+                .filter(person -> person.getTimestamp().isEqual(timestamp)).collect(Collectors.toList());
+    }
+
 }

@@ -17,6 +17,7 @@ export class PersonsHomeComponent implements OnInit {
 
   viewPersons(){
     this.show = 'personsList';
+    window.location.reload();
   }
 
   addPerson(){

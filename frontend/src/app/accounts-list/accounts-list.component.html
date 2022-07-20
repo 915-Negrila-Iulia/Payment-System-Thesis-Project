@@ -1,5 +1,5 @@
 <div id="container-accounts" *ngIf="!doTransaction">
-    <h3> Accounts </h3>
+  <br><br><br>
     <div class="accounts-list-container">
       <table id='accountsTable'>
           <tr>
@@ -15,7 +15,7 @@
               <th colspan="6">Actions</th>
           </tr>
           <tr *ngFor="let item of accounts; let i = index;">
-            <td>{{i+1}}</td>
+            <td><a [routerLink]="['/audit-list',item.id,objectType]">{{i+1}}</a></td>
             <td>{{item.iban}}</td>
             <td class="td-input"><input type="text" [(ngModel)]="accounts[i].countryCode" #countryCode="ngModel"></td>
             <td class="td-input"><input type="text" [(ngModel)]="accounts[i].bankCode" #bankCode="ngModel"></td>
@@ -39,7 +39,7 @@
           </tr>
         </table>
       <br>
-      <button (click)="getAccounts()">getAccounts</button>
+      <!-- <button (click)="getAccounts()">getAccounts</button> -->
     </div>
   </div>
 <div class="account-details-container" *ngIf="showDetails">
