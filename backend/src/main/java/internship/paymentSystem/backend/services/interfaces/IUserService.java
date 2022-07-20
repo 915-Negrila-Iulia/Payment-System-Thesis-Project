@@ -27,9 +27,9 @@ public interface IUserService {
 
     User updateUser(Long id, Long currentUserId, User userDetails);
 
-    User approveUser(Long id, Long currentUserId);
+    User approveUser(Long id, Long currentUserId) throws Exception;
 
-    User rejectUser(Long id, Long currentUserId);
+    User rejectUser(Long id, Long currentUserId) throws Exception;
 
     User deleteUser(Long id, Long currentUserId);
 

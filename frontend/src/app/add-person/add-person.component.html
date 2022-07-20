@@ -15,9 +15,6 @@
         <label for="phoneNumber">Phone number</label>
         <input type="text" id="phoneNumber" formControlName="phoneNumber">
         <span *ngIf="phoneNumber && phoneNumber.invalid && phoneNumber.touched">Phone number is invalid</span>
-        <label for="userID">User id</label>
-        <input type="text" id="userID" formControlName="userID">
-        <span *ngIf="userID && userID.invalid && userID.touched">User id is invalid</span>
         <button class="add-button" type="submit" [disabled]="addPersonForm.invalid">ADD</button>
     </form>
 </div>

@@ -18,8 +18,8 @@ export class AddPersonComponent implements OnInit {
     address: new FormControl('',[Validators.required, Validators.pattern('^[a-zA-Z -]{3,}/[a-zA-Z -]{3,}/[0-9]{3,}/[a-zA-Z0-9 -]{3,}$')]),
     dateOfBirth: new FormControl('',[Validators.required, Validators.pattern('^[0-9]{4}-(((0[13578]|(10|12))-(0[1-9]|[1-2][0-9]|3[0-1]))|(02-(0[1-9]|[1-2][0-9]))|((0[469]|11)-(0[1-9]|[1-2][0-9]|30)))$')]),
     phoneNumber: new FormControl('',[Validators.required, Validators.pattern('^[0-9]{10}$')]),
-    userID: new FormControl('',[Validators.required]),
   })
+  currentUserId = sessionStorage.getItem('userID');
 
   constructor(private personService: PersonService, private router: Router) { }
 
@@ -29,11 +29,13 @@ export class AddPersonComponent implements OnInit {
   onSubmit(){
     this.person = this.addPersonForm.value;
     this.person.status = "APPROVE";
+    this.person.userID = Number(this.currentUserId);
     console.log(this.person);
     this.personService.addPerson(this.person).subscribe(data => {
       console.log(data);
       if(data){
         console.log("succeded");
+        window.location.reload();
       }
       else{
         console.log("failed");
@@ -62,8 +64,8 @@ export class AddPersonComponent implements OnInit {
     return this.addPersonForm.get('phoneNumber');
   }
 
-  get userID(){
-    return this.addPersonForm.get('userID');
-  }
+  // get userID(){
+  //   return this.addPersonForm.get('userID');
+  // }
 
 }

@@ -7,6 +7,14 @@
         display: flex;
         flex-direction: column;
 
+        span{
+            color: #ff0000;
+            align-self: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
         #accountsTable{
             font-family: Arial, Helvetica, sans-serif;
             border-collapse: collapse;
@@ -42,6 +50,10 @@
                 }
             }
 
+            .small-size-solumn{
+                width: 6px;
+            }
+
             input{
                 border: none;
             }
@@ -62,6 +74,15 @@
             .td-input, .td-button{
                 padding: 1px;
                 margin: 0;
+            }
+
+
+            select{
+                display: block;
+                margin: 0 auto;
+                align-self: center;
+                margin-top: 10px;
+                font-size: 13px;
             }
 
         }

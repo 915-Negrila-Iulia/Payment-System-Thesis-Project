@@ -16,6 +16,7 @@ export class UsersListComponent implements OnInit {
   user: User = new User();
   modifierUserID: number | undefined;
   objectType = 'USER';
+  errorMessage = '';
 
   constructor(private userService: UserService, private auditService: AuditService) { }
 
@@ -45,18 +46,25 @@ export class UsersListComponent implements OnInit {
     this.user.status = status;
     this.userService.updateUser(id,this.user).subscribe(data => {
       console.log(data);
+      window.location.reload();
     },
-    error => console.log(error)
+    error => {
+      this.errorMessage = error.error;
+      console.log(error.error)
+    }
     );
-    window.location.reload();
   }
 
   deleteUser(id: any){
     this.userService.deleteUser(id).subscribe(data => {
       console.log(data)
+      window.location.reload();
     },
-    error => console.log(error))
-    window.location.reload();
+    error => {
+      this.errorMessage = error.error;
+      console.log(error.error)
+    }  
+    )
   }
 
   filterById(id: any){
@@ -65,18 +73,26 @@ export class UsersListComponent implements OnInit {
 
   approveUser(id: any){
     this.userService.approveUser(id).subscribe(data => {
+      console.log(data);
+      window.location.reload();
     },
-    error => console.log(error)
+    error => {
+      this.errorMessage = error.error;
+      console.log(error.error)
+    }
     );
-    window.location.reload();
   }
 
   rejectUser(id: any){
     this.userService.rejectUser(id).subscribe(data => {
       console.log(data);
+      window.location.reload();
     },
-    error => console.log(error))
-    window.location.reload();
+    error => {
+      this.errorMessage = error.error;
+      console.log(error.error)
+    }
+    );
   }
 
 }

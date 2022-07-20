@@ -3,9 +3,9 @@ package internship.paymentSystem.backend.services;
 import internship.paymentSystem.backend.models.Audit;
 import internship.paymentSystem.backend.models.Person;
 import internship.paymentSystem.backend.models.PersonHistory;
-import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
-import internship.paymentSystem.backend.models.enumerations.OperationEnum;
-import internship.paymentSystem.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
+import internship.paymentSystem.backend.models.enums.OperationEnum;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.repositories.IPersonRepository;
 import internship.paymentSystem.backend.services.interfaces.IAuditService;
 import internship.paymentSystem.backend.services.interfaces.IPersonHistoryService;
@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonService implements IPersonService {
@@ -48,6 +50,21 @@ public class PersonService implements IPersonService {
     @Override
     public List<Person> getAllPersons() {
         return personRepository.findAll();
+    }
+
+    @Override
+    public Set<Person> getPersonsOfUser(Long userId){
+        return personRepository.findAll().stream()
+                .filter(person -> Objects.equals(person.getUserID(), userId)).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Person getPersonByDetails(String firstName, String lastName, String phoneNumber){
+        return personRepository.findAll().stream()
+                .filter(person -> Objects.equals(person.getFirstName(), firstName) &&
+                        Objects.equals(person.getLastName(), lastName) &&
+                        Objects.equals(person.getPhoneNumber(), phoneNumber))
+                .findFirst().get();
     }
 
     @Override
@@ -139,7 +156,7 @@ public class PersonService implements IPersonService {
      */
     @Transactional
     @Override
-    public Person approvePerson(Long id, Long currentUserId) {
+    public Person approvePerson(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.PERSON), currentUserId)) {
             Person person = personRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
@@ -150,7 +167,9 @@ public class PersonService implements IPersonService {
             auditService.saveAudit(audit);
             return activePerson;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to approve");
+        }
     }
 
     /**
@@ -166,7 +185,7 @@ public class PersonService implements IPersonService {
      */
     @Transactional
     @Override
-    public Person rejectPerson(Long id, Long currentUserId) {
+    public Person rejectPerson(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.PERSON), currentUserId)) {
             Person person = personRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
@@ -185,7 +204,9 @@ public class PersonService implements IPersonService {
             auditService.saveAudit(audit);
             return rejectedPerson;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to reject");
+        }
     }
 
     /**
@@ -213,6 +234,5 @@ public class PersonService implements IPersonService {
         auditService.saveAudit(audit);
         return deletedPerson;
     }
-
 
 }

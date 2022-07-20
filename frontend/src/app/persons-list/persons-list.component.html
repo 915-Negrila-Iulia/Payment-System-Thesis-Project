@@ -1,6 +1,7 @@
 <div class="container">
     <br><br><br>
     <div class="persons-list-container">
+      <span>{{errorMessage}}</span>
       <table id='personsTable'>
           <tr>
               <th>#</th>
@@ -19,12 +20,12 @@
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].firstName" #firstName="ngModel"></td>
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].lastName" #lastName="ngModel"></td>
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].address" #address="ngModel"></td>
-            <td class="td-input"><input type="text" [(ngModel)]="persons[i].dateOfBirth" #dateOfBirth="ngModel"></td>
+            <td>{{item.dateOfBirth | date}}</td>
             <td class="td-input"><input type="text" [(ngModel)]="persons[i].phoneNumber" #phoneNumber="ngModel"></td>
             <td>{{getUsername(item.userID)}}</td>
             <td>{{item.status}}</td>
             <td>{{item.nextStatus}}</td>
-            <td class="td-button"><button class="updateButton" (click)="getUsername(item.userID); updatePerson(item.id,firstName,lastName,address,dateOfBirth,phoneNumber,item.userID,item.status)"
+            <td class="td-button"><button class="updateButton" (click)="getUsername(item.userID); updatePerson(item.id,firstName,lastName,address,item.dateOfBirth,phoneNumber,item.userID,item.status)"
               [disabled] = "item.status !== 'ACTIVE'">update</button></td>
             <td class="td-button"><button class="updateButton" (click)="deletePerson(item.id)"
               [disabled] = "item.status !== 'ACTIVE'">delete</button></td>

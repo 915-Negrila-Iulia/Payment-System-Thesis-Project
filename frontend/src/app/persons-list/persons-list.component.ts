@@ -16,6 +16,7 @@ export class PersonsListComponent implements OnInit {
   person: Person = new Person();
   users: User[] = [];
   objectType = 'PERSON';
+  errorMessage='';
 
   constructor(private personService: PersonService, private userService: UserService) { }
 
@@ -50,24 +51,26 @@ export class PersonsListComponent implements OnInit {
     this.person.firstName = firstName.value;
     this.person.lastName = lastName.value;
     this.person.address = address.value;
-    this.person.dateOfBirth = dateOfBirth.value;
+    this.person.dateOfBirth = dateOfBirth;
     this.person.phoneNumber = phoneNumber.value;
     this.person.userID = userID;
     this.person.status = status;
     this.personService.updatePerson(id,this.person).subscribe(data => {
       //console.log(data);
+      window.location.reload();
     },
-    error => console.log(error)
-    );
-    window.location.reload();
+    error => {
+      this.errorMessage = error.error;
+    });
   }
 
   deletePerson(id: any){
     this.personService.deletePerson(id).subscribe(data => {
-     console.log(data)
+      window.location.reload();
     },
-    error => console.log(error))
-    window.location.reload();
+    error => {
+      this.errorMessage = error.error; 
+    })
   }
 
   getPersonById(id: any){
@@ -76,19 +79,20 @@ export class PersonsListComponent implements OnInit {
 
   approvePerson(id: any){
     this.personService.approvePerson(id).subscribe(data => {
-      console.log(data);
+      window.location.reload();
     },
-    error => console.log(error)
-    );
-    window.location.reload();
+    error => {
+      this.errorMessage = error.error;
+    });
   }
 
   rejectPerson(id: number | undefined){
     this.personService.rejectPerson(id).subscribe(data => {
-      console.log(data)
+      window.location.reload();
      },
-     error => console.log(error))
-     window.location.reload();
+     error => {
+      this.errorMessage = error.error;
+     })
   }
 
 }

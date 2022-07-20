@@ -24,9 +24,9 @@ public interface IAccountService {
 
     Account updateAccount(Long id, Long currentUserId, Account account);
 
-    Account approveAccount(Long id, Long currentUserId);
+    Account approveAccount(Long id, Long currentUserId) throws Exception;
 
-    Account rejectAccount(Long id, Long currentUserId);
+    Account rejectAccount(Long id, Long currentUserId) throws Exception;
 
     Account deleteAccount(Long id, Long currentUserId);
 

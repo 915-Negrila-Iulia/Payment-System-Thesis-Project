@@ -1,12 +1,11 @@
 package internship.paymentSystem.backend.models.bases;
 
-import internship.paymentSystem.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import java.time.LocalDate;
 import java.util.Date;
 
 @MappedSuperclass

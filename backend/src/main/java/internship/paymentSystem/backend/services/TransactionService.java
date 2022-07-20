@@ -2,7 +2,7 @@ package internship.paymentSystem.backend.services;
 
 import internship.paymentSystem.backend.models.Audit;
 import internship.paymentSystem.backend.models.Transaction;
-import internship.paymentSystem.backend.models.enumerations.*;
+import internship.paymentSystem.backend.models.enums.*;
 import internship.paymentSystem.backend.repositories.ITransactionRepository;
 import internship.paymentSystem.backend.services.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +52,15 @@ public class TransactionService implements ITransactionService {
         return userId;
     }
 
+    private AccountStatusEnum getStatusByAccountId(Long accountId){
+        return accountService.findAccountById(accountId).get().getAccountStatus();
+    }
+
     /**
      * Deposit amount of money
      * Check if user that wants to deposit is the owner of the account
+     * Throw exception if credit is blocked
+     * Throw exception if user logged is not the owner of the account
      * Change 'Status' to 'APPROVE' and 'NextStatus' to 'ACTIVE'
      * Update 'Audit' table
      * Update balance of the account that initiated the transaction
@@ -64,25 +70,35 @@ public class TransactionService implements ITransactionService {
      */
     @Transactional
     @Override
-    public Transaction depositTransaction(Transaction transactionDetails, Long currentUserId){
+    public Transaction depositTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
         if(Objects.equals(userId, currentUserId)) {
-            Double amount = transactionDetails.getAmount();
-            Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.DEPOSIT, amount,
-                    accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
-            transactionRepository.save(transaction);
-            balanceService.updateAvailableAmount(accountId, transaction.getId());
-            Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
-            auditService.saveAudit(audit);
-            return transaction;
+            if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_CREDIT) ||
+                    Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))){
+                Double amount = transactionDetails.getAmount();
+                Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.DEPOSIT, amount,
+                        accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
+                transactionRepository.save(transaction);
+                balanceService.updateAvailableAmount(accountId, transaction.getId());
+                Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
+                auditService.saveAudit(audit);
+                return transaction;
+            }
+            else{
+                throw new Exception("Credit Blocked. Not allowed to deposit");
+            }
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to make transaction");
+        }
     }
 
     /**
      * Withdrawal amount of money
      * Check if user that wants to withdrawal is the owner of the account
+     * Throw exception if debit is blocked
+     * Throw exception if user logged is not the owner of the account
      * Change 'Status' to 'APPROVE' and 'NextStatus' to 'ACTIVE'
      * Update 'Audit' table
      * Update balance of the account that initiated the transaction
@@ -92,20 +108,28 @@ public class TransactionService implements ITransactionService {
      */
     @Transactional
     @Override
-    public Transaction withdrawalTransaction(Transaction transactionDetails, Long currentUserId) {
+    public Transaction withdrawalTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
         if(Objects.equals(userId, currentUserId)) {
-            Double amount = transactionDetails.getAmount();
-            Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.WITHDRAWAL, amount,
-                    accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
-            transactionRepository.save(transaction);
-            balanceService.updateAvailableAmount(accountId, transaction.getId());
-            Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
-            auditService.saveAudit(audit);
-            return transaction;
+            if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_DEBIT) ||
+                    Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))) {
+                Double amount = transactionDetails.getAmount();
+                Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.WITHDRAWAL, amount,
+                        accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
+                transactionRepository.save(transaction);
+                balanceService.updateAvailableAmount(accountId, transaction.getId());
+                Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
+                auditService.saveAudit(audit);
+                return transaction;
+            }
+            else{
+                throw new Exception("Debit Blocked. Not allowed to withdraw");
+            }
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to make transaction");
+        }
     }
 
     /**
@@ -120,22 +144,37 @@ public class TransactionService implements ITransactionService {
      */
     @Transactional
     @Override
-    public Transaction transferTransaction(Transaction transactionDetails, Long currentUserId) {
+    public Transaction transferTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
         if(Objects.equals(userId, currentUserId)) {
-            Long targetId = transactionDetails.getTargetAccountID();
-            Double amount = transactionDetails.getAmount();
-            Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.TRANSFER, amount,
-                    accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
-            transaction.setTargetAccountID(targetId);
-            transactionRepository.save(transaction);
-            balanceService.updateAvailableAmount(accountId, transaction.getId());
-            Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
-            auditService.saveAudit(audit);
-            return transaction;
+            if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_CREDIT) ||
+                    Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))) {
+                if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_CREDIT) ||
+                        Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))) {
+
+                    Long targetId = transactionDetails.getTargetAccountID();
+                    Double amount = transactionDetails.getAmount();
+                    Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.TRANSFER, amount,
+                            accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
+                    transaction.setTargetAccountID(targetId);
+                    transactionRepository.save(transaction);
+                    balanceService.updateAvailableAmount(accountId, transaction.getId());
+                    Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
+                    auditService.saveAudit(audit);
+                    return transaction;
+                }
+                else{
+                    throw new Exception("Debit Blocked. Not allowed to receive");
+                }
+            }
+            else{
+                throw new Exception("Credit Blocked. Not allowed to send");
+            }
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to make transaction");
+        }
     }
 
     @Transactional
@@ -161,7 +200,7 @@ public class TransactionService implements ITransactionService {
      * @return the approved transaction
      */
     @Override
-    public Transaction approveTransaction(Long id, Long currentUserId) {
+    public Transaction approveTransaction(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.TRANSACTION), currentUserId)) {
             Transaction transaction = transactionRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
@@ -172,7 +211,9 @@ public class TransactionService implements ITransactionService {
             auditService.saveAudit(audit);
             return activeTransaction;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to approve");
+        }
     }
 
     /**
@@ -188,8 +229,9 @@ public class TransactionService implements ITransactionService {
      */
     @Transactional
     @Override
-    public Transaction rejectTransaction(Long id, Long currentUserId) {
+    public Transaction rejectTransaction(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.TRANSACTION), currentUserId)) {
+
             Transaction transaction = transactionRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
             transaction.setStatus(StatusEnum.DELETE);
@@ -200,7 +242,9 @@ public class TransactionService implements ITransactionService {
             auditService.saveAudit(audit);
             return rejectedTransaction;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to approve");
+        }
     }
 
 }

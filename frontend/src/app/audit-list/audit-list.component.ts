@@ -2,6 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { Audit } from '../audit';
 import { AuditService } from '../audit.service';
+import { User } from '../user';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-audit-list',
@@ -11,12 +13,13 @@ import { AuditService } from '../audit.service';
 export class AuditListComponent implements OnInit, OnDestroy {
 
   audit: Audit[] = [];
+  users: User[] = [];
   subscribe: any;
   objectId: any;
   objectType: any;
   historyRoute: any;
 
-  constructor(private auditService: AuditService, private activatedRoute: ActivatedRoute) { }
+  constructor(private auditService: AuditService, private userService: UserService, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.subscribe = this.activatedRoute.paramMap.subscribe(params => {
@@ -29,6 +32,9 @@ export class AuditListComponent implements OnInit, OnDestroy {
         this.getAudit();
       }
     })
+    this.userService.getAllUsers().subscribe(data => {
+      this.users = data;
+      })
   }
 
   ngOnDestroy(): void {
@@ -45,6 +51,19 @@ export class AuditListComponent implements OnInit, OnDestroy {
     this.auditService.getAuditOfObject(this.objectId, this.objectType).subscribe(data => {
       this.audit = data;
     });
+  }
+
+  getUsername(id: number | undefined){
+    if(this.users){
+      let user = this.users.filter(user => user.id === id)[0];
+      if(user){
+        return user.username;
+      }
+      return '';
+    }
+    else{
+      return '';
+    }
   }
 
 }

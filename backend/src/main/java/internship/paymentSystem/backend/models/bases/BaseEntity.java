@@ -1,6 +1,6 @@
 package internship.paymentSystem.backend.models.bases;
 
-import internship.paymentSystem.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -3,9 +3,9 @@ package internship.paymentSystem.backend.services;
 import internship.paymentSystem.backend.models.Audit;
 import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.models.UserHistory;
-import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
-import internship.paymentSystem.backend.models.enumerations.OperationEnum;
-import internship.paymentSystem.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
+import internship.paymentSystem.backend.models.enums.OperationEnum;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.repositories.IUserRepository;
 import internship.paymentSystem.backend.services.interfaces.IAuditService;
 import internship.paymentSystem.backend.services.interfaces.IUserHistoryService;
@@ -143,7 +143,7 @@ public class UserService implements IUserService {
      */
     @Transactional
     @Override
-    public User approveUser(Long id, Long currentUserId) {
+    public User approveUser(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), currentUserId)) {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
@@ -154,7 +154,9 @@ public class UserService implements IUserService {
             auditService.saveAudit(audit);
             return activeUser;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to approve");
+        }
     }
 
     /**
@@ -170,7 +172,7 @@ public class UserService implements IUserService {
      */
     @Transactional
     @Override
-    public User rejectUser(Long id, Long currentUserId) {
+    public User rejectUser(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), currentUserId)) {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
@@ -190,7 +192,9 @@ public class UserService implements IUserService {
             auditService.saveAudit(audit);
             return rejectedUser;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to reject");
+        }
     }
 
     /**

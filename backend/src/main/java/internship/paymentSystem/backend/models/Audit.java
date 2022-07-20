@@ -1,7 +1,7 @@
 package internship.paymentSystem.backend.models;
 
-import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
-import internship.paymentSystem.backend.models.enumerations.OperationEnum;
+import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
+import internship.paymentSystem.backend.models.enums.OperationEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "audit")

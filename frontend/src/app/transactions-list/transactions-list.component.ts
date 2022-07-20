@@ -15,6 +15,7 @@ export class TransactionsListComponent implements OnInit {
   transaction: Transaction = new Transaction();
   accounts: Account[] = [];
   objectType = 'TRANSACTION';
+  errorMessage='';
 
   constructor(private transactionService: TransactionService, private accountService: AccountService) { }
 
@@ -46,17 +47,21 @@ export class TransactionsListComponent implements OnInit {
 
   approveTransaction(id: number | undefined){
     this.transactionService.approveTransaction(id).subscribe(data => {
-      console.log(data);
+      window.location.reload();
     },
-    error => console.log(error)
+    error => {
+      this.errorMessage = error.error;
+    }
     );
   }
 
   rejectTransaction(id: number | undefined){
     this.transactionService.rejectTransaction(id).subscribe(data => {
-      console.log(data);
+      window.location.reload();
     },
-    error => console.log(error)
+    error => {
+      this.errorMessage = error.error;
+    }
     );
   }
 

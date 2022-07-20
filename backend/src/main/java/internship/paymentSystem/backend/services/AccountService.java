@@ -3,9 +3,10 @@ package internship.paymentSystem.backend.services;
 import internship.paymentSystem.backend.models.Account;
 import internship.paymentSystem.backend.models.AccountHistory;
 import internship.paymentSystem.backend.models.Audit;
-import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
-import internship.paymentSystem.backend.models.enumerations.OperationEnum;
-import internship.paymentSystem.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.models.enums.AccountStatusEnum;
+import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
+import internship.paymentSystem.backend.models.enums.OperationEnum;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.repositories.IAccountRepository;
 import internship.paymentSystem.backend.services.interfaces.IAccountHistoryService;
 import internship.paymentSystem.backend.services.interfaces.IAccountService;
@@ -158,7 +159,7 @@ public class AccountService implements IAccountService {
      */
     @Transactional
     @Override
-    public Account approveAccount(Long id, Long currentUserId) {
+    public Account approveAccount(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.ACCOUNT), currentUserId)) {
             Account account = accountRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
@@ -169,7 +170,9 @@ public class AccountService implements IAccountService {
             auditService.saveAudit(audit);
             return activeAccount;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to approve");
+        }
     }
 
     /**
@@ -185,7 +188,7 @@ public class AccountService implements IAccountService {
      */
     @Transactional
     @Override
-    public Account rejectAccount(Long id, Long currentUserId) {
+    public Account rejectAccount(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.ACCOUNT), currentUserId)) {
             Account account = accountRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
@@ -204,7 +207,9 @@ public class AccountService implements IAccountService {
             auditService.saveAudit(audit);
             return rejectedAccount;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to reject");
+        }
     }
 
     /**
@@ -214,6 +219,7 @@ public class AccountService implements IAccountService {
      * And throw an exception otherwise
      * Add a new record in 'AccountHistory' table containing the previous state of the account
      * Change 'Status' and 'NextStatus' to 'DELETE'
+     * Change 'AccountStatus' to 'CLOSED'
      * Update 'Audit' table
      * @param id of the account that is deleted
      * @param currentUserId id of user performing the deletion

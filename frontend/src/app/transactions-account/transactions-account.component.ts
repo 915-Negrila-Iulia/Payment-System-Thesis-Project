@@ -13,7 +13,7 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
 
   @Input()
   accountId: number | undefined;
-  types: any = ['INTERNAL', 'EXTERNAL'];
+  types: any = ['INTERNAL']; // add 'EXTERNAL'
   actions: any = ['DEPOSIT', 'WITHDRAWAL', 'TRANSFER'];
   transactionForm = new FormGroup({
     iban: new FormControl({value: '', disabled: true}, Validators.required),
@@ -23,6 +23,7 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
     targetAccountID: new FormControl('',[]),
   })
   transaction: Transaction = new Transaction();
+  errorMessage = '';
 
   constructor(private accountService: AccountService, private transactionService: TransactionService) { }
 
@@ -46,20 +47,29 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
     if(actionPerformed === "DEPOSIT"){
       this.transactionService.deposit(this.transaction).subscribe(data => {
         console.log(data);
+        window.location.reload();
       },
-      error => console.log(error));
+      error => {
+        this.errorMessage = error.error;
+      });
     }
     else if(actionPerformed === "WITHDRAWAL"){
       this.transactionService.withdrawal(this.transaction).subscribe(data => {
         console.log(data);
+        window.location.reload();
       },
-      error => console.log(error));
+      error => {
+        this.errorMessage = error.error;
+      });
     }
     else if(actionPerformed === "TRANSFER"){
       this.transactionService.transfer(this.transaction).subscribe(data => {
         console.log(data);
+        window.location.reload();
       },
-      error => console.log(error));
+      error => {
+        this.errorMessage = error.error;
+      });
     }
 }
 

@@ -1,12 +1,11 @@
 package internship.paymentSystem.backend.DTOs;
 
-import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
+import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;

@@ -1,10 +1,9 @@
 package internship.paymentSystem.backend.services.interfaces;
 
 import internship.paymentSystem.backend.models.Audit;
-import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
+import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 public interface IAuditService {

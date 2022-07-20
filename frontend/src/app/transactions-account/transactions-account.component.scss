@@ -2,6 +2,15 @@
     height: 100%;
     width: 100%;
     margin: 0;
+
+    .top-span{
+        color: #ff0000;
+        font-weight: bold;
+        font-size: 16px;
+        display: table;
+        margin: 0 auto;
+        margin-top: 70px;
+    }
     
     .transaction-form{
         font-family: Arial, Helvetica, sans-serif;
@@ -10,7 +19,7 @@
         gap: 10px;
         max-width: 300px;
         margin: auto;
-        margin-top: 100px;
+        margin-top: 40px;
         background-color: #b2d9c3;
         padding: 20px;
         border-radius: 5px;
