@@ -69,6 +69,7 @@ export class AccountsListComponent implements OnInit, OnChanges {
     },
     error => console.log(error)
     );
+    window.location.reload();
   }
 
   deleteAccount(id: any){
@@ -77,6 +78,7 @@ export class AccountsListComponent implements OnInit, OnChanges {
     },
     error => console.log(error)
     );
+    window.location.reload();
   }
 
   approveAccount(id: any){
@@ -85,6 +87,7 @@ export class AccountsListComponent implements OnInit, OnChanges {
     },
     error => console.log(error)
     );
+    window.location.reload();
   }
 
   rejectAccount(id: number | undefined){
@@ -93,6 +96,7 @@ export class AccountsListComponent implements OnInit, OnChanges {
     },
     error => console.log(error)
     );
+    window.location.reload();
   }
 
   selectAccount(id: any){

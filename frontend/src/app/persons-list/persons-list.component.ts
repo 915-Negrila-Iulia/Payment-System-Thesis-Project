@@ -59,6 +59,7 @@ export class PersonsListComponent implements OnInit {
     },
     error => console.log(error)
     );
+    window.location.reload();
   }
 
   deletePerson(id: any){
@@ -66,6 +67,7 @@ export class PersonsListComponent implements OnInit {
      console.log(data)
     },
     error => console.log(error))
+    window.location.reload();
   }
 
   getPersonById(id: any){
@@ -78,6 +80,7 @@ export class PersonsListComponent implements OnInit {
     },
     error => console.log(error)
     );
+    window.location.reload();
   }
 
   rejectPerson(id: number | undefined){
@@ -85,6 +88,7 @@ export class PersonsListComponent implements OnInit {
       console.log(data)
      },
      error => console.log(error))
+     window.location.reload();
   }
 
 }

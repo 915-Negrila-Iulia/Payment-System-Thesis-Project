@@ -18,6 +18,7 @@ export class UsersHomeComponent implements OnInit {
 
   viewUsers(){
     this.show = "usersList";
+    window.location.reload();
   }
 
   registerUser(){

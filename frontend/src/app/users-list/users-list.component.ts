@@ -65,7 +65,6 @@ export class UsersListComponent implements OnInit {
 
   approveUser(id: any){
     this.userService.approveUser(id).subscribe(data => {
-
     },
     error => console.log(error)
     );
