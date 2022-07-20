@@ -1,14 +1,32 @@
-<h1>home</h1>
-<button (click)="goToUsersHomePage()">USERS</button>
-<br><br>
-<button (click)="goToPersonsHomePage()">PERSONS</button>
-<br><br>
-<button (click)="goToAccountsHomePage()">ACCOUNTS</button>
-<br><br>
-<button (click)="goToBalancesHomePage()">BALANCES</button>
-<br><br>
-<button (click)="goToTransactionsHomePage()">TRANSACTIONS</button>
-<br><br>
-<button (click)="goToAuditListPage()">AUDIT</button>
-<br><br>
-<button (click)="logout()">logout</button>
+<div class="home-container">
+    <!-- <h1>home</h1> -->
+    <!-- <button (click)="logout()">logout</button> -->
+    <div class="top-container">
+        <div class="img-btn-container">
+            <button (click)="goToUsersHomePage()">USERS</button>
+            <img src = "../../assets/1 - REBUILD THE ECONOMY.svg" alt = "economy svg"/>
+        </div>
+        <div class="img-btn-container">
+            <button (click)="goToPersonsHomePage()">PERSONS</button>
+            <img src = "../../assets/2 - INCOME INEQUALITY.svg"/>
+        </div>
+        <div class="img-btn-container">
+            <button (click)="goToAccountsHomePage()">ACCOUNTS</button>
+            <img src = "../../assets/6 - FINANCES.svg"/>
+        </div>
+    </div>
+    <div class="bottom-container">
+        <div class="img-btn-container">
+            <button (click)="goToBalancesHomePage()">BALANCES</button>
+            <img src = "../../assets/7 - BANK DEAL.svg"/>
+        </div>
+        <div class="img-btn-container">
+            <button (click)="goToTransactionsHomePage()">TRANSACTIONS</button>
+            <img src = "../../assets/9 - ECONOMY ANALYSIS.svg"/>
+        </div>
+        <div class="img-btn-container">
+            <button (click)="goToAuditListPage()">AUDIT</button>
+            <img src = "../../assets/10 - BIKE .svg"/>
+        </div>
+    </div>
+</div>
