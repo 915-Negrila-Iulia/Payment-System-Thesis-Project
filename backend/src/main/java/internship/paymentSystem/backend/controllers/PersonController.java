@@ -4,6 +4,7 @@ import internship.paymentSystem.backend.models.Person;
 import internship.paymentSystem.backend.models.PersonHistory;
 import internship.paymentSystem.backend.services.interfaces.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,15 +59,25 @@ public class PersonController {
     }
 
     @PutMapping("/approve/{id}/{currentUserId}")
-    public ResponseEntity<Person> approvePerson(@PathVariable Long id, @PathVariable Long currentUserId){
-        Person activePerson = personService.approvePerson(id,currentUserId);
-        return ResponseEntity.ok(activePerson);
+    public ResponseEntity<?> approvePerson(@PathVariable Long id, @PathVariable Long currentUserId){
+        try{
+            Person activePerson = personService.approvePerson(id,currentUserId);
+            return ResponseEntity.ok(activePerson);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/reject/{id}/{currentUserId}")
-    public ResponseEntity<Person> rejectPerson(@PathVariable Long id, @PathVariable Long currentUserId){
-        Person rejectedPerson = personService.rejectPerson(id,currentUserId);
-        return ResponseEntity.ok(rejectedPerson);
+    public ResponseEntity<?> rejectPerson(@PathVariable Long id, @PathVariable Long currentUserId){
+        try{
+            Person rejectedPerson = personService.rejectPerson(id,currentUserId);
+            return ResponseEntity.ok(rejectedPerson);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/delete/{id}/{currentUserId}")

@@ -3,6 +3,7 @@ package internship.paymentSystem.backend.controllers;
 import internship.paymentSystem.backend.services.interfaces.ITransactionService;
 import internship.paymentSystem.backend.models.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,33 +31,58 @@ public class TransactionController {
     }
 
     @PutMapping("/approve/{id}/{currentUserId}")
-    public ResponseEntity<Transaction> approveTransaction(@PathVariable Long id, @PathVariable Long currentUserId){
-        Transaction activeTransaction = transactionService.approveTransaction(id,currentUserId);
-        return ResponseEntity.ok(activeTransaction);
+    public ResponseEntity<?> approveTransaction(@PathVariable Long id, @PathVariable Long currentUserId){
+        try{
+            Transaction activeTransaction = transactionService.approveTransaction(id,currentUserId);
+            return ResponseEntity.ok(activeTransaction);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/reject/{id}/{currentUserId}")
-    public ResponseEntity<Transaction> rejectTransaction(@PathVariable Long id, @PathVariable Long currentUserId){
-        Transaction rejectedTransaction = transactionService.rejectTransaction(id,currentUserId);
-        return ResponseEntity.ok(rejectedTransaction);
+    public ResponseEntity<?> rejectTransaction(@PathVariable Long id, @PathVariable Long currentUserId){
+        try{
+            Transaction rejectedTransaction = transactionService.rejectTransaction(id,currentUserId);
+            return ResponseEntity.ok(rejectedTransaction);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/deposit/{currentUserId}")
-    public ResponseEntity<Transaction> depositTransaction(@RequestBody Transaction transactionDetails, @PathVariable Long currentUserId){
-        Transaction transaction = transactionService.depositTransaction(transactionDetails, currentUserId);
-        return ResponseEntity.ok(transaction);
+    public ResponseEntity<?> depositTransaction(@RequestBody Transaction transactionDetails, @PathVariable Long currentUserId){
+        try{
+            Transaction transaction = transactionService.depositTransaction(transactionDetails, currentUserId);
+            return ResponseEntity.ok(transaction);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/withdrawal/{currentUserId}")
-    public ResponseEntity<Transaction> withdrawalTransaction(@RequestBody Transaction transactionDetails, @PathVariable Long currentUserId){
-        Transaction transaction = transactionService.withdrawalTransaction(transactionDetails,currentUserId);
-        return ResponseEntity.ok(transaction);
+    public ResponseEntity<?> withdrawalTransaction(@RequestBody Transaction transactionDetails, @PathVariable Long currentUserId){
+        try{
+            Transaction transaction = transactionService.withdrawalTransaction(transactionDetails,currentUserId);
+            return ResponseEntity.ok(transaction);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/transfer/{currentUserId}")
-    public ResponseEntity<Transaction> transferTransaction(@RequestBody Transaction transactionDetails, @PathVariable Long currentUserId){
-        Transaction transaction = transactionService.transferTransaction(transactionDetails,currentUserId);
-        return ResponseEntity.ok(transaction);
+    public ResponseEntity<?> transferTransaction(@RequestBody Transaction transactionDetails, @PathVariable Long currentUserId){
+        try{
+            Transaction transaction = transactionService.transferTransaction(transactionDetails,currentUserId);
+            return ResponseEntity.ok(transaction);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

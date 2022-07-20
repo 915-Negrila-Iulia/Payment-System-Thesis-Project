@@ -26,9 +26,9 @@ public interface IPersonService {
 
     Person updatePerson(Long id, Long currentUserId, Person personalInfo);
 
-    Person approvePerson(Long id, Long currentUserId);
+    Person approvePerson(Long id, Long currentUserId) throws Exception;
 
-    Person rejectPerson(Long id, Long currentUserId);
+    Person rejectPerson(Long id, Long currentUserId) throws Exception;
 
     Person deletePerson(Long id, Long currentUserId);
 

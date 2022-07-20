@@ -13,16 +13,16 @@ public interface ITransactionService {
 
     List<Transaction> getAllTransactions();
 
-    Transaction depositTransaction(Transaction transactionDetails, Long currentUserId);
+    Transaction depositTransaction(Transaction transactionDetails, Long currentUserId) throws Exception;
 
-    Transaction withdrawalTransaction(Transaction transactionDetails, Long currentUserId);
+    Transaction withdrawalTransaction(Transaction transactionDetails, Long currentUserId) throws Exception;
 
-    Transaction transferTransaction(Transaction transactionDetails, Long currentUserId);
+    Transaction transferTransaction(Transaction transactionDetails, Long currentUserId) throws Exception;
 
     Transaction createTransaction(Transaction transaction, Long currentUserId);
 
-    Transaction approveTransaction(Long id, Long currentUserId);
+    Transaction approveTransaction(Long id, Long currentUserId) throws Exception;
 
-    Transaction rejectTransaction(Long id, Long currentUserId);
+    Transaction rejectTransaction(Long id, Long currentUserId) throws Exception;
 
 }

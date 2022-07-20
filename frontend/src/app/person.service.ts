@@ -21,6 +21,10 @@ export class PersonService {
     return this.httpClient.get<Person[]>(this.baseUrl);
   }
 
+  getPersonById(id: number){
+    return this.httpClient.get<Person>(this.baseUrl+`/${id}`);
+  }
+
   getHistoryOfPersons(){
     return this.httpClient.get<PersonHistory[]>(this.baseUrl+"/history");
   }

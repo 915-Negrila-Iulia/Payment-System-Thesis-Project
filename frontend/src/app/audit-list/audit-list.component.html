@@ -1,5 +1,5 @@
 <div class="container">
-    <br><br><br>
+  <button class="top-button" (click)="getAudit()">AUDIT</button>
     <div class="audit-list-container">
       <table id='auditTable'>
           <tr>
@@ -15,7 +15,7 @@
             <td>{{item.objectID}}</td>
             <td>{{item.objectType}}</td>
             <td>{{item.operation}}</td>
-            <td>{{item.userID}}</td>
+            <td>{{getUsername(item.userID)}}</td>
             <td>{{item.timestamp | date: 'medium'}}</td>
           </tr>
         </table>

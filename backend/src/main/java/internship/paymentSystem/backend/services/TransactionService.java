@@ -64,7 +64,7 @@ public class TransactionService implements ITransactionService {
      */
     @Transactional
     @Override
-    public Transaction depositTransaction(Transaction transactionDetails, Long currentUserId){
+    public Transaction depositTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
         if(Objects.equals(userId, currentUserId)) {
@@ -77,7 +77,9 @@ public class TransactionService implements ITransactionService {
             auditService.saveAudit(audit);
             return transaction;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to make transaction");
+        }
     }
 
     /**
@@ -92,7 +94,7 @@ public class TransactionService implements ITransactionService {
      */
     @Transactional
     @Override
-    public Transaction withdrawalTransaction(Transaction transactionDetails, Long currentUserId) {
+    public Transaction withdrawalTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
         if(Objects.equals(userId, currentUserId)) {
@@ -105,7 +107,9 @@ public class TransactionService implements ITransactionService {
             auditService.saveAudit(audit);
             return transaction;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to make transaction");
+        }
     }
 
     /**
@@ -120,7 +124,7 @@ public class TransactionService implements ITransactionService {
      */
     @Transactional
     @Override
-    public Transaction transferTransaction(Transaction transactionDetails, Long currentUserId) {
+    public Transaction transferTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
         if(Objects.equals(userId, currentUserId)) {
@@ -135,7 +139,9 @@ public class TransactionService implements ITransactionService {
             auditService.saveAudit(audit);
             return transaction;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to make transaction");
+        }
     }
 
     @Transactional
@@ -161,7 +167,7 @@ public class TransactionService implements ITransactionService {
      * @return the approved transaction
      */
     @Override
-    public Transaction approveTransaction(Long id, Long currentUserId) {
+    public Transaction approveTransaction(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.TRANSACTION), currentUserId)) {
             Transaction transaction = transactionRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
@@ -172,7 +178,9 @@ public class TransactionService implements ITransactionService {
             auditService.saveAudit(audit);
             return activeTransaction;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to approve");
+        }
     }
 
     /**
@@ -188,7 +196,7 @@ public class TransactionService implements ITransactionService {
      */
     @Transactional
     @Override
-    public Transaction rejectTransaction(Long id, Long currentUserId) {
+    public Transaction rejectTransaction(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.TRANSACTION), currentUserId)) {
             Transaction transaction = transactionRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
@@ -200,7 +208,9 @@ public class TransactionService implements ITransactionService {
             auditService.saveAudit(audit);
             return rejectedTransaction;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to approve");
+        }
     }
 
 }

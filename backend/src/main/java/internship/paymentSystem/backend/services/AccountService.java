@@ -158,7 +158,7 @@ public class AccountService implements IAccountService {
      */
     @Transactional
     @Override
-    public Account approveAccount(Long id, Long currentUserId) {
+    public Account approveAccount(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.ACCOUNT), currentUserId)) {
             Account account = accountRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
@@ -169,7 +169,9 @@ public class AccountService implements IAccountService {
             auditService.saveAudit(audit);
             return activeAccount;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to approve");
+        }
     }
 
     /**
@@ -185,7 +187,7 @@ public class AccountService implements IAccountService {
      */
     @Transactional
     @Override
-    public Account rejectAccount(Long id, Long currentUserId) {
+    public Account rejectAccount(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.ACCOUNT), currentUserId)) {
             Account account = accountRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Account with id " + id + " not found"));
@@ -204,7 +206,9 @@ public class AccountService implements IAccountService {
             auditService.saveAudit(audit);
             return rejectedAccount;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to reject");
+        }
     }
 
     /**

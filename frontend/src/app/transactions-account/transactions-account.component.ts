@@ -23,6 +23,7 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
     targetAccountID: new FormControl('',[]),
   })
   transaction: Transaction = new Transaction();
+  errorMessage = '';
 
   constructor(private accountService: AccountService, private transactionService: TransactionService) { }
 
@@ -47,19 +48,25 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
       this.transactionService.deposit(this.transaction).subscribe(data => {
         console.log(data);
       },
-      error => console.log(error));
+      error => {
+        this.errorMessage = error.error;
+      });
     }
     else if(actionPerformed === "WITHDRAWAL"){
       this.transactionService.withdrawal(this.transaction).subscribe(data => {
         console.log(data);
       },
-      error => console.log(error));
+      error => {
+        this.errorMessage = error.error;
+      });
     }
     else if(actionPerformed === "TRANSFER"){
       this.transactionService.transfer(this.transaction).subscribe(data => {
         console.log(data);
       },
-      error => console.log(error));
+      error => {
+        this.errorMessage = error.error;
+      });
     }
 }
 

@@ -139,7 +139,7 @@ public class PersonService implements IPersonService {
      */
     @Transactional
     @Override
-    public Person approvePerson(Long id, Long currentUserId) {
+    public Person approvePerson(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.PERSON), currentUserId)) {
             Person person = personRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
@@ -150,7 +150,9 @@ public class PersonService implements IPersonService {
             auditService.saveAudit(audit);
             return activePerson;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to approve");
+        }
     }
 
     /**
@@ -166,7 +168,7 @@ public class PersonService implements IPersonService {
      */
     @Transactional
     @Override
-    public Person rejectPerson(Long id, Long currentUserId) {
+    public Person rejectPerson(Long id, Long currentUserId) throws Exception {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.PERSON), currentUserId)) {
             Person person = personRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Person with id " + id + " not found"));
@@ -185,7 +187,9 @@ public class PersonService implements IPersonService {
             auditService.saveAudit(audit);
             return rejectedPerson;
         }
-        return null;
+        else{
+            throw new Exception("Not allowed to reject");
+        }
     }
 
     /**
@@ -213,6 +217,5 @@ public class PersonService implements IPersonService {
         auditService.saveAudit(audit);
         return deletedPerson;
     }
-
 
 }

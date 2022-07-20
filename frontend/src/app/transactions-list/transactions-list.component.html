@@ -1,6 +1,7 @@
 <div class="container">
-    <br><br><br>
+    <button class="top-button" (click)="getTransactions()">TRANSACTIONS</button>
     <div class="transactions-list-container">
+      <span>{{errorMessage}}</span>
       <table id='transactionsTable'>
           <tr>
               <th>#</th>

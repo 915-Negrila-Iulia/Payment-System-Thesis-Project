@@ -22,6 +22,7 @@ export class AccountsListComponent implements OnInit, OnChanges {
   doTransaction: boolean = false;
   persons: Person[] = [];
   objectType= 'ACCOUNT';
+  errorMessage='';
 
   constructor(private accountService: AccountService, private personService: PersonService, private router: Router) { }
 
@@ -65,38 +66,46 @@ export class AccountsListComponent implements OnInit, OnChanges {
     this.account.personID = personID;
     this.account.status = status;
     this.accountService.updateAccount(id,this.account).subscribe(data => {
-      console.log(data);
+      window.location.reload();
     },
-    error => console.log(error)
+    error => {
+      this.errorMessage = error.error;
+    }
     );
-    window.location.reload();
+    
   }
 
   deleteAccount(id: any){
     this.accountService.deleteAccount(id).subscribe(data => {
-      console.log(data);
+      window.location.reload();
     },
-    error => console.log(error)
+    error => {
+      this.errorMessage = error.error;
+    }
     );
-    window.location.reload();
+    
   }
 
   approveAccount(id: any){
     this.accountService.approveAccount(id).subscribe(data => {
-      console.log(data);
+      window.location.reload();
     },
-    error => console.log(error)
+    error => {
+      this.errorMessage = error.error;
+    }
     );
-    window.location.reload();
+    
   }
 
   rejectAccount(id: number | undefined){
-        this.accountService.rejectAccount(id).subscribe(data => {
-      console.log(data);
+    this.accountService.rejectAccount(id).subscribe(data => {
+      window.location.reload();
     },
-    error => console.log(error)
+    error => {
+      this.errorMessage = error.error;
+    }
     );
-    window.location.reload();
+    
   }
 
   selectAccount(id: any){

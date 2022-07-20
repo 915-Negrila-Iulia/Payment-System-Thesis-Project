@@ -4,6 +4,7 @@ import internship.paymentSystem.backend.services.interfaces.IUserService;
 import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.models.UserHistory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,15 +43,25 @@ public class UserController {
     }
 
     @PutMapping("users/approve/{id}/{currentUserId}")
-    public ResponseEntity<User> approveUser(@PathVariable Long id, @PathVariable Long currentUserId){
-        User activeUser = userService.approveUser(id,currentUserId);
-        return ResponseEntity.ok(activeUser);
+    public ResponseEntity<?> approveUser(@PathVariable Long id, @PathVariable Long currentUserId){
+        try {
+            User activeUser = userService.approveUser(id, currentUserId);
+            return ResponseEntity.ok(activeUser);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("users/reject/{id}/{currentUserId}")
-    public ResponseEntity<User> rejectUser(@PathVariable Long id, @PathVariable Long currentUserId){
-        User rejectedUser = userService.rejectUser(id,currentUserId);
-        return ResponseEntity.ok(rejectedUser);
+    public ResponseEntity<?> rejectUser(@PathVariable Long id, @PathVariable Long currentUserId){
+        try {
+            User rejectedUser = userService.rejectUser(id, currentUserId);
+            return ResponseEntity.ok(rejectedUser);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("users/delete/{id}/{currentUserId}")
