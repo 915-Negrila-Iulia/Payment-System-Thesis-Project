@@ -4,7 +4,7 @@
         <p>Country code: {{account.countryCode}}</p>
         <p>Bank code: {{account.bankCode}}</p>
         <p>Currency: {{account.currency}}</p>
-        <p>AccountID: {{accountId}}</p>
+        <p>Person: {{getPersonDetails(account.personID)}}</p>
         <p>Total: {{currentBalance.total}}</p>
         <p>Available: {{currentBalance.available}}</p>
         <p>Timestamp: {{currentBalance.timestamp | date: 'medium'}}</p>

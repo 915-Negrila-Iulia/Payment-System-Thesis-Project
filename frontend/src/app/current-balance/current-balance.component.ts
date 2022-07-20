@@ -3,6 +3,8 @@ import { Account } from '../account';
 import { AccountService } from '../account.service';
 import { Balance } from '../balance';
 import { BalanceService } from '../balance.service';
+import { Person } from '../person';
+import { PersonService } from '../person.service';
 
 @Component({
   selector: 'app-current-balance',
@@ -15,12 +17,16 @@ export class CurrentBalanceComponent implements OnInit {
   accountId: number | undefined;
   currentBalance: Balance = new Balance();
   account: Account = new Account();
+  persons: Person[] = [];
 
-  constructor(private balanceService: BalanceService, private accountService: AccountService) { }
+  constructor(private balanceService: BalanceService, private accountService: AccountService, private personService: PersonService) { }
 
   ngOnInit(): void {
     this.getCurrentBalance();
     this.getAccount();
+    this.personService.getAllPersons().subscribe(data => {
+      this.persons = data;
+    })
   }
 
   getCurrentBalance(){
@@ -37,5 +43,19 @@ export class CurrentBalanceComponent implements OnInit {
       this.account = data;
     },
     err => console.log(err))
+  }
+
+  getPersonDetails(id: number | undefined){
+    if(this.persons){
+      let person = this.persons.filter(pers => pers.id === id)[0];
+      let personString = '';
+      if(person){
+        personString = person.firstName + " " + person.lastName;
+      }
+      return personString;
+    }
+    else{
+      return '';
+    }
   }
 }
