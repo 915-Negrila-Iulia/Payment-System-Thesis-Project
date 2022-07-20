@@ -1,6 +1,6 @@
 package internship.paymentSystem.backend.services;
 
-import internship.paymentSystem.backend.models.enumerations.ActionTransactionEnum;
+import internship.paymentSystem.backend.models.enums.ActionTransactionEnum;
 import internship.paymentSystem.backend.models.Balance;
 import internship.paymentSystem.backend.models.Transaction;
 import internship.paymentSystem.backend.repositories.IBalanceRepository;

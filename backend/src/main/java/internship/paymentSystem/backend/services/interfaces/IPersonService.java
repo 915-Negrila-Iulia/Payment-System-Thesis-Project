@@ -5,6 +5,7 @@ import internship.paymentSystem.backend.models.PersonHistory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface IPersonService {
 
@@ -15,6 +16,10 @@ public interface IPersonService {
     Optional<Person> findPersonById(Long id);
 
     List<Person> getAllPersons();
+
+    Set<Person> getPersonsOfUser(Long userId);
+
+    Person getPersonByDetails(String firstName, String lastName, String phoneNumber);
 
     Person undonePersonChanges(Person person, PersonHistory lastVersion);
 

@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Account } from '../account';
 import { AccountService } from '../account.service';
@@ -23,6 +24,10 @@ export class AccountsListComponent implements OnInit, OnChanges {
   persons: Person[] = [];
   objectType= 'ACCOUNT';
   errorMessage='';
+  chooseAccountStatusFormGroup = new FormGroup({
+    accountStatus: new FormControl()
+  });
+  statusList = ['OPEN','CLOSED','BLOCKED','BLOCK_CREDIT','BLOCK_DEBIT'];
 
   constructor(private accountService: AccountService, private personService: PersonService, private router: Router) { }
 
@@ -56,13 +61,13 @@ export class AccountsListComponent implements OnInit, OnChanges {
     }
   }
 
-  updateAccount(id: any, iban: any, countryCode: any, bankCode: any, currency: any, accountStatus: any, personID: any, status: any){
+  updateAccount(id: any, iban: any, countryCode: any, bankCode: any, currency: any, personID: any, status: any){
     this.account.id = id;
     this.account.iban = iban;
     this.account.countryCode = countryCode.value;
     this.account.bankCode = bankCode.value;
     this.account.currency = currency.value;
-    this.account.accountStatus = accountStatus.value;
+    this.account.accountStatus = this.chooseAccountStatusFormGroup.value.accountStatus;
     this.account.personID = personID;
     this.account.status = status;
     this.accountService.updateAccount(id,this.account).subscribe(data => {

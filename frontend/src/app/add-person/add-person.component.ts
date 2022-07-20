@@ -35,6 +35,7 @@ export class AddPersonComponent implements OnInit {
       console.log(data);
       if(data){
         console.log("succeded");
+        window.location.reload();
       }
       else{
         console.log("failed");

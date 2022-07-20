@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { last } from 'rxjs';
 import { Person } from './person';
 import { PersonHistory } from './person-history';
 
@@ -19,6 +20,14 @@ export class PersonService {
 
   getAllPersons(){
     return this.httpClient.get<Person[]>(this.baseUrl);
+  }
+
+  getPersonsOfUser(){
+    return this.httpClient.get<Person[]>(this.baseUrl+`/user/${this.currentUserId}`);
+  }
+
+  getPersonByDetails(firstName: string, lastName: string, phoneNumber: string){
+    return this.httpClient.get<Person>(this.baseUrl+`/${firstName}/${lastName}/${phoneNumber}`);
   }
 
   getPersonById(id: number){

@@ -3,9 +3,10 @@ package internship.paymentSystem.backend.services;
 import internship.paymentSystem.backend.models.Account;
 import internship.paymentSystem.backend.models.AccountHistory;
 import internship.paymentSystem.backend.models.Audit;
-import internship.paymentSystem.backend.models.enumerations.ObjectTypeEnum;
-import internship.paymentSystem.backend.models.enumerations.OperationEnum;
-import internship.paymentSystem.backend.models.enumerations.StatusEnum;
+import internship.paymentSystem.backend.models.enums.AccountStatusEnum;
+import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
+import internship.paymentSystem.backend.models.enums.OperationEnum;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.repositories.IAccountRepository;
 import internship.paymentSystem.backend.services.interfaces.IAccountHistoryService;
 import internship.paymentSystem.backend.services.interfaces.IAccountService;
@@ -218,6 +219,7 @@ public class AccountService implements IAccountService {
      * And throw an exception otherwise
      * Add a new record in 'AccountHistory' table containing the previous state of the account
      * Change 'Status' and 'NextStatus' to 'DELETE'
+     * Change 'AccountStatus' to 'CLOSED'
      * Update 'Audit' table
      * @param id of the account that is deleted
      * @param currentUserId id of user performing the deletion

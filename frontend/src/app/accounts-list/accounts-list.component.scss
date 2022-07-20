@@ -50,6 +50,10 @@
                 }
             }
 
+            .small-size-solumn{
+                width: 6px;
+            }
+
             input{
                 border: none;
             }
@@ -70,6 +74,15 @@
             .td-input, .td-button{
                 padding: 1px;
                 margin: 0;
+            }
+
+
+            select{
+                display: block;
+                margin: 0 auto;
+                align-self: center;
+                margin-top: 10px;
+                font-size: 13px;
             }
 
         }

@@ -15,9 +15,11 @@
         <label for="accountStatus">Account status</label>
         <input type="text" id="accountStatus" formControlName="accountStatus">
         <span *ngIf="accountStatus && accountStatus.invalid && accountStatus.touched">Account status is invalid</span>
-        <label for="personID">Person id</label>
-        <input type="text" id="personID" formControlName="personID">
-        <span *ngIf="personID && personID.invalid && personID.touched">Person id is invalid</span>
+        <label for="person">Choose Person</label>
+        <select formControlName="person">
+            <option></option>
+            <option *ngFor="let itemPerson of persons">{{itemPerson.firstName}} {{itemPerson.lastName}} {{itemPerson.phoneNumber}}</option>
+        </select>
         <button class="add-button" type="submit" [disabled]="addAccountForm.invalid">ADD</button>
     </form>
 </div>

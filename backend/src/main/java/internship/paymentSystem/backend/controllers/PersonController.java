@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/persons")
@@ -34,6 +35,17 @@ public class PersonController {
     @GetMapping("/history/{personId}")
     public List<PersonHistory> getHistoryOfPerson(@PathVariable Long personId){
         return personService.getHistoryByPersonId(personId);
+    }
+
+    @GetMapping("/user/{currentUserId}")
+    public Set<Person> getPersonsOfUser(@PathVariable Long currentUserId){
+        return personService.getPersonsOfUser(currentUserId);
+    }
+
+    @GetMapping("/{firstName}/{lastName}/{phoneNumber}")
+    public Person getPersonByDetails(@PathVariable String firstName, @PathVariable String lastName,
+                                     @PathVariable String phoneNumber){
+        return personService.getPersonByDetails(firstName,lastName,phoneNumber);
     }
 
     @PostMapping("/{currentUserId}")
