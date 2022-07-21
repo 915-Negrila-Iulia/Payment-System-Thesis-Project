@@ -40,6 +40,7 @@ export class AddAccountComponent implements OnInit {
     var firstName = String(personTokens[0]);
     var lastName = String(personTokens[1]);
     var phoneNumber = String(personTokens[2]);
+    
     var myAccount =  this.addAccountForm.value;
 
     this.personService.getPersonByDetails(firstName,lastName,phoneNumber).subscribe(data => {

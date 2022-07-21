@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CurrentUserDto } from './current-user-dto';
+import { ObjectDto } from './object-dto';
 import { User } from './user';
 import { UserHistory } from './user-history';
 
@@ -9,7 +11,10 @@ import { UserHistory } from './user-history';
 export class UserService {
 
   baseUrl = 'http://localhost:8080/api';
-  currentUserId = sessionStorage.getItem('userID');
+  currentUserId = Number(sessionStorage.getItem('userID'));
+
+  objectDto: ObjectDto = new ObjectDto();
+  currentUserDto: CurrentUserDto = new CurrentUserDto();
 
   constructor(private httpClient: HttpClient) { }
 
@@ -33,19 +38,24 @@ export class UserService {
     return this.httpClient.get<UserHistory[]>(this.baseUrl+"/users/history");
   }
 
-  updateUser(id: number | undefined, user: User){
-    return this.httpClient.put<User>(this.baseUrl+"/users/"+`${id}/${this.currentUserId}`,user);
+  updateUser(id: number, user: User){
+    this.objectDto.currentUserDto.objectId = id;
+    this.objectDto.object = user;
+    return this.httpClient.put<User>(this.baseUrl+"/users",this.objectDto);
   }
 
-  deleteUser(id: number | undefined){
-    return this.httpClient.put<User>(this.baseUrl+"/users/delete/"+`${id}/${this.currentUserId}`,null);
+  deleteUser(id: number){
+    this.currentUserDto.objectId = id;
+    return this.httpClient.put<User>(this.baseUrl+"/users/delete",this.currentUserDto);
   }
 
-  approveUser(id: number | undefined){
-    return this.httpClient.put<User>(this.baseUrl+"/users/approve/"+`${id}/${this.currentUserId}`,null);
+  approveUser(id: number){
+    this.currentUserDto.objectId = id;
+    return this.httpClient.put<User>(this.baseUrl+"/users/approve",this.currentUserDto);
   }
 
-  rejectUser(id: number | undefined){
-    return this.httpClient.put<User>(this.baseUrl+"/users/reject/"+`${id}/${this.currentUserId}`,null);
+  rejectUser(id: number){
+    this.currentUserDto.objectId = id;
+    return this.httpClient.put<User>(this.baseUrl+"/users/reject",this.currentUserDto);
   }
 }

@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService implements IAccountService {
@@ -48,6 +50,21 @@ public class AccountService implements IAccountService {
     @Override
     public List<Account> getAllAccounts() {
         return accountRepository.findAll();
+    }
+
+    @Override
+    public Set<Account> getValidAccounts(){
+        return accountRepository.findAll().stream()
+                .filter(account -> account.getStatus() != StatusEnum.DELETE &&
+                        account.getAccountStatus() != AccountStatusEnum.CLOSED)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Account getAccountByIban(String iban){
+        return accountRepository.findAll().stream()
+                .filter((account -> Objects.equals(account.getIban(), iban)))
+                .findFirst().get();
     }
 
     @Override

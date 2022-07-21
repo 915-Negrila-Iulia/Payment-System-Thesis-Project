@@ -18,19 +18,19 @@
           <tr *ngFor="let item of accounts; let i = index;">
             <td><a [routerLink]="['/audit-list',item.id,objectType]">{{i+1}}</a></td>
             <td>{{item.iban}}</td>
-            <td class="td-input small-size-solumn"><input type="text" [(ngModel)]="accounts[i].countryCode" #countryCode="ngModel"></td>
-            <td class="td-input small-size-solumn"><input type="text" [(ngModel)]="accounts[i].bankCode" #bankCode="ngModel"></td>
-            <td class="td-input small-size-solumn"><input type="text" [(ngModel)]="accounts[i].currency" #currency="ngModel"></td>
-            <div class="drop-down-div" [formGroup]="chooseAccountStatusFormGroup">
-            <select formControlName="accountStatus small-size-solumn">
+            <td class="small-size-solumn">{{item.countryCode}}</td>
+            <td class="small-size-solumn">{{item.bankCode}}</td>
+            <td class="small-size-solumn">{{item.currency}}</td>
+            <td class="drop-down-div" [formGroup]="chooseAccountStatusFormGroup">
+            <select formControlName="accountStatus" class="small-size-column">
                 <option>{{item.accountStatus}}</option>
                 <option *ngFor="let itemAccountStatus of statusList">{{itemAccountStatus}}</option>
             </select>
-            </div>
+          </td>
             <td>{{getPersonDetails(item.personID)}}</td>
             <td>{{item.status}}</td>
             <td>{{item.nextStatus}}</td>
-            <td class="td-button"><button class="updateButton" (click)="updateAccount(item.id,item.iban,countryCode,bankCode,currency,item.personID,item.status)"
+            <td class="td-button"><button class="updateButton" (click)="updateAccount(item.id,item.iban,item.countryCode,item.bankCode,item.currency,item.personID,item.status)"
               [disabled] = "item.status !== 'ACTIVE'">update</button></td>
             <td class="td-button"><button class="deleteButton" (click)="deleteAccount(item.id)"
               [disabled] = "item.status !== 'ACTIVE'">delete</button></td>  

@@ -5,6 +5,7 @@ import internship.paymentSystem.backend.models.AccountHistory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface IAccountService {
 
@@ -13,6 +14,10 @@ public interface IAccountService {
     Optional<Account> findAccountById(Long id);
 
     List<Account> getAllAccounts();
+
+    Set<Account> getValidAccounts();
+
+    Account getAccountByIban(String iban);
 
     Account undoneAccountChanges(Account account, AccountHistory lastVersion);
 

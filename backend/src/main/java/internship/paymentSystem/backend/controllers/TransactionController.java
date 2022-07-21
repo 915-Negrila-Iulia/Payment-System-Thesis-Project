@@ -1,5 +1,8 @@
 package internship.paymentSystem.backend.controllers;
 
+import internship.paymentSystem.backend.DTOs.BaseObjectDto;
+import internship.paymentSystem.backend.DTOs.CurrentUserDto;
+import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.services.interfaces.ITransactionService;
 import internship.paymentSystem.backend.models.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +33,11 @@ public class TransactionController {
         return transactionService.createTransaction(transactionDetails,currentUserId);
     }
 
-    @PutMapping("/approve/{id}/{currentUserId}")
-    public ResponseEntity<?> approveTransaction(@PathVariable Long id, @PathVariable Long currentUserId){
+    @PutMapping("/approve")
+    public ResponseEntity<?> approveTransaction(@RequestBody CurrentUserDto currentUserDto){
         try{
-            Transaction activeTransaction = transactionService.approveTransaction(id,currentUserId);
+            Transaction activeTransaction = transactionService.approveTransaction(currentUserDto.getObjectId(),
+                    currentUserDto.getCurrentUserId());
             return ResponseEntity.ok(activeTransaction);
         }
         catch(Exception e){
@@ -41,10 +45,11 @@ public class TransactionController {
         }
     }
 
-    @PutMapping("/reject/{id}/{currentUserId}")
-    public ResponseEntity<?> rejectTransaction(@PathVariable Long id, @PathVariable Long currentUserId){
+    @PutMapping("/reject")
+    public ResponseEntity<?> rejectTransaction(@RequestBody CurrentUserDto currentUserDto){
         try{
-            Transaction rejectedTransaction = transactionService.rejectTransaction(id,currentUserId);
+            Transaction rejectedTransaction = transactionService.rejectTransaction(currentUserDto.getObjectId(),
+                    currentUserDto.getCurrentUserId());
             return ResponseEntity.ok(rejectedTransaction);
         }
         catch(Exception e){
@@ -52,10 +57,33 @@ public class TransactionController {
         }
     }
 
-    @PutMapping("/deposit/{currentUserId}")
-    public ResponseEntity<?> depositTransaction(@RequestBody Transaction transactionDetails, @PathVariable Long currentUserId){
+    @PutMapping("/AC/{id}")
+    public ResponseEntity<?> authorizeTransaction(@PathVariable Long id){
         try{
-            Transaction transaction = transactionService.depositTransaction(transactionDetails, currentUserId);
+            Transaction activeTransaction = transactionService.authorizeTransaction(id);
+            return ResponseEntity.ok(activeTransaction);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/NAC/{id}")
+    public ResponseEntity<?> notAuthorizeTransaction(@PathVariable Long id){
+        try{
+            Transaction activeTransaction = transactionService.notAuthorizeTransaction(id);
+            return ResponseEntity.ok(activeTransaction);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/deposit")
+    public ResponseEntity<?> depositTransaction(@RequestBody BaseObjectDto<Transaction> transactionDto){
+        try{
+            Transaction transaction = transactionService.depositTransaction(
+                    transactionDto.getObject(), transactionDto.getCurrentUserDto().getCurrentUserId());
             return ResponseEntity.ok(transaction);
         }
         catch(Exception e){
@@ -63,10 +91,11 @@ public class TransactionController {
         }
     }
 
-    @PutMapping("/withdrawal/{currentUserId}")
-    public ResponseEntity<?> withdrawalTransaction(@RequestBody Transaction transactionDetails, @PathVariable Long currentUserId){
+    @PutMapping("/withdrawal")
+    public ResponseEntity<?> withdrawalTransaction(@RequestBody BaseObjectDto<Transaction> transactionDto){
         try{
-            Transaction transaction = transactionService.withdrawalTransaction(transactionDetails,currentUserId);
+            Transaction transaction = transactionService.withdrawalTransaction(
+                    transactionDto.getObject(), transactionDto.getCurrentUserDto().getCurrentUserId());
             return ResponseEntity.ok(transaction);
         }
         catch(Exception e){
@@ -74,10 +103,11 @@ public class TransactionController {
         }
     }
 
-    @PutMapping("/transfer/{currentUserId}")
-    public ResponseEntity<?> transferTransaction(@RequestBody Transaction transactionDetails, @PathVariable Long currentUserId){
+    @PutMapping("/transfer")
+    public ResponseEntity<?> transferTransaction(@RequestBody BaseObjectDto<Transaction> transactionDto){
         try{
-            Transaction transaction = transactionService.transferTransaction(transactionDetails,currentUserId);
+            Transaction transaction = transactionService.transferTransaction(
+                    transactionDto.getObject(), transactionDto.getCurrentUserDto().getCurrentUserId());
             return ResponseEntity.ok(transaction);
         }
         catch(Exception e){

@@ -3,6 +3,8 @@ package internship.paymentSystem.backend.services;
 import internship.paymentSystem.backend.models.enums.ActionTransactionEnum;
 import internship.paymentSystem.backend.models.Balance;
 import internship.paymentSystem.backend.models.Transaction;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
+import internship.paymentSystem.backend.models.enums.TypeTransactionEnum;
 import internship.paymentSystem.backend.repositories.IBalanceRepository;
 import internship.paymentSystem.backend.repositories.ITransactionRepository;
 import internship.paymentSystem.backend.services.interfaces.IBalanceService;
@@ -76,7 +78,8 @@ public class BalanceService implements IBalanceService {
         else if(transaction.getAction() == ActionTransactionEnum.WITHDRAWAL){
             updatedBalance.setTotal(currentBalance.getTotal() - transaction.getAmount());
         }
-        else if(transaction.getAction() == ActionTransactionEnum.TRANSFER) {
+        else if(transaction.getAction() == ActionTransactionEnum.TRANSFER &&
+                transaction.getType() == TypeTransactionEnum.INTERNAL) {
             updatedBalance.setTotal(currentBalance.getTotal() - transaction.getAmount());
 
             Balance targetAccountBalance = this.getCurrentBalance(transaction.getTargetAccountID());
@@ -86,6 +89,14 @@ public class BalanceService implements IBalanceService {
             updatedTargetAccountBalance.setTotal(targetAccountBalance.getTotal() + transaction.getAmount());
             balanceRepository.save(updatedTargetAccountBalance);
         }
+        else if(transaction.getAction() == ActionTransactionEnum.TRANSFER &&
+                transaction.getType() == TypeTransactionEnum.EXTERNAL &&
+                transaction.getStatus() == StatusEnum.ACTIVE){
+            // if transaction type is EXTERNAL -> ips handles the balance of target account
+            //                                 -> total balance of current account is changed only after ips approval
+            updatedBalance.setTotal(currentBalance.getTotal() - transaction.getAmount());
+        }
+
         balanceRepository.save(updatedBalance);
     }
 

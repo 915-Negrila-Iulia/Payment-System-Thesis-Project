@@ -5,5 +5,6 @@ public enum OperationEnum {
     UPDATE,
     APPROVE,
     REJECT,
-    DELETE
+    DELETE,
+    AUTHORIZE
 }

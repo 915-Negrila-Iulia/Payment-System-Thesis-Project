@@ -64,9 +64,9 @@ export class AccountsListComponent implements OnInit, OnChanges {
   updateAccount(id: any, iban: any, countryCode: any, bankCode: any, currency: any, personID: any, status: any){
     this.account.id = id;
     this.account.iban = iban;
-    this.account.countryCode = countryCode.value;
-    this.account.bankCode = bankCode.value;
-    this.account.currency = currency.value;
+    this.account.countryCode = countryCode;
+    this.account.bankCode = bankCode;
+    this.account.currency = currency;
     this.account.accountStatus = this.chooseAccountStatusFormGroup.value.accountStatus;
     this.account.personID = personID;
     this.account.status = status;
