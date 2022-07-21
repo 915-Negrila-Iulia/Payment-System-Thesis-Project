@@ -273,6 +273,15 @@ public class TransactionService implements ITransactionService {
         }
     }
 
+    /**
+     * Authorize transaction
+     * Check if the transaction exists by using the given id and throw an exception otherwise
+     * Change 'Status' to 'ACTIVE'
+     * Update 'Audit' table
+     * Update balance of the account that initiated the transaction
+     * @param id of the transaction that is authorized
+     * @return the rejected transaction
+     */
     @Transactional
     @Override
     public Transaction authorizeTransaction(Long id) throws Exception {
@@ -291,6 +300,15 @@ public class TransactionService implements ITransactionService {
         }
     }
 
+    /**
+     * Not-Authorize transaction
+     * Check if the transaction exists by using the given id and throw an exception otherwise
+     * Change 'Status' and 'NextStatus' to 'DELETE'
+     * Update 'Audit' table
+     * Update balance of the account that initiated the transaction
+     * @param id of the transaction that is authorized
+     * @return the rejected transaction
+     */
     @Transactional
     @Override
     public Transaction notAuthorizeTransaction(Long id) throws Exception {

@@ -48,6 +48,15 @@ public class BalanceService implements IBalanceService {
                 .orElse(null);
     }
 
+    /**
+     * Available Amount
+     * Check if the transaction exists by using the given id
+     * Update available amount of Balance based on transaction type:
+     *      - withdrawal => subtract amount given by transaction from available
+     *      - transfer => subtract amount given by transaction from available
+     * @param accountId id of the account that is updated
+     * @param transactionId id of the transaction of account/s
+     */
     @Override
     public void updateAvailableAmount(Long accountId, Long transactionId){
         Transaction transaction = transactionRepository.findById(transactionId).get();
@@ -65,6 +74,18 @@ public class BalanceService implements IBalanceService {
         balanceRepository.save(updatedBalance);
     }
 
+    /**
+     * Total Amount
+     * Check if the transaction exists by using the given id
+     * Update total amount of Balance based on transaction type:
+     *      - deposit => add amount given by transaction to available and total
+     *      - withdrawal => subtract amount given by transaction from total
+     *      - internal transfer => subtract amount given by transaction from total of account
+     *                 => add amount given by transaction to available and total of target account
+     *      - external transfer => subtract amount given by transaction from available of account
+     *                          => than wait for authorization to modify the total
+     * @param transactionId id of the transaction of account/s
+     */
     @Override
     public void updateTotalAmount(Long transactionId){
         Transaction transaction = transactionRepository.findById(transactionId).get();
@@ -107,6 +128,14 @@ public class BalanceService implements IBalanceService {
         return initialBalance;
     }
 
+    /**
+     * Available Amount
+     * Check if the transaction exists by using the given id
+     * Update available amount of Balance based on transaction type:
+     *      - withdrawal => add (restore) amount given by transaction to available
+     *      - transfer => add (restore) amount given by transaction to available
+     * @param transactionId id of the transaction of account/s
+     */
     @Override
     public void cancelAmountChanges(Long transactionId) {
         Transaction transaction = transactionRepository.findById(transactionId).get();
