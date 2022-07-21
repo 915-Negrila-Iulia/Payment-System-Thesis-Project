@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { last } from 'rxjs';
+import { CurrentUserDto } from './current-user-dto';
+import { ObjectDto } from './object-dto';
 import { Person } from './person';
 import { PersonHistory } from './person-history';
 
@@ -11,6 +13,8 @@ export class PersonService {
   
   baseUrl = 'http://localhost:8080/api/persons';
   currentUserId = sessionStorage.getItem('userID');
+  objectDto: ObjectDto = new ObjectDto();
+  currentUserDto: CurrentUserDto = new CurrentUserDto();
 
   constructor(private httpClient: HttpClient) { }
 
@@ -39,18 +43,23 @@ export class PersonService {
   }
 
   updatePerson(id: number | undefined, person: Person){
-    return this.httpClient.put<Person>(this.baseUrl+`/${id}/${this.currentUserId}`,person);
+    this.objectDto.currentUserDto.objectId = id;
+    this.objectDto.object = person;
+    return this.httpClient.put<Person>(this.baseUrl,this.objectDto);
   }
 
   deletePerson(id: number | undefined){
-    return this.httpClient.put<Person>(this.baseUrl+"/delete/"+`${id}/${this.currentUserId}`,null);
+    this.currentUserDto.objectId = id;
+    return this.httpClient.put<Person>(this.baseUrl+"/delete",this.currentUserDto);
   }
 
   approvePerson(id: number | undefined){
-    return this.httpClient.put<Person>(this.baseUrl+"/approve/"+`${id}/${this.currentUserId}`,null);
+    this.currentUserDto.objectId = id;
+    return this.httpClient.put<Person>(this.baseUrl+"/approve",this.currentUserDto);
   }
 
   rejectPerson(id: number | undefined){
-    return this.httpClient.put<Person>(this.baseUrl+"/reject/"+`${id}/${this.currentUserId}`,null);
+    this.currentUserDto.objectId = id;
+    return this.httpClient.put<Person>(this.baseUrl+"/reject",this.currentUserDto);
   }
 }

@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CurrentUserDto } from './current-user-dto';
+import { ObjectDto } from './object-dto';
 import { Transaction } from './transaction';
 
 @Injectable({
@@ -10,6 +12,9 @@ export class TransactionService {
   baseUrl = "http://localhost:8080/api/transactions";
   currentUserId = sessionStorage.getItem('userID');
 
+  objectDto: ObjectDto = new ObjectDto();
+  currentUserDto: CurrentUserDto = new CurrentUserDto();
+
   constructor(private httpClient: HttpClient) { }
 
   getAllTransactions(){
@@ -17,22 +22,27 @@ export class TransactionService {
   }
 
   deposit(transaction: Transaction){
-    return this.httpClient.put<Transaction>(`${this.baseUrl}/deposit/${this.currentUserId}`,transaction);
+    this.objectDto.object = transaction;
+    return this.httpClient.put<Transaction>(`${this.baseUrl}/deposit`,this.objectDto);
   }
 
   withdrawal(transaction: Transaction){
-    return this.httpClient.put<Transaction>(`${this.baseUrl}/withdrawal/${this.currentUserId}`,transaction);
+    this.objectDto.object = transaction;
+    return this.httpClient.put<Transaction>(`${this.baseUrl}/withdrawal`,this.objectDto);
   }
 
   transfer(transaction: Transaction){
-    return this.httpClient.put<Transaction>(`${this.baseUrl}/transfer/${this.currentUserId}`,transaction);
+    this.objectDto.object = transaction;
+    return this.httpClient.put<Transaction>(`${this.baseUrl}/transfer`,this.objectDto);
   }
 
   approveTransaction(id: number | undefined){
-    return this.httpClient.put<Transaction>(this.baseUrl+"/approve/"+`${id}/${this.currentUserId}`,null);
+    this.currentUserDto.objectId = id;
+    return this.httpClient.put<Transaction>(this.baseUrl+"/approve",this.currentUserDto);
   }
 
   rejectTransaction(id: number | undefined){
-    return this.httpClient.put<Transaction>(this.baseUrl+"/reject/"+`${id}/${this.currentUserId}`,null);
+    this.currentUserDto.objectId = id;
+    return this.httpClient.put<Transaction>(this.baseUrl+"/reject",this.currentUserDto);
   }
 }

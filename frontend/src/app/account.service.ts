@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Account } from './account';
 import { AccountHistory } from './account-history';
+import { CurrentUserDto } from './current-user-dto';
+import { ObjectDto } from './object-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +12,8 @@ export class AccountService {
 
   baseUrl = 'http://localhost:8080/api/accounts';
   currentUserId = sessionStorage.getItem('userID');
+  objectDto: ObjectDto = new ObjectDto();
+  currentUserDto: CurrentUserDto = new CurrentUserDto();
 
   constructor(private httpClient: HttpClient) { }
 
@@ -34,19 +38,24 @@ export class AccountService {
   }
 
   updateAccount(id: number | undefined, account: Account){
-    return this.httpClient.put<Account>(this.baseUrl+`/${id}/${this.currentUserId}`,account);
+    this.objectDto.currentUserDto.objectId = id;
+    this.objectDto.object = account;
+    return this.httpClient.put<Account>(this.baseUrl,this.objectDto);
   }
 
   deleteAccount(id: number | undefined){
-    return this.httpClient.put<Account>(this.baseUrl+"/delete/"+`${id}/${this.currentUserId}`,null);
+    this.currentUserDto.objectId = id;
+    return this.httpClient.put<Account>(this.baseUrl+"/delete",this.currentUserDto);
   }
 
   approveAccount(id: number | undefined){
-    return this.httpClient.put<Account>(this.baseUrl+"/approve/"+`${id}/${this.currentUserId}`,null);
+    this.currentUserDto.objectId = id;
+    return this.httpClient.put<Account>(this.baseUrl+"/approve",this.currentUserDto);
   }
 
   rejectAccount(id: number | undefined){
-    return this.httpClient.put<Account>(this.baseUrl+"/reject/"+`${id}/${this.currentUserId}`,null);
+    this.currentUserDto.objectId = id;
+    return this.httpClient.put<Account>(this.baseUrl+"/reject",this.currentUserDto);
   }
 
   getAccountById(id: number | undefined){

@@ -1,7 +1,10 @@
 package internship.paymentSystem.backend.controllers;
 
+import internship.paymentSystem.backend.DTOs.BaseObjectDto;
+import internship.paymentSystem.backend.DTOs.CurrentUserDto;
 import internship.paymentSystem.backend.models.Account;
 import internship.paymentSystem.backend.models.AccountHistory;
+import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.services.interfaces.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,16 +58,18 @@ public class AccountController {
         return accountService.createAccount(accountDetails,currentUserId);
     }
 
-    @PutMapping("/{id}/{currentUserId}")
-    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @PathVariable Long currentUserId, @RequestBody Account accountDetails){
-        Account updatedAccount = accountService.updateAccount(id,currentUserId,accountDetails);
+    @PutMapping()
+    public ResponseEntity<Account> updateAccount(@RequestBody BaseObjectDto<Account> accountDto){
+        Account updatedAccount = accountService.updateAccount(accountDto.getCurrentUserDto().getObjectId(),
+                accountDto.getCurrentUserDto().getCurrentUserId(), accountDto.getObject());
         return ResponseEntity.ok(updatedAccount);
     }
 
-    @PutMapping("/approve/{id}/{currentUserId}")
-    public ResponseEntity<?> approveAccount(@PathVariable Long id, @PathVariable Long currentUserId){
+    @PutMapping("/approve")
+    public ResponseEntity<?> approveAccount(@RequestBody CurrentUserDto currentUserDto){
         try{
-            Account activeAccount = accountService.approveAccount(id,currentUserId);
+            Account activeAccount = accountService.approveAccount(currentUserDto.getObjectId(),
+                    currentUserDto.getCurrentUserId());
             return ResponseEntity.ok(activeAccount);
         }
         catch(Exception e){
@@ -72,10 +77,11 @@ public class AccountController {
         }
     }
 
-    @PutMapping("/reject/{id}/{currentUserId}")
-    public ResponseEntity<?> rejectAccount(@PathVariable Long id, @PathVariable Long currentUserId){
+    @PutMapping("/reject")
+    public ResponseEntity<?> rejectAccount(@RequestBody CurrentUserDto currentUserDto){
         try{
-            Account rejectedAccount = accountService.rejectAccount(id,currentUserId);
+            Account rejectedAccount = accountService.rejectAccount(currentUserDto.getObjectId(),
+                    currentUserDto.getCurrentUserId());
             return ResponseEntity.ok(rejectedAccount);
         }
         catch(Exception e){
@@ -83,9 +89,10 @@ public class AccountController {
         }
     }
 
-    @PutMapping("/delete/{id}/{currentUserId}")
-    public ResponseEntity<Account> deleteAccount(@PathVariable Long id, @PathVariable Long currentUserId){
-        Account deletedAccount = accountService.deleteAccount(id,currentUserId);
+    @PutMapping("/delete")
+    public ResponseEntity<Account> deleteAccount(@RequestBody CurrentUserDto currentUserDto){
+        Account deletedAccount = accountService.deleteAccount(currentUserDto.getObjectId(),
+                currentUserDto.getCurrentUserId());
         return ResponseEntity.ok(deletedAccount);
     }
 }

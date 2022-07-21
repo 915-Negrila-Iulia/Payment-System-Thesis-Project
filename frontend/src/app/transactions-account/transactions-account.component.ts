@@ -53,12 +53,11 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
     var myTransaction = this.transactionForm.value;
 
     var targetIban;
-    if(myTransaction.type === 'INTERNAL'){
-      targetIban = this.transactionForm.value.targetAccount;
-    }
-    else if(myTransaction.type === 'EXTERNAL'){
-      console.log(this.iban);
+    if(myTransaction.type === 'EXTERNAL' || myTransaction.action !== 'TRANSFER'){
       targetIban = this.iban.value; // change this to target account from ips
+    }
+    else if(myTransaction.type === 'INTERNAL'){
+      targetIban = this.transactionForm.value.targetAccount;
     }
 
     this.accountService.getAccountByIban(targetIban).subscribe(data => {

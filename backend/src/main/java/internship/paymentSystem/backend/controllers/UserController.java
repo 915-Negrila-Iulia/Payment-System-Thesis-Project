@@ -1,5 +1,8 @@
 package internship.paymentSystem.backend.controllers;
 
+import internship.paymentSystem.backend.DTOs.BaseObjectDto;
+import internship.paymentSystem.backend.DTOs.CurrentUserDto;
+import internship.paymentSystem.backend.DTOs.UserDto;
 import internship.paymentSystem.backend.services.interfaces.IUserService;
 import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.models.UserHistory;
@@ -36,16 +39,17 @@ public class UserController {
         return userService.getHistoryByUserId(userId);
     }
 
-    @PutMapping("/users/{id}/{currentUserId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @PathVariable Long currentUserId, @RequestBody User userDetails){
-        User updatedUser = this.userService.updateUser(id,currentUserId,userDetails);
+    @PutMapping("/users")
+    public ResponseEntity<User> updateUser(@RequestBody BaseObjectDto<User> userDto){
+        User updatedUser = this.userService.updateUser(userDto.getCurrentUserDto().getObjectId(),
+                userDto.getCurrentUserDto().getCurrentUserId(), userDto.getObject());
         return ResponseEntity.ok(updatedUser);
     }
 
-    @PutMapping("users/approve/{id}/{currentUserId}")
-    public ResponseEntity<?> approveUser(@PathVariable Long id, @PathVariable Long currentUserId){
+    @PutMapping("users/approve")
+    public ResponseEntity<?> approveUser(@RequestBody CurrentUserDto currentUserDto){
         try {
-            User activeUser = userService.approveUser(id, currentUserId);
+            User activeUser = userService.approveUser(currentUserDto.getObjectId(), currentUserDto.getCurrentUserId());
             return ResponseEntity.ok(activeUser);
         }
         catch(Exception e){
@@ -53,10 +57,10 @@ public class UserController {
         }
     }
 
-    @PutMapping("users/reject/{id}/{currentUserId}")
-    public ResponseEntity<?> rejectUser(@PathVariable Long id, @PathVariable Long currentUserId){
+    @PutMapping("users/reject")
+    public ResponseEntity<?> rejectUser(@RequestBody CurrentUserDto currentUserDto){
         try {
-            User rejectedUser = userService.rejectUser(id, currentUserId);
+            User rejectedUser = userService.rejectUser(currentUserDto.getObjectId(), currentUserDto.getCurrentUserId());
             return ResponseEntity.ok(rejectedUser);
         }
         catch(Exception e){
@@ -64,9 +68,9 @@ public class UserController {
         }
     }
 
-    @PutMapping("users/delete/{id}/{currentUserId}")
-    public ResponseEntity<User> deleteUser(@PathVariable Long id, @PathVariable Long currentUserId){
-        User deletedUser = userService.deleteUser(id,currentUserId);
+    @PutMapping("users/delete")
+    public ResponseEntity<User> deleteUser(@RequestBody CurrentUserDto currentUserDto){
+        User deletedUser = userService.deleteUser(currentUserDto.getObjectId(), currentUserDto.getCurrentUserId());
         return ResponseEntity.ok(deletedUser);
     }
 }

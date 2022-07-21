@@ -1,7 +1,10 @@
 package internship.paymentSystem.backend.controllers;
 
+import internship.paymentSystem.backend.DTOs.BaseObjectDto;
+import internship.paymentSystem.backend.DTOs.CurrentUserDto;
 import internship.paymentSystem.backend.models.Person;
 import internship.paymentSystem.backend.models.PersonHistory;
+import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.services.interfaces.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,26 +57,17 @@ public class PersonController {
         return person;
     }
 
-    /**
-     * Update person
-     * Check if the person exists by using the given id
-     * And throw an exception otherwise
-     * Add a new record in 'PersonHistory' table containing the previous state of the person
-     * Update 'Audit' table
-     * @param id of the person that is updated
-     * @param details updates to be done on the person
-     * @return status set to 'OK' and the updated person
-     */
-    @PutMapping("/{id}/{currentUserId}")
-    public ResponseEntity<Person> updatePersonalInfo(@PathVariable Long id, @PathVariable Long currentUserId, @RequestBody Person details){
-        Person updatedPerson = personService.updatePerson(id,currentUserId,details);
+    @PutMapping()
+    public ResponseEntity<Person> updatePersonalInfo(@RequestBody BaseObjectDto<Person> personDto){
+        Person updatedPerson = personService.updatePerson(personDto.getCurrentUserDto().getObjectId(),
+                personDto.getCurrentUserDto().getCurrentUserId(),personDto.getObject());
         return ResponseEntity.ok(updatedPerson);
     }
 
-    @PutMapping("/approve/{id}/{currentUserId}")
-    public ResponseEntity<?> approvePerson(@PathVariable Long id, @PathVariable Long currentUserId){
+    @PutMapping("/approve")
+    public ResponseEntity<?> approvePerson(@RequestBody CurrentUserDto currentUserDto){
         try{
-            Person activePerson = personService.approvePerson(id,currentUserId);
+            Person activePerson = personService.approvePerson(currentUserDto.getObjectId(), currentUserDto.getCurrentUserId());
             return ResponseEntity.ok(activePerson);
         }
         catch(Exception e){
@@ -81,10 +75,10 @@ public class PersonController {
         }
     }
 
-    @PutMapping("/reject/{id}/{currentUserId}")
-    public ResponseEntity<?> rejectPerson(@PathVariable Long id, @PathVariable Long currentUserId){
+    @PutMapping("/reject")
+    public ResponseEntity<?> rejectPerson(@RequestBody CurrentUserDto currentUserDto){
         try{
-            Person rejectedPerson = personService.rejectPerson(id,currentUserId);
+            Person rejectedPerson = personService.rejectPerson(currentUserDto.getObjectId(), currentUserDto.getCurrentUserId());
             return ResponseEntity.ok(rejectedPerson);
         }
         catch(Exception e){
@@ -92,9 +86,9 @@ public class PersonController {
         }
     }
 
-    @PutMapping("/delete/{id}/{currentUserId}")
-    public ResponseEntity<Person> deletePerson(@PathVariable Long id, @PathVariable Long currentUserId){
-        Person deletedPerson = personService.deletePerson(id,currentUserId);
+    @PutMapping("/delete")
+    public ResponseEntity<Person> deletePerson(@RequestBody CurrentUserDto currentUserDto){
+        Person deletedPerson = personService.deletePerson(currentUserDto.getObjectId(), currentUserDto.getCurrentUserId());
         return ResponseEntity.ok(deletedPerson);
     }
 }
