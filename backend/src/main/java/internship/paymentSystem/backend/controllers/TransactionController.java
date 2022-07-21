@@ -52,7 +52,7 @@ public class TransactionController {
         }
     }
 
-    @PutMapping("/authorize/{id}")
+    @PutMapping("/AC/{id}")
     public ResponseEntity<?> authorizeTransaction(@PathVariable Long id){
         try{
             Transaction activeTransaction = transactionService.authorizeTransaction(id);
@@ -63,7 +63,7 @@ public class TransactionController {
         }
     }
 
-    @PutMapping("/not-authorize/{id}")
+    @PutMapping("/NAC/{id}")
     public ResponseEntity<?> notAuthorizeTransaction(@PathVariable Long id){
         try{
             Transaction activeTransaction = transactionService.notAuthorizeTransaction(id);
