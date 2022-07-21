@@ -14,13 +14,15 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
 
   @Input()
   accountId: number | undefined;
-  types: any = ['INTERNAL']; // add 'EXTERNAL'
+  types: any = ['INTERNAL','EXTERNAL'];
   actions: any = ['DEPOSIT', 'WITHDRAWAL', 'TRANSFER'];
-  transactionForm: any;
   transaction: Transaction = new Transaction();
   errorMessage = '';
   targetAccounts: any;
   accountDetails: Account = new Account();
+  transactionForm: any;
+
+  // targetIban: any;
 
   constructor(private accountService: AccountService, private transactionService: TransactionService) { }
 
@@ -37,7 +39,6 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
       amount: new FormControl('',[Validators.required]),
       type: new FormControl('',[Validators.required]),
       action: new FormControl('',[Validators.required]),
-      //targetAccountID: new FormControl('',[]),
       targetAccount: new FormControl('',[])
     })
   }
@@ -49,8 +50,16 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
   onSubmit(){
     this.setIbanById();
 
-    var targetIban = this.transactionForm.value.targetAccount;
     var myTransaction = this.transactionForm.value;
+
+    var targetIban;
+    if(myTransaction.type === 'INTERNAL'){
+      targetIban = this.transactionForm.value.targetAccount;
+    }
+    else if(myTransaction.type === 'EXTERNAL'){
+      console.log(this.iban);
+      targetIban = this.iban.value; // change this to target account from ips
+    }
 
     this.accountService.getAccountByIban(targetIban).subscribe(data => {
       
@@ -92,41 +101,11 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
       }
 
     })
-
-    // let actionPerformed = this.transactionForm.value.action;
-    // this.transaction = this.transactionForm.value;
-    // this.transaction.accountID = this.accountId;
-    // this.transaction.status = "APPROVE";
-    // this.transaction.nextStatus = "ACTIVE";
-    // console.log(this.transaction);
-    // if(actionPerformed === "DEPOSIT"){
-    //   this.transactionService.deposit(this.transaction).subscribe(data => {
-    //     console.log(data);
-    //     window.location.reload();
-    //   },
-    //   error => {
-    //     this.errorMessage = error.error;
-    //   });
-    // }
-    // else if(actionPerformed === "WITHDRAWAL"){
-    //   this.transactionService.withdrawal(this.transaction).subscribe(data => {
-    //     console.log(data);
-    //     window.location.reload();
-    //   },
-    //   error => {
-    //     this.errorMessage = error.error;
-    //   });
-    // }
-    // else if(actionPerformed === "TRANSFER"){
-    //   this.transactionService.transfer(this.transaction).subscribe(data => {
-    //     console.log(data);
-    //     window.location.reload();
-    //   },
-    //   error => {
-    //     this.errorMessage = error.error;
-    //   });
-    // }
 }
+
+  get iban(){
+    return this.transactionForm.get('iban');
+  }
 
   get amount(){
     return this.transactionForm.get('amount');
@@ -134,6 +113,10 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
 
   get action(){
     return this.transactionForm.get('action');
+  }
+
+  get targetAccount(){
+    return this.transactionForm.get('targetAccount');
   }
 
   setIbanById(){

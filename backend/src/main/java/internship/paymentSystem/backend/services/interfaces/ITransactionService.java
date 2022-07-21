@@ -25,4 +25,7 @@ public interface ITransactionService {
 
     Transaction rejectTransaction(Long id, Long currentUserId) throws Exception;
 
+    Transaction authorizeTransaction(Long id) throws Exception;
+
+    Transaction notAuthorizeTransaction(Long id) throws Exception;
 }

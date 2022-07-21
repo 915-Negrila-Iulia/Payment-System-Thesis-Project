@@ -52,6 +52,28 @@ public class TransactionController {
         }
     }
 
+    @PutMapping("/authorize/{id}")
+    public ResponseEntity<?> authorizeTransaction(@PathVariable Long id){
+        try{
+            Transaction activeTransaction = transactionService.authorizeTransaction(id);
+            return ResponseEntity.ok(activeTransaction);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/not-authorize/{id}")
+    public ResponseEntity<?> notAuthorizeTransaction(@PathVariable Long id){
+        try{
+            Transaction activeTransaction = transactionService.notAuthorizeTransaction(id);
+            return ResponseEntity.ok(activeTransaction);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PutMapping("/deposit/{currentUserId}")
     public ResponseEntity<?> depositTransaction(@RequestBody Transaction transactionDetails, @PathVariable Long currentUserId){
         try{

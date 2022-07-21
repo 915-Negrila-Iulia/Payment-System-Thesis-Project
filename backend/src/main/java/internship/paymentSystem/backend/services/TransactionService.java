@@ -158,15 +158,33 @@ public class TransactionService implements ITransactionService {
                 if(!(Objects.equals(getStatusByAccountId(targetId),AccountStatusEnum.BLOCK_DEBIT) ||
                         Objects.equals(getStatusByAccountId(targetId),AccountStatusEnum.BLOCKED))) {
                     if(Objects.equals(getCurrencyByAccountId(accountId),getCurrencyByAccountId(targetId))) {
-                        Double amount = transactionDetails.getAmount();
-                        Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.TRANSFER, amount,
-                                accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
-                        transaction.setTargetAccountID(targetId);
-                        transactionRepository.save(transaction);
-                        balanceService.updateAvailableAmount(accountId, transaction.getId());
-                        Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
-                        auditService.saveAudit(audit);
-                        return transaction;
+                        if(transactionDetails.getType() == TypeTransactionEnum.INTERNAL) {
+                            Double amount = transactionDetails.getAmount();
+                            Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL,
+                                    ActionTransactionEnum.TRANSFER, amount, accountId,
+                                    StatusEnum.APPROVE, StatusEnum.ACTIVE);
+                            transaction.setTargetAccountID(targetId);
+                            transactionRepository.save(transaction);
+                            balanceService.updateAvailableAmount(accountId, transaction.getId());
+                            Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION,
+                                    OperationEnum.CREATE, currentUserId);
+                            auditService.saveAudit(audit);
+                            return transaction;
+                        }
+                        else{
+                            // ips transfer
+                            Double amount = transactionDetails.getAmount();
+                            Transaction transaction = new Transaction(TypeTransactionEnum.EXTERNAL,
+                                    ActionTransactionEnum.TRANSFER, amount, accountId,
+                                    StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
+                            transaction.setTargetAccountID(targetId);  // change to target iban - external
+                            transactionRepository.save(transaction);
+                            balanceService.updateAvailableAmount(accountId, transaction.getId());
+                            Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION,
+                                    OperationEnum.CREATE, currentUserId);
+                            auditService.saveAudit(audit);
+                            return transaction;
+                        }
                     }
                     else{
                         throw new Exception("Currencies do not match. Not allowed to transfer");
@@ -213,6 +231,7 @@ public class TransactionService implements ITransactionService {
             Transaction transaction = transactionRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
             transaction.setStatus(transaction.getNextStatus());
+            transaction.setNextStatus(StatusEnum.ACTIVE);
             Transaction activeTransaction = transactionRepository.save(transaction);
             balanceService.updateTotalAmount(transaction.getId());
             Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.APPROVE, currentUserId);
@@ -238,10 +257,9 @@ public class TransactionService implements ITransactionService {
     @Transactional
     @Override
     public Transaction rejectTransaction(Long id, Long currentUserId) throws Exception {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.TRANSACTION), currentUserId)) {
-
-            Transaction transaction = transactionRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
             transaction.setStatus(StatusEnum.DELETE);
             transaction.setNextStatus(StatusEnum.DELETE);
             Transaction rejectedTransaction = transactionRepository.save(transaction);
@@ -251,8 +269,44 @@ public class TransactionService implements ITransactionService {
             return rejectedTransaction;
         }
         else{
-            throw new Exception("Not allowed to approve");
+            throw new Exception("Not allowed to reject");
         }
     }
 
+    @Transactional
+    @Override
+    public Transaction authorizeTransaction(Long id) throws Exception {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
+        if(transaction.getStatus() == StatusEnum.AUTHORIZE) {
+            transaction.setStatus(StatusEnum.ACTIVE);
+            Transaction authorizedTransaction = transactionRepository.save(transaction);
+            balanceService.updateTotalAmount(transaction.getId());
+            Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
+            auditService.saveAudit(audit);
+            return authorizedTransaction;
+        }
+        else {
+            throw new Exception("Authorize not required");
+        }
+    }
+
+    @Transactional
+    @Override
+    public Transaction notAuthorizeTransaction(Long id) throws Exception {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
+        if(transaction.getStatus() == StatusEnum.AUTHORIZE) {
+            transaction.setStatus(StatusEnum.DELETE);
+            transaction.setNextStatus(StatusEnum.DELETE);
+            Transaction rejectedTransaction = transactionRepository.save(transaction);
+            balanceService.cancelAmountChanges(transaction.getId());
+            Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.REJECT, 0L);
+            auditService.saveAudit(audit);
+            return rejectedTransaction;
+        }
+        else{
+            throw new Exception("Authorize not required");
+        }
+    }
 }

@@ -54,6 +54,9 @@ export class AuditListComponent implements OnInit, OnDestroy {
   }
 
   getUsername(id: number | undefined){
+    if(id === 0){
+      return 'ips';
+    }
     if(this.users){
       let user = this.users.filter(user => user.id === id)[0];
       if(user){
