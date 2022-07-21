@@ -21,6 +21,14 @@ export class AccountService {
     return this.httpClient.get<Account[]>(this.baseUrl);
   }
 
+  getValidAccounts(){
+    return this.httpClient.get<Account[]>(this.baseUrl+`/valid`);
+  }
+
+  getAccountByIban(iban: String){
+    return this.httpClient.get<Account>(this.baseUrl+`/by-iban/${iban}`);
+  }
+
   getHistoryOfAccounts(){
     return this.httpClient.get<AccountHistory[]>(this.baseUrl+"/history");
   }

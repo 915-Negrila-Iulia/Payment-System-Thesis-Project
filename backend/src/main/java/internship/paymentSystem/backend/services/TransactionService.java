@@ -56,6 +56,10 @@ public class TransactionService implements ITransactionService {
         return accountService.findAccountById(accountId).get().getAccountStatus();
     }
 
+    private String getCurrencyByAccountId(Long accountId){
+        return accountService.findAccountById(accountId).get().getCurrency();
+    }
+
     /**
      * Deposit amount of money
      * Check if user that wants to deposit is the owner of the account
@@ -147,22 +151,26 @@ public class TransactionService implements ITransactionService {
     public Transaction transferTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
+        Long targetId = transactionDetails.getTargetAccountID();
         if(Objects.equals(userId, currentUserId)) {
             if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_CREDIT) ||
                     Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))) {
-                if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_CREDIT) ||
-                        Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))) {
-
-                    Long targetId = transactionDetails.getTargetAccountID();
-                    Double amount = transactionDetails.getAmount();
-                    Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.TRANSFER, amount,
-                            accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
-                    transaction.setTargetAccountID(targetId);
-                    transactionRepository.save(transaction);
-                    balanceService.updateAvailableAmount(accountId, transaction.getId());
-                    Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
-                    auditService.saveAudit(audit);
-                    return transaction;
+                if(!(Objects.equals(getStatusByAccountId(targetId),AccountStatusEnum.BLOCK_DEBIT) ||
+                        Objects.equals(getStatusByAccountId(targetId),AccountStatusEnum.BLOCKED))) {
+                    if(Objects.equals(getCurrencyByAccountId(accountId),getCurrencyByAccountId(targetId))) {
+                        Double amount = transactionDetails.getAmount();
+                        Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.TRANSFER, amount,
+                                accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
+                        transaction.setTargetAccountID(targetId);
+                        transactionRepository.save(transaction);
+                        balanceService.updateAvailableAmount(accountId, transaction.getId());
+                        Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
+                        auditService.saveAudit(audit);
+                        return transaction;
+                    }
+                    else{
+                        throw new Exception("Currencies do not match. Not allowed to transfer");
+                    }
                 }
                 else{
                     throw new Exception("Debit Blocked. Not allowed to receive");

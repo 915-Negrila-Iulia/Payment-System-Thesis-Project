@@ -21,12 +21,12 @@
             <td class="td-input small-size-solumn"><input type="text" [(ngModel)]="accounts[i].countryCode" #countryCode="ngModel"></td>
             <td class="td-input small-size-solumn"><input type="text" [(ngModel)]="accounts[i].bankCode" #bankCode="ngModel"></td>
             <td class="td-input small-size-solumn"><input type="text" [(ngModel)]="accounts[i].currency" #currency="ngModel"></td>
-            <div class="drop-down-div" [formGroup]="chooseAccountStatusFormGroup">
-            <select formControlName="accountStatus small-size-solumn">
+            <td class="drop-down-div" [formGroup]="chooseAccountStatusFormGroup">
+            <select formControlName="accountStatus" class="small-size-column">
                 <option>{{item.accountStatus}}</option>
                 <option *ngFor="let itemAccountStatus of statusList">{{itemAccountStatus}}</option>
             </select>
-            </div>
+          </td>
             <td>{{getPersonDetails(item.personID)}}</td>
             <td>{{item.status}}</td>
             <td>{{item.nextStatus}}</td>

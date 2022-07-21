@@ -37,7 +37,7 @@
             tr:nth-child(odd){
                 background-color: #f2f2f2;
                 
-                input{
+                input, select{
                     background-color: #f2f2f2;
                 }
             }
@@ -64,7 +64,7 @@
                 outline: none;
             }
 
-            input, button{
+            input, button, select{
                 margin: 0;
                 padding: 0;
                 height: 30px;
@@ -74,15 +74,6 @@
             .td-input, .td-button{
                 padding: 1px;
                 margin: 0;
-            }
-
-
-            select{
-                display: block;
-                margin: 0 auto;
-                align-self: center;
-                margin-top: 10px;
-                font-size: 13px;
             }
 
         }
@@ -124,6 +115,7 @@
         border: 0px;
         width: 200px;
         align-self: center;
+        background-color: #b2d9c3;
     }
 }
 

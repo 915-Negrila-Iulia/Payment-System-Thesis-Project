@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -37,6 +38,16 @@ public class AccountController {
     @GetMapping("/history/{accountId}")
     public List<AccountHistory> getHistoryOfAccount(@PathVariable Long accountId){
         return accountService.getHistoryByAccountId(accountId);
+    }
+
+    @GetMapping("/valid")
+    public Set<Account> getValidAccounts(){
+        return accountService.getValidAccounts();
+    }
+
+    @GetMapping("/by-iban/{iban}")
+    public Account getAccountByIban(@PathVariable String iban){
+        return accountService.getAccountByIban(iban);
     }
 
     @PostMapping("/{currentUserId}")
