@@ -9,6 +9,7 @@ import { LoginFailedComponent } from './login-failed/login-failed.component';
 import { LoginComponent } from './login/login.component';
 import { ObjectStatusHistoryComponent } from './object-status-history/object-status-history.component';
 import { PersonsHomeComponent } from './persons-home/persons-home.component';
+import { TransactionsHomeComponent } from './transactions-home/transactions-home.component';
 import { TransactionsListComponent } from './transactions-list/transactions-list.component';
 import { UsersHomeComponent } from './users-home/users-home.component';
 
@@ -23,7 +24,7 @@ const routes: Routes = [
     { path: 'persons-home', component: PersonsHomeComponent },
     { path: 'accounts-home', component: AccountsHomeComponent },
     { path: 'balances-list', component: BalancesListComponent },
-    { path: 'transactions-list', component: TransactionsListComponent },
+    { path: 'transactions-home', component: TransactionsHomeComponent },
     { path: 'object-status-history/:timestamp/:type', component: ObjectStatusHistoryComponent },
     { path: '**', redirectTo: 'home', pathMatch: 'full' }
   ]}

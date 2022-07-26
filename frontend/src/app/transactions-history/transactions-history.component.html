@@ -1,0 +1,35 @@
+<div class="container">
+    <br><br><br>
+    <div class="transactions-list-container">
+      <table id='transactionsTable'>
+          <tr>
+              <th>#</th>
+              <th>account iban</th>
+              <th>target iban</th>
+              <th>type</th>
+              <th>amount</th>
+              <th>action</th>
+              <th>status</th>
+              <th>next status</th>
+              <th>timestamp</th>
+              <th>transaction</th>
+              <th>history timestamp</th>
+          </tr>
+          <tr *ngFor="let item of transactionsHistory; let i = index;">
+            <td>{{i+1}}</td>
+            <td>{{getIbanAccount(item.accountID)}}</td>
+            <td>{{getIbanAccount(item.targetAccountID)}}</td>
+            <td>{{item.type}}</td>
+            <td>{{item.amount}}</td>
+            <td>{{item.action}}</td>
+            <td>{{item.status}}</td>
+            <td>{{item.nextStatus}}</td>
+            <td>{{item.timestamp | date: 'medium'}}</td>
+            <td>{{item.transactionID}}</td>
+            <td>{{item.historyTimestamp}}</td>
+        </tr>
+        </table>
+      <br>
+      <!-- <button (click)="getTransactions()">getTransactions</button> -->
+</div>
+</div>

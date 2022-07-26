@@ -1,6 +1,7 @@
 package internship.paymentSystem.backend.services.interfaces;
 
 import internship.paymentSystem.backend.models.Transaction;
+import internship.paymentSystem.backend.models.TransactionHistory;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +29,8 @@ public interface ITransactionService {
     Transaction authorizeTransaction(Long id) throws Exception;
 
     Transaction notAuthorizeTransaction(Long id) throws Exception;
+
+    List<TransactionHistory> getHistoryByTransactionId(Long transactionId);
+
+    List<TransactionHistory> getHistoryOfTransactions();
 }

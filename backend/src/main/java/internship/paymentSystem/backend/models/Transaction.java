@@ -1,6 +1,7 @@
 package internship.paymentSystem.backend.models;
 
 import internship.paymentSystem.backend.models.bases.BaseEntity;
+import internship.paymentSystem.backend.models.bases.TransactionEntity;
 import internship.paymentSystem.backend.models.enums.ActionTransactionEnum;
 import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.models.enums.TypeTransactionEnum;
@@ -14,41 +15,18 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "transaction")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Transaction extends BaseEntity {
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private TypeTransactionEnum type;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "action")
-    private ActionTransactionEnum action;
-
-    @Column(name = "amount")
-    private Double amount;
-
-    @Column(name = "account_id")
-    private Long accountID;
-
-    @Column(name = "target_account_id")
-    private Long targetAccountID;
-
-    @Column(name = "timestamp")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @CreationTimestamp
-    private LocalDateTime timestamp;
+public class Transaction extends TransactionEntity {
 
     public Transaction(TypeTransactionEnum type, ActionTransactionEnum action, Double amount, Long accountID,
                        StatusEnum status, StatusEnum nextStatus) {
-        super(status, nextStatus);
-        this.type = type;
-        this.action = action;
-        this.amount = amount;
-        this.accountID = accountID;
+        super(type, action, amount, accountID, status, nextStatus);
     }
+
+    public Transaction() {
+
+    }
+
 }
 

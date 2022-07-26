@@ -2,7 +2,10 @@ package internship.paymentSystem.backend.controllers;
 
 import internship.paymentSystem.backend.DTOs.BaseObjectDto;
 import internship.paymentSystem.backend.DTOs.CurrentUserDto;
+import internship.paymentSystem.backend.models.PersonHistory;
+import internship.paymentSystem.backend.models.TransactionHistory;
 import internship.paymentSystem.backend.models.User;
+import internship.paymentSystem.backend.services.interfaces.ITransactionHistoryService;
 import internship.paymentSystem.backend.services.interfaces.ITransactionService;
 import internship.paymentSystem.backend.models.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,16 @@ public class TransactionController {
 
     @GetMapping("/{id}")
     public Transaction getTransactionById(@PathVariable Long id) {return transactionService.findTransactionById(id).get();}
+
+    @GetMapping("/history")
+    public List<TransactionHistory> getHistoryOfTransactions() {
+        return transactionService.getHistoryOfTransactions();
+    }
+
+    @GetMapping("/history/{transactionId}")
+    public List<TransactionHistory> getHistoryOfTransaction(@PathVariable Long transactionId){
+        return transactionService.getHistoryByTransactionId(transactionId);
+    }
 
     @PostMapping("/{currentUserId}")
     public Transaction createTransaction(@RequestBody Transaction transactionDetails, @PathVariable Long currentUserId){
