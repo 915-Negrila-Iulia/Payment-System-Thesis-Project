@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit {
   }
 
   goToTransactionsHomePage(){
-    this.router.navigate(['/transactions-list']);
+    this.router.navigate(['/transactions-home']);
   }
 
   goToAuditListPage(){

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { CurrentUserDto } from './current-user-dto';
 import { ObjectDto } from './object-dto';
 import { Transaction } from './transaction';
+import { TransactionHistory } from './transaction-history';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,10 @@ export class TransactionService {
 
   getAllTransactions(){
     return this.httpClient.get<Transaction[]>(this.baseUrl);
+  }
+
+  getHistoryOfTransactions(){
+    return this.httpClient.get<TransactionHistory[]>(this.baseUrl+"/history");
   }
 
   deposit(transaction: Transaction){

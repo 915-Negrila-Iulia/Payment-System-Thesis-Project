@@ -36,3 +36,17 @@
       <p> <label for="timestamp">Timestamp</label> {{objStateDto.timestamp | date:'medium'}}</p>
   </div>
 </div>
+
+<div *ngIf="object && objStateDto.type === 'TRANSACTION'" class="details-container">
+  <div class="details-div">
+      <p> <label for="type">Type</label> {{object.type}}</p>
+      <p> <label for="amount">Amount</label> {{object.amount}}</p>
+      <p> <label for="action">Action</label> {{object.action}}</p>
+      <p> <label for="accountID">Account ID</label> {{object.accountID}}</p>
+      <p> <label for="targetAccountID">Target account ID</label> {{object.targetAccountID}}</p>
+      <p> <label for="status">Status</label> {{object.status}}</p>
+      <p> <label for="nextStatus">Next status</label> {{object.nextStatus}}</p>
+      <p> <label for="timestamp">Timestamp</label> {{object.timestamp | date:'medium'}}</p>
+      <p> <label for="timestamp">History timestamp</label> {{objStateDto.timestamp | date:'medium'}}</p>
+  </div>
+</div>

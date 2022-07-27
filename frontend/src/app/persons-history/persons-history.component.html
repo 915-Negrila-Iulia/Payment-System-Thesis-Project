@@ -1,34 +1,67 @@
 <div class="container">
     <br><br><br>
     <div class="persons-history-container">
-      <table id='personsHistoryTable'>
-          <tr>
-              <th>#</th>
-              <!-- <th>personID</th> -->
-              <th>first name</th>
-              <th>last name</th>
-              <th>address</th>
-              <th>date of birth</th>
-              <th>phone number</th>
-              <th>username</th>
-              <th>status</th>
-              <th>next status</th>
-              <th>timestamp</th>
-          </tr>
-          <tr *ngFor="let item of personsHistory; let i = index;">
-            <td>{{i+1}}</td>
-            <!-- <td>{{item.personID}}</td> -->
-            <td>{{item.firstName}}</td>
-            <td>{{item.lastName}}</td>
-            <td>{{item.address}}</td>
-            <td>{{item.dateOfBirth | date}}</td>
-            <td>{{item.phoneNumber}}</td>
-            <td>{{getUsername(item.userID)}}</td>
-            <td>{{item.status}}</td>
-            <td>{{item.nextStatus}}</td>
-            <td>{{item.timestamp | date: 'medium'}}</td>
-          </tr>
+      <table id='personsHistoryTable' mat-table [dataSource]="dataSource"  class="mat-elevation-z8">
+        <ng-container matColumnDef="#">
+          <th mat-header-cell *matHeaderCellDef> # </th>
+          <td mat-cell *matCellDef="let element; let i = index">
+            {{this.paginator.pageIndex == 0 ? i + 1 : 1 + i + this.paginator.pageIndex * this.paginator.pageSize}} 
+          </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef> FirstName </th>
+          <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="lastName">
+          <th mat-header-cell *matHeaderCellDef> LastName </th>
+          <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef> Address </th>
+          <td mat-cell *matCellDef="let element"> {{element.address}} </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="dateOfBirth">
+          <th mat-header-cell *matHeaderCellDef> Date Of Birth </th>
+          <td mat-cell *matCellDef="let element"> {{element.dateOfBirth | date}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="phoneNumber">
+          <th mat-header-cell *matHeaderCellDef> Phone Number </th>
+          <td mat-cell *matCellDef="let element"> {{element.phoneNumber}} </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="user">
+          <th mat-header-cell *matHeaderCellDef> User </th>
+          <td mat-cell *matCellDef="let element"> {{getUsername(element.userID)}} </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="next status">
+          <th mat-header-cell *matHeaderCellDef> Next Status </th>
+          <td mat-cell *matCellDef="let element"> {{element.nextStatus}} </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="timestamp">
+          <th mat-header-cell *matHeaderCellDef> Timestamp </th>
+          <td mat-cell *matCellDef="let element"> {{element.timestamp | date:'medium'}} </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
+  
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                    showFirstLastButtons 
+                    aria-label="Select page of periodic elements">
+        </mat-paginator>
       <br>
       <!-- <button (click)="getPersonsHistory()">getPersonsHistory</button> -->
     </div>

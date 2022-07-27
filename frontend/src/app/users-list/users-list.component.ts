@@ -1,5 +1,7 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { SelectMultipleControlValueAccessor } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { AuditService } from '../audit.service';
 import { User } from '../user';
@@ -10,7 +12,7 @@ import { UserService } from '../user.service';
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.scss']
 })
-export class UsersListComponent implements OnInit {
+export class UsersListComponent implements OnInit, AfterViewInit {
 
   users: User[] = [];
   user: User = new User();
@@ -18,14 +20,25 @@ export class UsersListComponent implements OnInit {
   objectType = 'USER';
   errorMessage = '';
 
+  displayedColumns: string[] = ['#', 'username', 'email', 'status', 'next status', 'actions'];
+  dataSource!: MatTableDataSource<User>;
+  
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+
   constructor(private userService: UserService, private auditService: AuditService) { }
 
   ngOnInit(): void {
     this.getUsers();
-  }
+    this.userService.getAllUsers().subscribe(data => {
+      this.users = data;
+      this.dataSource = new MatTableDataSource(this.users);
+      this.dataSource.paginator = this.paginator;
+    })
+  } 
 
-  delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
+  ngAfterViewInit() {
+    // this.dataSource.paginator = this.paginator;
   }
 
   getUsers(){

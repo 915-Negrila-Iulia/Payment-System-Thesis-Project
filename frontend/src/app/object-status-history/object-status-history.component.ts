@@ -25,6 +25,7 @@ export class ObjectStatusHistoryComponent implements OnInit, OnDestroy {
       this.objStateDto.type = params.get('type');
       this.auditService.getObjectState(this.objStateDto).subscribe(data => {
         this.object = data[0];
+        console.log(data);
       })
     })
   }

@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { Account } from '../account';
 import { AccountService } from '../account.service';
 import { Balance } from '../balance';
@@ -13,6 +15,11 @@ export class BalancesListComponent implements OnInit {
 
   balances: Balance[] = [];
   accounts: Account[] = [];
+  displayedColumns: string[] = ['#', 'account', 'available', 'total', 'timestamp'];
+  dataSource!: MatTableDataSource<Balance>;
+  
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
 
   constructor(private balanceService: BalanceService, private accountService: AccountService) { }
 
@@ -20,6 +27,8 @@ export class BalancesListComponent implements OnInit {
     this.getBalances();
     this.accountService.getAllAccounts().subscribe(data => {
       this.accounts = data;
+      this.dataSource = new MatTableDataSource(this.balances);
+      this.dataSource.paginator = this.paginator;
     })
   }
 

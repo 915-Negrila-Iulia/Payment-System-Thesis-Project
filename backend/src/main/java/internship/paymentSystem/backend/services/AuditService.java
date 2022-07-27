@@ -28,6 +28,9 @@ public class AuditService implements IAuditService {
     @Autowired
     private IAccountHistoryService accountHistoryService;
 
+    @Autowired
+    private ITransactionHistoryService transactionHistoryService;
+
     @Override
     public Audit saveAudit(Audit audit) {
         return auditRepository.save(audit);
@@ -62,6 +65,8 @@ public class AuditService implements IAuditService {
                 return this.personHistoryService.getPersonState(timestamp);
             case ACCOUNT:
                 return this.accountHistoryService.getAccountState(timestamp);
+            case TRANSACTION:
+                return this.transactionHistoryService.getTransactionState(timestamp);
             default:
                 return null;
         }

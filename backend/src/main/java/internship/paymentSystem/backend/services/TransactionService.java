@@ -1,7 +1,9 @@
 package internship.paymentSystem.backend.services;
 
 import internship.paymentSystem.backend.models.Audit;
+import internship.paymentSystem.backend.models.PersonHistory;
 import internship.paymentSystem.backend.models.Transaction;
+import internship.paymentSystem.backend.models.TransactionHistory;
 import internship.paymentSystem.backend.models.enums.*;
 import internship.paymentSystem.backend.repositories.ITransactionRepository;
 import internship.paymentSystem.backend.services.interfaces.*;
@@ -18,6 +20,9 @@ public class TransactionService implements ITransactionService {
 
     @Autowired
     private ITransactionRepository transactionRepository;
+
+    @Autowired
+    private ITransactionHistoryService transactionHistoryService;
 
     @Autowired
     private IBalanceService balanceService;
@@ -44,6 +49,16 @@ public class TransactionService implements ITransactionService {
     @Override
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
+    }
+
+    @Override
+    public List<TransactionHistory> getHistoryOfTransactions() {
+        return transactionHistoryService.getHistoryOfTransactions();
+    }
+
+    @Override
+    public List<TransactionHistory> getHistoryByTransactionId(Long transactionId) {
+        return transactionHistoryService.getHistoryByTransactionId(transactionId);
     }
 
     private Long getUserIdOfAccount(Long accountId){
@@ -84,6 +99,7 @@ public class TransactionService implements ITransactionService {
                 Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.DEPOSIT, amount,
                         accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
                 transactionRepository.save(transaction);
+                transactionHistoryService.saveTransactionHistory(transaction);
                 balanceService.updateAvailableAmount(accountId, transaction.getId());
                 Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
                 auditService.saveAudit(audit);
@@ -122,6 +138,7 @@ public class TransactionService implements ITransactionService {
                 Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.WITHDRAWAL, amount,
                         accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
                 transactionRepository.save(transaction);
+                transactionHistoryService.saveTransactionHistory(transaction);
                 balanceService.updateAvailableAmount(accountId, transaction.getId());
                 Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
                 auditService.saveAudit(audit);
@@ -165,6 +182,7 @@ public class TransactionService implements ITransactionService {
                                     StatusEnum.APPROVE, StatusEnum.ACTIVE);
                             transaction.setTargetAccountID(targetId);
                             transactionRepository.save(transaction);
+                            transactionHistoryService.saveTransactionHistory(transaction);
                             balanceService.updateAvailableAmount(accountId, transaction.getId());
                             Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION,
                                     OperationEnum.CREATE, currentUserId);
@@ -179,6 +197,7 @@ public class TransactionService implements ITransactionService {
                                     StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
                             transaction.setTargetAccountID(targetId);  // change to target iban - external
                             transactionRepository.save(transaction);
+                            transactionHistoryService.saveTransactionHistory(transaction);
                             balanceService.updateAvailableAmount(accountId, transaction.getId());
                             Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION,
                                     OperationEnum.CREATE, currentUserId);
@@ -209,6 +228,7 @@ public class TransactionService implements ITransactionService {
         transactionDetails.setStatus(StatusEnum.APPROVE);
         transactionDetails.setNextStatus(StatusEnum.ACTIVE);
         Transaction transaction = transactionRepository.save(transactionDetails);
+        transactionHistoryService.saveTransactionHistory(transaction);
         Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE,currentUserId);
         auditService.saveAudit(audit);
         return transaction;
@@ -230,6 +250,7 @@ public class TransactionService implements ITransactionService {
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.TRANSACTION), currentUserId)) {
             Transaction transaction = transactionRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
+            transactionHistoryService.saveTransactionHistory(transaction);
             transaction.setStatus(transaction.getNextStatus());
             transaction.setNextStatus(StatusEnum.ACTIVE);
             Transaction activeTransaction = transactionRepository.save(transaction);
@@ -260,6 +281,7 @@ public class TransactionService implements ITransactionService {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
         if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.TRANSACTION), currentUserId)) {
+            transactionHistoryService.saveTransactionHistory(transaction);
             transaction.setStatus(StatusEnum.DELETE);
             transaction.setNextStatus(StatusEnum.DELETE);
             Transaction rejectedTransaction = transactionRepository.save(transaction);
@@ -288,6 +310,7 @@ public class TransactionService implements ITransactionService {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
         if(transaction.getStatus() == StatusEnum.AUTHORIZE) {
+            transactionHistoryService.saveTransactionHistory(transaction);
             transaction.setStatus(StatusEnum.ACTIVE);
             Transaction authorizedTransaction = transactionRepository.save(transaction);
             balanceService.updateTotalAmount(transaction.getId());
@@ -315,6 +338,7 @@ public class TransactionService implements ITransactionService {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
         if(transaction.getStatus() == StatusEnum.AUTHORIZE) {
+            transactionHistoryService.saveTransactionHistory(transaction);
             transaction.setStatus(StatusEnum.DELETE);
             transaction.setNextStatus(StatusEnum.DELETE);
             Transaction rejectedTransaction = transactionRepository.save(transaction);
