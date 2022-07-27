@@ -10,6 +10,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
 
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -38,6 +40,7 @@ import { ObjectStatusHistoryComponent } from './object-status-history/object-sta
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TransactionsHomeComponent } from './transactions-home/transactions-home.component';
 import { TransactionsHistoryComponent } from './transactions-history/transactions-history.component';
+
 
 @NgModule({
   declarations: [
@@ -78,7 +81,9 @@ import { TransactionsHistoryComponent } from './transactions-history/transaction
     MatSidenavModule,
     MatButtonModule,
     MatIconModule,
-    MatDividerModule
+    MatDividerModule,
+    MatPaginatorModule,
+    MatTableModule
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],
   bootstrap: [AppComponent]

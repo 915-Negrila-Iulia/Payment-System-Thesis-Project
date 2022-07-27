@@ -24,7 +24,7 @@
         </select>
         <fieldset [disabled]="this.transactionForm.value.action !== 'TRANSFER'"
         *ngIf="this.transactionForm.value.type === 'EXTERNAL' || this.transactionForm.value.action !== 'TRANSFER'">
-            <input type="text" id="targetAccount" formControlName="targetAccount">
+            <input type="text" id="targetAccount" formControlName="targetAccount"> 
             <span *ngIf="targetAccount && targetAccount.invalid && targetAccount.touched">Iban is invalid</span>
         </fieldset>
         <button class="submit-button" type="submit" [disabled]="transactionForm.invalid">Submit</button>

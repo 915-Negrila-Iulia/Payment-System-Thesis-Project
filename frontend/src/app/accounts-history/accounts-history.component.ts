@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { AccountHistory } from '../account-history';
 import { AccountService } from '../account.service';
 import { Person } from '../person';
@@ -14,12 +16,20 @@ export class AccountsHistoryComponent implements OnInit {
   accountsHistory: AccountHistory[] = [];
   persons: Person[] = [];
 
+  displayedColumns: string[] = ['#', 'iban', 'countryCode', 'bankCode', 'currency', 'account status', 'person', 'status', 'next status', 'timestamp'];
+  dataSource!: MatTableDataSource<AccountHistory>;
+  
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+
   constructor(private accountService: AccountService, private personService: PersonService) { }
 
   ngOnInit(): void {
     this.getAccountsHistory();
     this.personService.getAllPersons().subscribe(data => {
       this.persons = data;
+      this.dataSource = new MatTableDataSource(this.accountsHistory);
+      this.dataSource.paginator = this.paginator;
     })
   }
 

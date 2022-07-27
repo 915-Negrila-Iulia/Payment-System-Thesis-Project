@@ -72,6 +72,11 @@
                 margin: 0;
             }
 
+            .div-buttons{
+                display: flex;
+                flex-direction: row;
+            }
+
         }
     }
 }

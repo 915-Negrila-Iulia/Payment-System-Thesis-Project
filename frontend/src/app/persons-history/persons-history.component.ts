@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { PersonHistory } from '../person-history';
 import { PersonService } from '../person.service';
 import { User } from '../user';
@@ -13,6 +15,12 @@ export class PersonsHistoryComponent implements OnInit {
 
   personsHistory: PersonHistory[] = [];
   users: User[] = [];
+  displayedColumns: string[] = ['#', 'firstName', 'lastName', 'address', 'dateOfBirth', 'phoneNumber', 'user', 'status', 'next status', 'timestamp'];
+  dataSource!: MatTableDataSource<PersonHistory>;
+  
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+
 
   constructor(private personService: PersonService, private userService: UserService) { }
 
@@ -20,7 +28,9 @@ export class PersonsHistoryComponent implements OnInit {
     this.getPersonsHistory();
     this.userService.getAllUsers().subscribe(data => {
       this.users = data;
-      })
+      this.dataSource = new MatTableDataSource(this.personsHistory);
+      this.dataSource.paginator = this.paginator;
+    })
   }
 
   getPersonsHistory(){

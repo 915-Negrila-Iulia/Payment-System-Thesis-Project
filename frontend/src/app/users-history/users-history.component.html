@@ -1,27 +1,48 @@
 <div class="container">
   <br><br><br>
   <div class="users-history-container">
-    <table id='usersHistoryTable' border='1'>
-        <tr>
-            <th>#</th>
-            <!-- <th>userID</th> -->
-            <th>username</th>
-            <th>email</th>
-            <th>status</th>
-            <th>next status</th>
-            <th>timestamp</th>
-        </tr>
-        <tr *ngFor="let item of usersHistory; let i = index;">
-          <td>{{i+1}}</td>
-          <!-- <td>{{item.userID}}</td> -->
-          <td>{{item.username}}</td>
-          <td>{{item.email}}</td>
-          <td>{{item.status}}</td>
-          <td>{{item.nextStatus}}</td>
-          <td>{{item.timestamp | date: 'medium'}}</td>
-        </tr>
+    <table id='usersHistoryTable' mat-table [dataSource]="dataSource"  class="mat-elevation-z8">
+      <ng-container matColumnDef="#">
+        <th mat-header-cell *matHeaderCellDef> # </th>
+        <td mat-cell *matCellDef="let element; let i = index">
+          {{this.paginator.pageIndex == 0 ? i + 1 : 1 + i + this.paginator.pageIndex * this.paginator.pageSize}} 
+        </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef> Username </th>
+        <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Status </th>
+        <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="next status">
+        <th mat-header-cell *matHeaderCellDef> Next Status </th>
+        <td mat-cell *matCellDef="let element"> {{element.nextStatus}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="timestamp">
+        <th mat-header-cell *matHeaderCellDef> Timestamp </th>
+        <td mat-cell *matCellDef="let element"> {{element.timestamp | date:'medium'}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
-    <br>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                  showFirstLastButtons 
+                  aria-label="Select page of periodic elements">
+      </mat-paginator>
+    <!-- <br> -->
     <!-- <button (click)="getUsersHistory()">getHistoryOfUsers</button> -->
   </div>
 </div>

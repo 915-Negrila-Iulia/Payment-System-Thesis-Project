@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { Account } from '../account';
 import { AccountService } from '../account.service';
 import { TransactionHistory } from '../transaction-history';
@@ -13,6 +15,11 @@ export class TransactionsHistoryComponent implements OnInit {
 
   transactionsHistory: TransactionHistory[] = [];
   accounts: Account[] = [];
+  displayedColumns: string[] = ['#', 'account', 'targetAccount', 'type', 'amount', 'action', 'status', 'next status', 'timestamp', 'historyTimestamp'];
+  dataSource!: MatTableDataSource<TransactionHistory>;
+  
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
 
   constructor(private transactionService: TransactionService, private accountService: AccountService) { }
 
@@ -20,6 +27,8 @@ export class TransactionsHistoryComponent implements OnInit {
     this.getTransactionsHistory();
     this.accountService.getAllAccounts().subscribe(data => {
       this.accounts = data;
+      this.dataSource = new MatTableDataSource(this.transactionsHistory);
+      this.dataSource.paginator = this.paginator;
     })
   }
 

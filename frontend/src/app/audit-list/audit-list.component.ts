@@ -1,4 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { Audit } from '../audit';
 import { AuditService } from '../audit.service';
@@ -18,6 +20,11 @@ export class AuditListComponent implements OnInit, OnDestroy {
   objectId: any;
   objectType: any;
   historyRoute: any;
+  displayedColumns: string[] = ['#', 'objectId', 'objectType', 'operation', 'user', 'timestamp'];
+  dataSource!: MatTableDataSource<Audit>;
+  
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
 
   constructor(private auditService: AuditService, private userService: UserService, private activatedRoute: ActivatedRoute) { }
 
@@ -34,7 +41,9 @@ export class AuditListComponent implements OnInit, OnDestroy {
     })
     this.userService.getAllUsers().subscribe(data => {
       this.users = data;
-      })
+      this.dataSource = new MatTableDataSource(this.audit);
+      this.dataSource.paginator = this.paginator;
+    })
   }
 
   ngOnDestroy(): void {
@@ -52,7 +61,7 @@ export class AuditListComponent implements OnInit, OnDestroy {
       this.audit = data;
     });
   }
-
+ 
   getUsername(id: number | undefined){
     if(id === 0){
       return 'ips';

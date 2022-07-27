@@ -1,34 +1,67 @@
 <div class="container">
     <br><br><br>
     <div class="transactions-list-container">
-      <table id='transactionsTable'>
-          <tr>
-              <th>#</th>
-              <th>account iban</th>
-              <th>target iban</th>
-              <th>type</th>
-              <th>amount</th>
-              <th>action</th>
-              <th>status</th>
-              <th>next status</th>
-              <th>timestamp</th>
-              <th>transaction</th>
-              <th>history timestamp</th>
-          </tr>
-          <tr *ngFor="let item of transactionsHistory; let i = index;">
-            <td>{{i+1}}</td>
-            <td>{{getIbanAccount(item.accountID)}}</td>
-            <td>{{getIbanAccount(item.targetAccountID)}}</td>
-            <td>{{item.type}}</td>
-            <td>{{item.amount}}</td>
-            <td>{{item.action}}</td>
-            <td>{{item.status}}</td>
-            <td>{{item.nextStatus}}</td>
-            <td>{{item.timestamp | date: 'medium'}}</td>
-            <td>{{item.transactionID}}</td>
-            <td>{{item.historyTimestamp}}</td>
-        </tr>
-        </table>
+      <table id='transactionsTable' mat-table [dataSource]="dataSource"  class="mat-elevation-z8">
+        <ng-container matColumnDef="#">
+          <th mat-header-cell *matHeaderCellDef> # </th>
+          <td mat-cell *matCellDef="let element; let i = index">
+            {{this.paginator.pageIndex == 0 ? i + 1 : 1 + i + this.paginator.pageIndex * this.paginator.pageSize}} 
+          </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="account">
+          <th mat-header-cell *matHeaderCellDef> Account Iban </th>
+          <td mat-cell *matCellDef="let element"> {{getIbanAccount(element.accountID)}} </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="targetAccount">
+          <th mat-header-cell *matHeaderCellDef> Target Account Iban </th>
+          <td mat-cell *matCellDef="let element"> {{getIbanAccount(element.targetAccountID)}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef> Type </th>
+          <td mat-cell *matCellDef="let element"> {{element.type}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef> Amount </th>
+          <td mat-cell *matCellDef="let element"> {{element.amount}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef> Action </th>
+          <td mat-cell *matCellDef="let element"> {{element.action}} </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="next status">
+          <th mat-header-cell *matHeaderCellDef> Next Status </th>
+          <td mat-cell *matCellDef="let element"> {{element.nextStatus}} </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="timestamp">
+          <th mat-header-cell *matHeaderCellDef> Creation Timestamp </th>
+          <td mat-cell *matCellDef="let element"> {{element.timestamp | date:'medium'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="historyTimestamp">
+          <th mat-header-cell *matHeaderCellDef> Timestamp </th>
+          <td mat-cell *matCellDef="let element"> {{element.historyTimestamp | date:'medium'}} </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                  showFirstLastButtons 
+                  aria-label="Select page of periodic elements">
+      </mat-paginator>
       <br>
       <!-- <button (click)="getTransactions()">getTransactions</button> -->
 </div>
