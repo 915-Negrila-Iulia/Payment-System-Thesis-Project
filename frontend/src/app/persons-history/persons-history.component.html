@@ -1,7 +1,18 @@
 <div class="container">
-    <br><br><br>
+    <br>
+    <div class="filter-buttons-div">
+      <button class="my-persons-button" (click)="getMyPersonsHistory()">My Persons</button>
+      <div class="drop-down">
+      <button class="filter-button" (click)="filterByPerson()">Choose Person</button>
+      <select  [(ngModel)]="selectedPerson">
+          <option></option>
+          <option *ngFor="let itemPerson of persons">{{itemPerson.firstName}} {{itemPerson.lastName}} {{itemPerson.phoneNumber}}</option>
+      </select>
+    </div>
+    </div>
+    <br>
     <div class="persons-history-container">
-      <table id='personsHistoryTable' mat-table [dataSource]="dataSource"  class="mat-elevation-z8">
+      <table id='personsHistoryTable' mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="#">
           <th mat-header-cell *matHeaderCellDef> # </th>
           <td mat-cell *matCellDef="let element; let i = index">

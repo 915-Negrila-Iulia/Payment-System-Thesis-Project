@@ -6,5 +6,5 @@
     </div>
     <app-persons-list *ngIf="show==='personsList'"></app-persons-list>
     <app-add-person *ngIf="show==='addPerson'"></app-add-person>
-    <app-persons-history *ngIf="show==='personsHistory'"></app-persons-history>
+    <app-persons-history [events]="eventsSubject.asObservable()" *ngIf="show==='personsHistory'"></app-persons-history>
 </div>

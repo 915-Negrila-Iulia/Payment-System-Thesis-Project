@@ -1,6 +1,11 @@
 mat-toolbar {
     background: #009681;
     color: white;
+
+    label{
+      position: absolute;
+      right: 30px;
+    }
   }
   
   mat-sidenav {

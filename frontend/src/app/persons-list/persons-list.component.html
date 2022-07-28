@@ -1,5 +1,11 @@
 <div class="container">
-    <br><br><br>
+    <br>
+    <div class="filter-buttons-div">
+      <button (click)="getMyPersons()">My Persons</button>
+      <button (click)="getApprovePersons()">Approve</button>
+      <button (click)="getActivePersons()">Active</button>
+      <button (click)="getDeletedPersons()">Delete</button>
+    </div>
     <div class="persons-list-container">
       <span>{{errorMessage}}</span>
       <table id='personsTable'>

@@ -5,6 +5,7 @@ import internship.paymentSystem.backend.DTOs.CurrentUserDto;
 import internship.paymentSystem.backend.models.Person;
 import internship.paymentSystem.backend.models.PersonHistory;
 import internship.paymentSystem.backend.models.User;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.services.interfaces.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,8 +42,18 @@ public class PersonController {
     }
 
     @GetMapping("/user/{currentUserId}")
-    public Set<Person> getPersonsOfUser(@PathVariable Long currentUserId){
+    public List<Person> getPersonsOfUser(@PathVariable Long currentUserId){
         return personService.getPersonsOfUser(currentUserId);
+    }
+
+    @GetMapping("/history/user/{currentUserId}")
+    public List<PersonHistory> getPersonsHistoryOfUser(@PathVariable Long currentUserId){
+        return personService.getPersonsHistoryOfUser(currentUserId);
+    }
+
+    @GetMapping("/status/{filterStatus}")
+    public List<Person> getPersonsByStatus(@PathVariable StatusEnum filterStatus){
+        return personService.getPersonsByStatus(filterStatus);
     }
 
     @GetMapping("/{firstName}/{lastName}/{phoneNumber}")
