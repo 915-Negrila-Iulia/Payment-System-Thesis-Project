@@ -61,6 +61,30 @@ export class AccountsListComponent implements OnInit, OnChanges {
     }
   }
 
+  getMyAccounts(){
+    this.accountService.getAccountsOfUser().subscribe(data => {
+      this.accounts = data;
+    })
+  }
+
+  getApproveAccounts(){
+    this.accountService.getAccountsByStatus('APPROVE').subscribe(data => {
+      this.accounts = data;
+    })
+  }
+
+  getActiveAccounts(){
+    this.accountService.getAccountsByStatus('ACTIVE').subscribe(data => {
+      this.accounts = data;
+    })
+  }
+
+  getDeletedAccounts(){
+    this.accountService.getAccountsByStatus('DELETE').subscribe(data => {
+      this.accounts = data;
+    })
+  }
+
   updateAccount(id: any, iban: any, countryCode: any, bankCode: any, currency: any, personID: any, status: any){
     this.account.id = id;
     this.account.iban = iban;

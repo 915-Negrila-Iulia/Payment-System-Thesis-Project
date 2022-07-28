@@ -3,12 +3,12 @@
     <div class="filter-buttons-div">
       <button class="my-persons-button" (click)="getMyPersonsHistory()">My Persons</button>
       <div class="drop-down">
-      <button class="filter-button" (click)="filterByPerson()">Choose Person</button>
-      <select  [(ngModel)]="selectedPerson">
-          <option></option>
-          <option *ngFor="let itemPerson of persons">{{itemPerson.firstName}} {{itemPerson.lastName}} {{itemPerson.phoneNumber}}</option>
-      </select>
-    </div>
+        <button class="filter-button" (click)="filterByPerson()">Choose Person</button>
+        <select  [(ngModel)]="selectedPerson">
+            <option></option>
+            <option *ngFor="let itemPerson of persons">{{itemPerson.firstName}} {{itemPerson.lastName}} {{itemPerson.phoneNumber}}</option>
+        </select>
+      </div>
     </div>
     <br>
     <div class="persons-history-container">

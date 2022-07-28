@@ -22,4 +22,8 @@ export class BalanceService {
   getCurrentBalanceOfAccount(id: number){
     return this.httpClient.get<Balance>(`${this.baseUrl}/current-balance/${id}`);
   }
+
+  getBalancesInDateRange(startDate: string | undefined, endDate: string | undefined){
+    return this.httpClient.get<Balance[]>(`${this.baseUrl}/balances/${startDate}/${endDate}`);
+  }
 }

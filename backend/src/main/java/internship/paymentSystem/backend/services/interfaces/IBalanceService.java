@@ -2,6 +2,7 @@ package internship.paymentSystem.backend.services.interfaces;
 
 import internship.paymentSystem.backend.models.Balance;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IBalanceService {
@@ -22,4 +23,5 @@ public interface IBalanceService {
 
     void cancelAmountChanges(Long transactionId);
 
+    List<Balance> filterByDates(String startDate, String endDate);
 }

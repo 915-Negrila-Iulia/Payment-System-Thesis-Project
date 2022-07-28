@@ -11,6 +11,8 @@ import internship.paymentSystem.backend.services.interfaces.IBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -151,6 +153,19 @@ public class BalanceService implements IBalanceService {
             //in target account => do nothing
         }
         balanceRepository.save(updatedBalance);
+    }
+
+    @Override
+    public List<Balance> filterByDates(String startDate, String endDate) {
+        String startDateString = startDate + " 00:00:00";
+        String endDateString = endDate + " 23:59:59";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startDateTime = LocalDateTime.parse(startDateString, formatter);
+        LocalDateTime endDateTime = LocalDateTime.parse(endDateString, formatter);
+        return balanceRepository.findAll().stream()
+                .filter(balance -> !(balance.getTimestamp().isBefore(startDateTime)
+                                    || balance.getTimestamp().isAfter(endDateTime)))
+                .collect(Collectors.toList());
     }
 
 }

@@ -23,6 +23,11 @@ public class BalanceController {
         return this.balanceService.getAllBalancesByAccountId(id);
     }
 
+    @GetMapping("/balances/{startDate}/{endDate}")
+    List<Balance> getBalancesInDateRange(@PathVariable String startDate, @PathVariable String endDate){
+        return this.balanceService.filterByDates(startDate, endDate);
+    }
+
     @GetMapping("/current-balance/{id}")
     Balance getCurrentBalance(@PathVariable Long id){
         return this.balanceService.getCurrentBalance(id);

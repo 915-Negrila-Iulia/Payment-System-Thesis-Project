@@ -1,5 +1,11 @@
 <div id="container-accounts" *ngIf="!doTransaction">
-  <br><br><br>
+  <br>
+  <div class="filter-buttons-div">
+    <button (click)="getMyAccounts()">My Accounts</button>
+    <button (click)="getApproveAccounts()">Approve</button>
+    <button (click)="getActiveAccounts()">Active</button>
+    <button (click)="getDeletedAccounts()">Delete</button>
+  </div>
     <div class="accounts-list-container">
       <span>{{errorMessage}}</span>
       <table id='accountsTable'>

@@ -16,7 +16,7 @@ export class PersonsHistoryComponent implements OnInit, OnDestroy {
 
   personsHistory: PersonHistory[] = [];
   users: User[] = [];
-  persons: any;
+  persons: any; 
   selectedPerson: any;
 
   displayedColumns: string[] = ['#', 'firstName', 'lastName', 'address', 'dateOfBirth', 'phoneNumber', 'user', 'status', 'next status', 'timestamp'];

@@ -3,24 +3,20 @@ package internship.paymentSystem.backend.services;
 import internship.paymentSystem.backend.models.Account;
 import internship.paymentSystem.backend.models.AccountHistory;
 import internship.paymentSystem.backend.models.Audit;
+import internship.paymentSystem.backend.models.Person;
 import internship.paymentSystem.backend.models.enums.AccountStatusEnum;
 import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
 import internship.paymentSystem.backend.models.enums.OperationEnum;
 import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.repositories.IAccountRepository;
-import internship.paymentSystem.backend.services.interfaces.IAccountHistoryService;
-import internship.paymentSystem.backend.services.interfaces.IAccountService;
-import internship.paymentSystem.backend.services.interfaces.IAuditService;
-import internship.paymentSystem.backend.services.interfaces.IBalanceService;
+import internship.paymentSystem.backend.services.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class AccountService implements IAccountService {
@@ -30,6 +26,9 @@ public class AccountService implements IAccountService {
 
     @Autowired
     IAccountHistoryService accountHistoryService;
+
+    @Autowired
+    IPersonService personService;
 
     @Autowired
     IBalanceService balanceService;
@@ -63,8 +62,33 @@ public class AccountService implements IAccountService {
     @Override
     public Account getAccountByIban(String iban){
         return accountRepository.findAll().stream()
-                .filter((account -> Objects.equals(account.getIban(), iban)))
+                .filter(account -> Objects.equals(account.getIban(), iban))
                 .findFirst().get();
+    }
+
+    @Override
+    public List<Account> getAccountByPersonId(Long personId){
+        return accountRepository.findAll().stream()
+                .filter(account -> Objects.equals(account.getPersonID(), personId))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Account> getAccountsOfUser(Long currentUserId) {
+        List<Account> userAccounts = new ArrayList<>();
+        List<Person> userPersons =  personService.getPersonsOfUser(currentUserId);
+        for(Person person:  userPersons){
+            List<Account> accountsList = getAccountByPersonId(person.getId());
+            userAccounts.addAll(accountsList);
+        }
+        return userAccounts;
+    }
+
+    @Override
+    public List<Account> getAccountsByStatus(StatusEnum filterStatus) {
+        return accountRepository.findAll().stream()
+                .filter(account -> account.getStatus() == filterStatus)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -87,6 +111,17 @@ public class AccountService implements IAccountService {
     @Override
     public List<AccountHistory> getHistoryByAccountId(Long accountId) {
         return accountHistoryService.getHistoryByAccountId(accountId);
+    }
+
+    @Override
+    public List<AccountHistory> getAccountsHistoryOfUser(Long currentUserId) {
+        List<AccountHistory> userAccountsHistory = new ArrayList<>();
+        List<Person> userPersons = personService.getPersonsOfUser(currentUserId);
+        for(Person person:  userPersons){
+            List<AccountHistory> accountsList = accountHistoryService.getAccountHistoryByPersonId(person.getId());
+            userAccountsHistory.addAll(accountsList);
+        }
+        return userAccountsHistory;
     }
 
     private String ibanGenerator(String countryCode, String bankCode){
