@@ -45,7 +45,7 @@ public class TransactionHistoryService implements ITransactionHistoryService {
     @Override
     public TransactionHistory getLastVersionOfTransaction(Long personId) {
         List<TransactionHistory> history = this.getHistoryByTransactionId(personId);
-        TransactionHistory findLastVersion = history.stream().max(Comparator.comparing(TransactionHistory::getTimestamp)).get();
+        TransactionHistory findLastVersion = history.stream().max(Comparator.comparing(TransactionHistory::getHistoryTimestamp)).get();
         TransactionHistory lastVersion = new TransactionHistory(findLastVersion.getType(), findLastVersion.getAction(),
                 findLastVersion.getAmount(), findLastVersion.getAccountID(), findLastVersion.getStatus(),
                 findLastVersion.getNextStatus());
@@ -55,7 +55,8 @@ public class TransactionHistoryService implements ITransactionHistoryService {
     @Override
     public List<TransactionHistory> getTransactionState(LocalDateTime timestamp) {
         return transactionHistoryRepository.findAll().stream()
-                .filter(transaction -> transaction.getHistoryTimestamp().isEqual(timestamp)).collect(Collectors.toList());
+                .filter(transaction -> !(transaction.getHistoryTimestamp().isBefore(timestamp.minusSeconds(2))
+                                        || transaction.getHistoryTimestamp().isAfter(timestamp.plusSeconds(2))))
+                .collect(Collectors.toList());
     }
-
 }

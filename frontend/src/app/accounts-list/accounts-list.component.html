@@ -19,7 +19,7 @@
               <th>person</th>
               <th>status</th>
               <th>next status</th>
-              <th colspan="6">Actions</th>
+              <th colspan="7">Actions</th>
           </tr>
           <tr *ngFor="let item of accounts; let i = index;">
             <td><a [routerLink]="['/audit-list',item.id,objectType]">{{i+1}}</a></td>

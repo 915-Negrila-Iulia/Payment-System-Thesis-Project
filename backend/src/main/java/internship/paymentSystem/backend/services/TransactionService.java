@@ -171,7 +171,7 @@ public class TransactionService implements ITransactionService {
         String targetAccountIban = accountService.findAccountById(targetId).get().getIban();
         Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL,
                 ActionTransactionEnum.TRANSFER, amount, accountId, targetId, targetAccountIban,
-                StatusEnum.APPROVE, StatusEnum.ACTIVE);
+                StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
         transactionRepository.save(transaction);
         transactionHistoryService.saveTransactionHistory(transaction);
         balanceService.updateAvailableAmount(accountId, transaction.getId());

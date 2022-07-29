@@ -26,7 +26,6 @@
             <th>action</th>
             <th>status</th>
             <th>next status</th>
-            <th>timestamp</th>
             <th colspan="2">Actions</th>
         </tr>
         <tr *ngFor="let item of transactions; let i = index;">
@@ -39,7 +38,6 @@
           <td>{{item.action}}</td>
           <td>{{item.status}}</td>
           <td>{{item.nextStatus}}</td>
-          <td>{{item.timestamp | date: 'medium'}}</td>
           <td class="td-button"><button class="approveButton" (click)="approveTransaction(item.id)"
             [disabled] = "item.status !== 'APPROVE'">approve</button></td>
           <td class="td-button"><button class="rejectButton" (click)="rejectTransaction(item.id)"

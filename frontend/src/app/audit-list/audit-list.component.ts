@@ -78,4 +78,8 @@ export class AuditListComponent implements OnInit, OnDestroy {
     }
   }
 
+  reload(){
+    window.location.reload();
+  }
+
 }

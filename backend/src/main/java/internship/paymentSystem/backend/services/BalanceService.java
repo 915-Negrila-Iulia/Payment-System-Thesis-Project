@@ -102,22 +102,20 @@ public class BalanceService implements IBalanceService {
             updatedBalance.setTotal(currentBalance.getTotal() - transaction.getAmount());
         }
         else if(transaction.getAction() == ActionTransactionEnum.TRANSFER &&
-                transaction.getType() == TypeTransactionEnum.INTERNAL) {
-            updatedBalance.setTotal(currentBalance.getTotal() - transaction.getAmount());
-
-            Balance targetAccountBalance = this.getCurrentBalance(transaction.getTargetAccountID());
-            Balance updatedTargetAccountBalance = new Balance(targetAccountBalance.getTotal(),
-                    targetAccountBalance.getAvailable(), targetAccountBalance.getAccountID());
-            updatedTargetAccountBalance.setAvailable(targetAccountBalance.getAvailable() + transaction.getAmount());
-            updatedTargetAccountBalance.setTotal(targetAccountBalance.getTotal() + transaction.getAmount());
-            balanceRepository.save(updatedTargetAccountBalance);
-        }
-        else if(transaction.getAction() == ActionTransactionEnum.TRANSFER &&
-                transaction.getType() == TypeTransactionEnum.EXTERNAL &&
                 transaction.getStatus() == StatusEnum.ACTIVE){
-            // if transaction type is EXTERNAL -> ips handles the balance of target account
+            // if transaction action is TRANSFER -> ips handles the balance of target account
             //                                 -> total balance of current account is changed only after ips approval
             updatedBalance.setTotal(currentBalance.getTotal() - transaction.getAmount());
+
+            if(transaction.getType() == TypeTransactionEnum.INTERNAL){
+                // if transaction type is INTERNAL -> total balance of current account and target account are changed
+                Balance targetAccountBalance = this.getCurrentBalance(transaction.getTargetAccountID());
+                Balance updatedTargetAccountBalance = new Balance(targetAccountBalance.getTotal(),
+                        targetAccountBalance.getAvailable(), targetAccountBalance.getAccountID());
+                updatedTargetAccountBalance.setAvailable(targetAccountBalance.getAvailable() + transaction.getAmount());
+                updatedTargetAccountBalance.setTotal(targetAccountBalance.getTotal() + transaction.getAmount());
+                balanceRepository.save(updatedTargetAccountBalance);
+            }
         }
 
         balanceRepository.save(updatedBalance);

@@ -43,11 +43,6 @@
           <th mat-header-cell *matHeaderCellDef> Next Status </th>
           <td mat-cell *matCellDef="let element"> {{element.nextStatus}} </td>
         </ng-container>
-  
-        <ng-container matColumnDef="timestamp">
-          <th mat-header-cell *matHeaderCellDef> Creation Timestamp </th>
-          <td mat-cell *matCellDef="let element"> {{element.timestamp | date:'medium'}} </td>
-        </ng-container>
 
         <ng-container matColumnDef="historyTimestamp">
           <th mat-header-cell *matHeaderCellDef> Timestamp </th>

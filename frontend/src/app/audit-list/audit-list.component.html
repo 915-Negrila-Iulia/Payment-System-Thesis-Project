@@ -1,5 +1,5 @@
 <div class="container">
-  <button class="top-button" (click)="getAudit()">AUDIT</button>
+  <button class="top-button" (click)="getAudit(); reload();">AUDIT</button>
     <div class="audit-list-container">
       <table id='auditTable' mat-table [dataSource]="dataSource"  class="mat-elevation-z8">
         <ng-container matColumnDef="#">

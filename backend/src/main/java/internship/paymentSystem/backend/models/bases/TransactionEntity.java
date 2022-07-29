@@ -41,11 +41,6 @@ public abstract class TransactionEntity extends BaseEntity{
     @Column(name = "target_external_iban")
     private String targetIban;
 
-    @Column(name = "timestamp")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @CreationTimestamp
-    private LocalDateTime timestamp;
-
     public TransactionEntity(TypeTransactionEnum type, ActionTransactionEnum action, Double amount, Long accountID,
                              StatusEnum status, StatusEnum nextStatus) {
         super(status, nextStatus);
