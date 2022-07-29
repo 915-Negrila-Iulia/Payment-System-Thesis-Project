@@ -1,5 +1,19 @@
 <div class="container">
-  <br><br><br>
+  <br>
+  <div class="filter-buttons-div">
+    <div class="drop-down">
+      <button class="filter-button" (click)="filterByIban()">Choose Iban</button>
+      <select  [(ngModel)]="selectedIban">
+          <option></option>
+          <option *ngFor="let itemAccount of accounts">{{itemAccount.iban}}</option>
+      </select>
+    </div>
+    <button class="my-transactions-button" (click)="getApproveTransactions()">Approve</button>
+    <button class="my-transactions-button" (click)="getAuthorizeTransactions()">Authorize</button>
+    <button class="my-transactions-button" (click)="getActiveTransactions()">Active</button>
+    <button class="my-transactions-button" (click)="getDeletedTransactions()">Delete</button>
+  </div>
+  <br>
   <div class="transactions-list-container">
     <span>{{errorMessage}}</span>
     <table id='transactionsTable'>
@@ -18,7 +32,8 @@
         <tr *ngFor="let item of transactions; let i = index;">
           <td><a [routerLink]="['/audit-list',item.id,objectType]">{{i+1}}</a></td>
           <td>{{getIbanAccount(item.accountID)}}</td>
-          <td>{{getIbanAccount(item.targetAccountID)}}</td>
+          <!-- <td>{{getIbanAccount(item.targetAccountID)}}</td> -->
+          <td>{{item.targetIban}}</td>
           <td>{{item.type}}</td>
           <td>{{item.amount}}</td>
           <td>{{item.action}}</td>

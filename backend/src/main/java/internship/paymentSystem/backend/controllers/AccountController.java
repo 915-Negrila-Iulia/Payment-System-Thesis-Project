@@ -40,7 +40,7 @@ public class AccountController {
         return accountService.getHistoryOfAccounts();
     }
 
-    @GetMapping("history/user/{currentUserId}")
+    @GetMapping("/history/user/{currentUserId}")
     public List<AccountHistory> getAccountsHistoryOfUser(@PathVariable Long currentUserId){
         return accountService.getAccountsHistoryOfUser(currentUserId);
     }

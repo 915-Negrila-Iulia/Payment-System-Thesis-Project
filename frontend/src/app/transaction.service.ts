@@ -22,6 +22,14 @@ export class TransactionService {
     return this.httpClient.get<Transaction[]>(this.baseUrl);
   }
 
+  getTransactionsByAccountId(id: number | undefined){
+    return this.httpClient.get<Transaction[]>(this.baseUrl+`/account/${id}`);
+  }
+
+  getTransactionsByStatus(status: string | undefined){
+    return this.httpClient.get<Transaction[]>(this.baseUrl+`/status/${status}`);
+  }
+
   getHistoryOfTransactions(){
     return this.httpClient.get<TransactionHistory[]>(this.baseUrl+"/history");
   }

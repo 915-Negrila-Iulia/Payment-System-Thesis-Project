@@ -8,4 +8,5 @@ export class Transaction {
     status: string | undefined;
     nextStatus: string | undefined;
     timestamp: Date | undefined;
+    targetIban: string | undefined;
 }

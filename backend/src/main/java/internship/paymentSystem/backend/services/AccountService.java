@@ -63,7 +63,8 @@ public class AccountService implements IAccountService {
     public Account getAccountByIban(String iban){
         return accountRepository.findAll().stream()
                 .filter(account -> Objects.equals(account.getIban(), iban))
-                .findFirst().get();
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
