@@ -2,6 +2,7 @@ package internship.paymentSystem.backend.controllers;
 
 import internship.paymentSystem.backend.DTOs.BaseObjectDto;
 import internship.paymentSystem.backend.DTOs.CurrentUserDto;
+import internship.paymentSystem.backend.DTOs.StatisticDto;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.services.interfaces.ITransactionHistoryService;
@@ -47,6 +48,11 @@ public class TransactionController {
     @GetMapping("/account/{id}")
     public List<Transaction> getTransactionsByAccountId(@PathVariable Long id){
         return transactionService.getTransactionsByAccountId(id);
+    }
+
+    @GetMapping("/statistics/{accountId}")
+    public List<StatisticDto> getStatisticsOfAccount(@PathVariable Long accountId){
+        return transactionService.getStatisticsOfAccount(accountId);
     }
 
     @PostMapping("/{currentUserId}")
@@ -135,5 +141,4 @@ public class TransactionController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
 }

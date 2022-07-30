@@ -1,6 +1,8 @@
 package internship.paymentSystem.backend.services;
 
+import internship.paymentSystem.backend.DTOs.StatisticDto;
 import internship.paymentSystem.backend.models.*;
+import internship.paymentSystem.backend.models.bases.TransactionEntity;
 import internship.paymentSystem.backend.models.enums.*;
 import internship.paymentSystem.backend.repositories.ITransactionRepository;
 import internship.paymentSystem.backend.services.interfaces.*;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -370,5 +373,41 @@ public class TransactionService implements ITransactionService {
         else{
             throw new Exception("Authorize not required");
         }
+    }
+
+    private Long getCountStatisticByStatus(Long accountId,StatusEnum status){
+        List<Transaction> transactions = this.getTransactionsByAccountId(accountId);
+        return transactions.stream()
+                .filter(transaction -> transaction.getStatus() == status)
+                .count();
+    }
+
+    private Double getAmountStatisticByStatus(Long accountId,StatusEnum status){
+        List<Transaction> transactions = this.getTransactionsByAccountId(accountId);
+        return transactions.stream()
+                .filter(transaction -> transaction.getStatus() == status)
+                .map(TransactionEntity::getAmount)
+                .reduce(0D, Double::sum);
+    }
+
+    public List<StatisticDto> getStatisticsOfAccount(Long accountId) {
+        List<StatisticDto> statistics = new ArrayList<>();
+        StatisticDto approveStatus = new StatisticDto(StatusEnum.APPROVE,
+                this.getCountStatisticByStatus(accountId,StatusEnum.APPROVE),
+                this.getAmountStatisticByStatus(accountId,StatusEnum.APPROVE));
+        statistics.add(approveStatus);
+        StatisticDto authorizeStatus = new StatisticDto(StatusEnum.AUTHORIZE,
+                this.getCountStatisticByStatus(accountId,StatusEnum.AUTHORIZE),
+                this.getAmountStatisticByStatus(accountId,StatusEnum.AUTHORIZE));
+        statistics.add(authorizeStatus);
+        StatisticDto activeStatus = new StatisticDto(StatusEnum.ACTIVE,
+                this.getCountStatisticByStatus(accountId,StatusEnum.ACTIVE),
+                this.getAmountStatisticByStatus(accountId,StatusEnum.ACTIVE));
+        statistics.add(activeStatus);
+        StatisticDto deleteStatus = new StatisticDto(StatusEnum.DELETE,
+                this.getCountStatisticByStatus(accountId,StatusEnum.DELETE),
+                this.getAmountStatisticByStatus(accountId,StatusEnum.DELETE));
+        statistics.add(deleteStatus);
+        return statistics;
     }
 }

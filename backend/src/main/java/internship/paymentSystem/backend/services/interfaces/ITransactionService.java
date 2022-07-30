@@ -1,5 +1,6 @@
 package internship.paymentSystem.backend.services.interfaces;
 
+import internship.paymentSystem.backend.DTOs.StatisticDto;
 import internship.paymentSystem.backend.models.Transaction;
 import internship.paymentSystem.backend.models.TransactionHistory;
 import internship.paymentSystem.backend.models.enums.StatusEnum;
@@ -38,4 +39,6 @@ public interface ITransactionService {
     List<TransactionHistory> getHistoryByTransactionId(Long transactionId);
 
     List<TransactionHistory> getHistoryOfTransactions();
+
+    List<StatisticDto> getStatisticsOfAccount(Long accountId);
 }

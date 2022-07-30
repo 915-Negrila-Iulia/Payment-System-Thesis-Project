@@ -52,9 +52,16 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
     this.setIbanById();
 
     var myTransaction = this.transactionForm.value;
+    var targetIban;
+
+    if(myTransaction.action !== 'TRANSFER'){
+      targetIban = this.iban.value;
+    }
+    else{
+      targetIban = this.transactionForm.value.targetAccount;
+    }
 
     if(myTransaction.amount === myTransaction.reenteredAmount || myTransaction.amount < 1000){
-      var targetIban = this.transactionForm.value.targetAccount;
 
       this.accountService.getAccountByIban(targetIban).subscribe(data => {
         this.transaction.type = myTransaction.type;

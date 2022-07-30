@@ -2,13 +2,23 @@
     <div class="account-details">
         <label>Balance Details</label>
         <p>Iban: {{account.iban}}</p>
-        <p>Country code: {{account.countryCode}}</p>
-        <p>Bank code: {{account.bankCode}}</p>
-        <p>Currency: {{account.currency}}</p>
-        <p>Person: {{getPersonDetails(account.personID)}}</p>
         <p>Total: {{currentBalance.total}}</p>
         <p>Available: {{currentBalance.available}}</p>
         <p>Timestamp: {{currentBalance.timestamp | date: 'medium'}}</p>
         <p></p>
+        <!-- <div class="statistics-container"> -->
+            <div class="header-row-details">
+              <div class="status">Status</div>
+              <div class="count">Count</div>
+              <div class="amount">Amount</div>
+            </div>
+            <div class="box-details">
+            <div *ngFor="let item of statistics; let i = index;" class="row-details">
+              <p class="status">{{item.status}}</p>
+              <p class="count">{{item.count}}</p>
+              <p class="amount">{{item.amount}}</p>
+            </div>
+          </div>
+      <!-- </div> -->
     </div>
 </div>
