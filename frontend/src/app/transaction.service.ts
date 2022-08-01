@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CurrentUserDto } from './current-user-dto';
 import { ObjectDto } from './object-dto';
+import { StatisticDto } from './statistic-dto';
 import { Transaction } from './transaction';
 import { TransactionHistory } from './transaction-history';
 
@@ -20,6 +21,14 @@ export class TransactionService {
 
   getAllTransactions(){
     return this.httpClient.get<Transaction[]>(this.baseUrl);
+  }
+
+  getTransactionsByAccountId(id: number | undefined){
+    return this.httpClient.get<Transaction[]>(this.baseUrl+`/account/${id}`);
+  }
+
+  getTransactionsByStatus(status: string | undefined){
+    return this.httpClient.get<Transaction[]>(this.baseUrl+`/status/${status}`);
   }
 
   getHistoryOfTransactions(){
@@ -49,5 +58,9 @@ export class TransactionService {
   rejectTransaction(id: number | undefined){
     this.currentUserDto.objectId = id;
     return this.httpClient.put<Transaction>(this.baseUrl+"/reject",this.currentUserDto);
+  }
+
+  getStatisticsOfAccount(id: number | undefined){
+    return this.httpClient.get<StatisticDto[]>(this.baseUrl+`/statistics/${id}`);
   }
 }

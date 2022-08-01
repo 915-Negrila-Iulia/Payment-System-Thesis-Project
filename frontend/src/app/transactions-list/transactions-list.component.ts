@@ -16,6 +16,7 @@ export class TransactionsListComponent implements OnInit {
   accounts: Account[] = [];
   objectType = 'TRANSACTION';
   errorMessage='';
+  selectedIban: string | undefined;
 
   constructor(private transactionService: TransactionService, private accountService: AccountService) { }
 
@@ -63,6 +64,42 @@ export class TransactionsListComponent implements OnInit {
       this.errorMessage = error.error;
     }
     );
+  }
+
+  filterByIban(){
+    if(this.selectedIban){
+      this.accountService.getAccountByIban(this.selectedIban).subscribe(data => {
+        let id = data.id;
+        this.transactionService.getTransactionsByAccountId(id).subscribe(trans => {
+          this.transactions = trans;
+        })
+      })
+      this.selectedIban = '';
+    }
+  }
+
+  getApproveTransactions(){
+    this.transactionService.getTransactionsByStatus('APPROVE').subscribe(data => {
+      this.transactions = data;
+    })
+  }
+
+  getActiveTransactions(){
+    this.transactionService.getTransactionsByStatus('ACTIVE').subscribe(data => {
+      this.transactions = data;
+    })
+  }
+
+  getAuthorizeTransactions(){
+    this.transactionService.getTransactionsByStatus('AUTHORIZE').subscribe(data => {
+      this.transactions = data;
+    })
+  }
+
+  getDeletedTransactions(){
+    this.transactionService.getTransactionsByStatus('DELETE').subscribe(data => {
+      this.transactions = data;
+    })
   }
 
 }

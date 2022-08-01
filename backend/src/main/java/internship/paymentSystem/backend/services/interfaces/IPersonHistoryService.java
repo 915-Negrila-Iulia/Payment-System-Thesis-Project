@@ -15,6 +15,8 @@ public interface IPersonHistoryService {
 
     List<PersonHistory> getHistoryByPersonId(Long id);
 
+    List<PersonHistory> getPersonsHistoryOfUser(Long currentUserId);
+
     PersonHistory getLastVersionOfPerson(Long personId);
 
     List<PersonHistory> getPersonState(LocalDateTime timestamp);

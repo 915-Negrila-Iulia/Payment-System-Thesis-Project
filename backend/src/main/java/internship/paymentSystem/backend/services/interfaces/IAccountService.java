@@ -2,6 +2,7 @@ package internship.paymentSystem.backend.services.interfaces;
 
 import internship.paymentSystem.backend.models.Account;
 import internship.paymentSystem.backend.models.AccountHistory;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +20,19 @@ public interface IAccountService {
 
     Account getAccountByIban(String iban);
 
+    List<Account> getAccountByPersonId(Long id);
+
+    List<Account> getAccountsOfUser(Long currentUserId);
+
+    List<Account> getAccountsByStatus(StatusEnum filterStatus);
+
     Account undoneAccountChanges(Account account, AccountHistory lastVersion);
 
     List<AccountHistory> getHistoryOfAccounts();
 
     List<AccountHistory> getHistoryByAccountId(Long accountId);
+
+    List<AccountHistory> getAccountsHistoryOfUser(Long currentUserId);
 
     Account createAccount(Account account, Long currentUserId);
 

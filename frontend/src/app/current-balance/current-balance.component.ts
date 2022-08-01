@@ -5,6 +5,8 @@ import { Balance } from '../balance';
 import { BalanceService } from '../balance.service';
 import { Person } from '../person';
 import { PersonService } from '../person.service';
+import { StatisticDto } from '../statistic-dto';
+import { TransactionService } from '../transaction.service';
 
 @Component({
   selector: 'app-current-balance',
@@ -18,8 +20,10 @@ export class CurrentBalanceComponent implements OnInit {
   currentBalance: Balance = new Balance();
   account: Account = new Account();
   persons: Person[] = [];
+  statistics: StatisticDto[] = [];
 
-  constructor(private balanceService: BalanceService, private accountService: AccountService, private personService: PersonService) { }
+  constructor(private balanceService: BalanceService, private accountService: AccountService, private personService: PersonService,
+    private transactionService: TransactionService) { }
 
   ngOnInit(): void {
     this.getCurrentBalance();
@@ -36,6 +40,10 @@ export class CurrentBalanceComponent implements OnInit {
       console.log(data);
     },
     err => console.log(err))
+    this.transactionService.getStatisticsOfAccount(this.accountId).subscribe(data => {
+      this.statistics = data;
+      console.log(data);
+    })
   }
 
   getAccount(){

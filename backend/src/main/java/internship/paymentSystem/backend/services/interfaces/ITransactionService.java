@@ -1,7 +1,9 @@
 package internship.paymentSystem.backend.services.interfaces;
 
+import internship.paymentSystem.backend.DTOs.StatisticDto;
 import internship.paymentSystem.backend.models.Transaction;
 import internship.paymentSystem.backend.models.TransactionHistory;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +15,10 @@ public interface ITransactionService {
     Optional<Transaction> findTransactionById(Long id);
 
     List<Transaction> getAllTransactions();
+
+    List<Transaction> getTransactionsByStatus(StatusEnum filterStatus);
+
+    List<Transaction> getTransactionsByAccountId(Long id);
 
     Transaction depositTransaction(Transaction transactionDetails, Long currentUserId) throws Exception;
 
@@ -33,4 +39,6 @@ public interface ITransactionService {
     List<TransactionHistory> getHistoryByTransactionId(Long transactionId);
 
     List<TransactionHistory> getHistoryOfTransactions();
+
+    List<StatisticDto> getStatisticsOfAccount(Long accountId);
 }

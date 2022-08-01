@@ -7,5 +7,5 @@ export class Transaction {
     targetAccountID: number | undefined;
     status: string | undefined;
     nextStatus: string | undefined;
-    timestamp: Date | undefined;
+    targetIban: string | undefined;
 }

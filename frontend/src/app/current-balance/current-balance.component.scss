@@ -5,10 +5,55 @@
     
     .account-details{
 
+        label{
+            font-weight: bold;
+        }
+
         p{
             border-radius: 2px;
             background-color: rgba(255, 255, 255, 0.875);
         }
 
+        .row-details, .header-row-details{
+            display: flex;
+            align-content: center;
+            justify-content: center;
+    
+            .count, .amount{
+                width: 60px;
+            }
+    
+            .status{
+                width: 120px;
+            }
+        }
+
+        .row-details{
+            background-color: rgba(255, 255, 255, 0.875);
+        }
+    
+        .header-row-details{
+            font-weight: bold;
+    
+            .count, .amount{
+                padding-right: 20px;
+            }
+
+        }
+    
+        .box-details{
+            text-align:left;
+            height:100px;
+            overflow-y:scroll;
+            display:flex;
+            flex-direction:column;
+            box-sizing:border-box;
+            border:1px solid #000;
+            scroll-snap-type:y mandatory;
+            border-radius: 2px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.875);
+
+        }
     }
 }

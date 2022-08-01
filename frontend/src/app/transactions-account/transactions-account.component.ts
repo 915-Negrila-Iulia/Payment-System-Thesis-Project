@@ -37,6 +37,7 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
     this.transactionForm = new FormGroup({
       iban: new FormControl({value: '', disabled: true}, Validators.required),
       amount: new FormControl('',[Validators.required]),
+      reenteredAmount: new FormControl('',[]),
       type: new FormControl('',[Validators.required]),
       action: new FormControl('',[Validators.required]),
       targetAccount: new FormControl('',[])
@@ -51,55 +52,69 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
     this.setIbanById();
 
     var myTransaction = this.transactionForm.value;
-
     var targetIban;
-    if(myTransaction.type === 'EXTERNAL' || myTransaction.action !== 'TRANSFER'){
-      targetIban = this.iban.value; // change this to target account from ips
+
+    if(myTransaction.action !== 'TRANSFER'){
+      targetIban = this.iban.value;
     }
-    else if(myTransaction.type === 'INTERNAL'){
+    else{
       targetIban = this.transactionForm.value.targetAccount;
     }
 
-    this.accountService.getAccountByIban(targetIban).subscribe(data => {
-      
-      this.transaction.type = myTransaction.type;
-      this.transaction.amount = myTransaction.amount;
-      this.transaction.action = myTransaction.action;
-      let actionPerformed = myTransaction.action;
-      this.transaction.accountID = this.accountId;
-      this.transaction.targetAccountID = data.id;
-      this.transaction.status = "APPROVE";
-      this.transaction.nextStatus = "ACTIVE";
-      console.log(this.transaction);
-      if(actionPerformed === "DEPOSIT"){
-        this.transactionService.deposit(this.transaction).subscribe(data => {
-          console.log(data);
-          window.location.reload();
-        },
-        error => {
-          this.errorMessage = error.error;
-        });
-      }
-      else if(actionPerformed === "WITHDRAWAL"){
-        this.transactionService.withdrawal(this.transaction).subscribe(data => {
-          console.log(data);
-          window.location.reload();
-        },
-        error => {
-          this.errorMessage = error.error;
-        });
-      }
-      else if(actionPerformed === "TRANSFER"){
-        this.transactionService.transfer(this.transaction).subscribe(data => {
-          console.log(data);
-          window.location.reload();
-        },
-        error => {
-          this.errorMessage = error.error;
-        });
-      }
+    if(myTransaction.amount === myTransaction.reenteredAmount || myTransaction.amount < 1000){
 
-    })
+      this.accountService.getAccountByIban(targetIban).subscribe(data => {
+        this.transaction.type = myTransaction.type;
+        this.transaction.amount = myTransaction.amount;
+        this.transaction.action = myTransaction.action;
+        let actionPerformed = myTransaction.action;
+        this.transaction.accountID = this.accountId;
+        if(data != null){
+          this.transaction.targetAccountID = data.id;
+        }
+        else{
+          this.transaction.targetIban = myTransaction.targetAccount;
+        }
+        this.transaction.status = "APPROVE";
+        this.transaction.nextStatus = "ACTIVE";
+        console.log(this.transaction);
+        if(actionPerformed === "DEPOSIT"){
+          this.transactionService.deposit(this.transaction).subscribe(data => {
+            console.log(data);
+            window.location.reload();
+          },
+          error => {
+            this.errorMessage = error.error;
+          });
+        }
+        else if(actionPerformed === "WITHDRAWAL"){
+          this.transactionService.withdrawal(this.transaction).subscribe(data => {
+            console.log(data);
+            window.location.reload();
+          },
+          error => {
+            this.errorMessage = error.error;
+          });
+        }
+        else if(actionPerformed === "TRANSFER"){
+          this.transactionService.transfer(this.transaction).subscribe(data => {
+            console.log(data);
+            window.location.reload();
+          },
+          error => {
+            console.log(error);
+            this.errorMessage = error.error;
+          });
+        }
+      },
+      err => {
+        console.log("null");
+        console.log(err);
+      })
+    }
+    else{
+      this.errorMessage = "Reentered Amount is not the same";
+    }
 }
 
   get iban(){
@@ -108,6 +123,10 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
 
   get amount(){
     return this.transactionForm.get('amount');
+  }
+
+  get reenteredAmount(){
+    return this.transactionForm.get('reenteredAmount');
   }
 
   get action(){

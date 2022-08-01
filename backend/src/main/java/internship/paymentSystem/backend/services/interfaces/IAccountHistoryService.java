@@ -2,6 +2,7 @@ package internship.paymentSystem.backend.services.interfaces;
 
 import internship.paymentSystem.backend.models.Account;
 import internship.paymentSystem.backend.models.AccountHistory;
+import internship.paymentSystem.backend.models.Person;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -14,6 +15,8 @@ public interface IAccountHistoryService {
     List<AccountHistory> getHistoryOfAccounts();
 
     List<AccountHistory> getHistoryByAccountId(Long id);
+
+    List<AccountHistory> getAccountHistoryByPersonId(Long personId);
 
     AccountHistory getLastVersionOfAccount(Long id);
 

@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
   userCreds: User = new User();
   sessionId: any = "";
   userID: any;
+  username: any ="";
 
   constructor(private userService: UserService, private router: Router) { }
 
@@ -40,8 +41,11 @@ export class LoginComponent implements OnInit {
         console.log(data);
         this.sessionId = data.accessToken; //sessionId is the token of the current user logged
         this.userID = data.id;
+        this.username = data.username;
         sessionStorage.setItem('token', this.sessionId);
         sessionStorage.setItem('userID', this.userID);
+        sessionStorage.setItem('username',this.username);
+        console.log(this.username);
         this.goToHomePage();
       }
       else{

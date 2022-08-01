@@ -2,7 +2,6 @@ package internship.paymentSystem.backend.controllers;
 
 import internship.paymentSystem.backend.DTOs.BaseObjectDto;
 import internship.paymentSystem.backend.DTOs.CurrentUserDto;
-import internship.paymentSystem.backend.DTOs.UserDto;
 import internship.paymentSystem.backend.services.interfaces.IUserService;
 import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.models.UserHistory;

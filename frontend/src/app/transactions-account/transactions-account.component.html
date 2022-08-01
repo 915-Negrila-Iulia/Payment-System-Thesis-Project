@@ -6,6 +6,11 @@
         <label for="amount">Enter Amount</label>
         <input type="text" id="amount" formControlName="amount">
         <span *ngIf="amount && amount.invalid && amount.touched">Amount is invalid</span>
+        <fieldset [disabled]="this.transactionForm.value.amount < 1000">
+            <label for="reenteredAmount">Reenter Amount</label>
+            <input type="text" id="reenteredAmount" formControlName="reenteredAmount">
+            <span *ngIf="reenteredAmount && reenteredAmount.invalid && reenteredAmount.touched">Amount is invalid</span>
+        </fieldset>
         <label for="type">Choose Type</label>
         <select formControlName="type">
             <option></option>

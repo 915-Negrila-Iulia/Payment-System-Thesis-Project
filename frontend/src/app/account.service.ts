@@ -33,8 +33,24 @@ export class AccountService {
     return this.httpClient.get<Account>(this.baseUrl+`/by-iban/${iban}`);
   }
 
+  getAccountsOfUser(){
+    return this.httpClient.get<Account[]>(this.baseUrl+`/user/${this.currentUserId}`);
+  }
+
+  getAccountsByStatus(status: string){
+    return this.httpClient.get<Account[]>(this.baseUrl+`/status/${status}`);
+  }
+
   getHistoryOfAccounts(){
     return this.httpClient.get<AccountHistory[]>(this.baseUrl+"/history");
+  }
+
+  getAccountsHistoryOfUser(){
+    return this.httpClient.get<AccountHistory[]>(this.baseUrl+`/history/user/${this.currentUserId}`);
+  }
+
+  getAccountsHistoryByAccountId(accountId: number | undefined){
+    return this.httpClient.get<AccountHistory[]>(this.baseUrl+`/history/${accountId}`);
   }
 
   updateAccount(id: number | undefined, account: Account){

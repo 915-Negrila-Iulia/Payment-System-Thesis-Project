@@ -2,6 +2,7 @@ package internship.paymentSystem.backend.services.interfaces;
 
 import internship.paymentSystem.backend.models.Person;
 import internship.paymentSystem.backend.models.PersonHistory;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,9 @@ public interface IPersonService {
 
     List<Person> getAllPersons();
 
-    Set<Person> getPersonsOfUser(Long userId);
+    List<Person> getPersonsOfUser(Long userId);
+
+    List<Person> getPersonsByStatus(StatusEnum status);
 
     Person getPersonByDetails(String firstName, String lastName, String phoneNumber);
 
@@ -26,6 +29,8 @@ public interface IPersonService {
     List<PersonHistory> getHistoryOfPersons();
 
     List<PersonHistory> getHistoryByPersonId(Long personId);
+
+    List<PersonHistory> getPersonsHistoryOfUser(Long currentUserId);
 
     Person createPerson(Person personalInfo, Long currentUserId);
 

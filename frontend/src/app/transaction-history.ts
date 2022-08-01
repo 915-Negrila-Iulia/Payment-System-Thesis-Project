@@ -7,7 +7,6 @@ export class TransactionHistory {
     targetAccountID: number | undefined;
     status: string | undefined;
     nextStatus: string | undefined;
-    timestamp: Date | undefined;
     transactionID: number | undefined;
     historyTimestamp: Date | undefined;
 }

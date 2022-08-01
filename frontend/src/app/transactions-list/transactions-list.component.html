@@ -1,30 +1,43 @@
 <div class="container">
-  <br><br><br>
+  <br>
+  <div class="filter-buttons-div">
+    <div class="drop-down">
+      <button class="filter-button" (click)="filterByIban()">Choose Iban</button>
+      <select  [(ngModel)]="selectedIban">
+          <option></option>
+          <option *ngFor="let itemAccount of accounts">{{itemAccount.iban}}</option>
+      </select>
+    </div>
+    <button class="my-transactions-button" (click)="getApproveTransactions()">Approve</button>
+    <button class="my-transactions-button" (click)="getAuthorizeTransactions()">Authorize</button>
+    <button class="my-transactions-button" (click)="getActiveTransactions()">Active</button>
+    <button class="my-transactions-button" (click)="getDeletedTransactions()">Delete</button>
+  </div>
+  <br>
   <div class="transactions-list-container">
     <span>{{errorMessage}}</span>
     <table id='transactionsTable'>
         <tr>
             <th>#</th>
-            <th>account iban</th>
-            <th>target iban</th>
-            <th>type</th>
-            <th>amount</th>
-            <th>action</th>
-            <th>status</th>
-            <th>next status</th>
-            <th>timestamp</th>
+            <th>Account Iban</th>
+            <th>Target Iban</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Action</th>
+            <th>Status</th>
+            <th>Next Status</th>
             <th colspan="2">Actions</th>
         </tr>
         <tr *ngFor="let item of transactions; let i = index;">
           <td><a [routerLink]="['/audit-list',item.id,objectType]">{{i+1}}</a></td>
           <td>{{getIbanAccount(item.accountID)}}</td>
-          <td>{{getIbanAccount(item.targetAccountID)}}</td>
+          <!-- <td>{{getIbanAccount(item.targetAccountID)}}</td> -->
+          <td>{{item.targetIban}}</td>
           <td>{{item.type}}</td>
           <td>{{item.amount}}</td>
           <td>{{item.action}}</td>
           <td>{{item.status}}</td>
           <td>{{item.nextStatus}}</td>
-          <td>{{item.timestamp | date: 'medium'}}</td>
           <td class="td-button"><button class="approveButton" (click)="approveTransaction(item.id)"
             [disabled] = "item.status !== 'APPROVE'">approve</button></td>
           <td class="td-button"><button class="rejectButton" (click)="rejectTransaction(item.id)"

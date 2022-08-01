@@ -53,9 +53,15 @@ public class PersonService implements IPersonService {
     }
 
     @Override
-    public Set<Person> getPersonsOfUser(Long userId){
+    public List<Person> getPersonsOfUser(Long userId){
         return personRepository.findAll().stream()
-                .filter(person -> Objects.equals(person.getUserID(), userId)).collect(Collectors.toSet());
+                .filter(person -> Objects.equals(person.getUserID(), userId)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Person> getPersonsByStatus(StatusEnum status) {
+        return personRepository.findAll().stream()
+                .filter(person -> person.getStatus() == status).collect(Collectors.toList());
     }
 
     @Override
@@ -87,6 +93,11 @@ public class PersonService implements IPersonService {
     @Override
     public List<PersonHistory> getHistoryByPersonId(Long personId) {
         return personHistoryService.getHistoryByPersonId(personId);
+    }
+
+    @Override
+    public List<PersonHistory> getPersonsHistoryOfUser(Long currentUserId) {
+        return personHistoryService.getPersonsHistoryOfUser(currentUserId);
     }
 
     /**

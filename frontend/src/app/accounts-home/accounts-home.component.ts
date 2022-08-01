@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-accounts-home',
@@ -8,6 +9,7 @@ import { Component, Input, OnChanges, OnInit } from '@angular/core';
 export class AccountsHomeComponent implements OnInit, OnChanges {
 
   show: string = "accountsList";
+  eventsSubject: Subject<void> = new Subject<void>();
   
   constructor() { }
 
@@ -28,6 +30,7 @@ export class AccountsHomeComponent implements OnInit, OnChanges {
 
   viewHistory(){
     this.show = "accountsHistory";
+    this.eventsSubject.next();
   }
 
 }

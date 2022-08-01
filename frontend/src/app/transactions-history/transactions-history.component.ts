@@ -15,7 +15,7 @@ export class TransactionsHistoryComponent implements OnInit {
 
   transactionsHistory: TransactionHistory[] = [];
   accounts: Account[] = [];
-  displayedColumns: string[] = ['#', 'account', 'targetAccount', 'type', 'amount', 'action', 'status', 'next status', 'timestamp', 'historyTimestamp'];
+  displayedColumns: string[] = ['#', 'account', 'targetAccount', 'type', 'amount', 'action', 'status', 'next status', 'historyTimestamp'];
   dataSource!: MatTableDataSource<TransactionHistory>;
   
   @ViewChild(MatPaginator)

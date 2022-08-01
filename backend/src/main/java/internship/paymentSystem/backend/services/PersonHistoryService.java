@@ -41,6 +41,12 @@ public class PersonHistoryService implements IPersonHistoryService {
                 .collect(Collectors.toList());
     }
 
+    public List<PersonHistory> getPersonsHistoryOfUser(Long currentUserId){
+        return personHistoryRepository.findAll().stream()
+                .filter(personHistory -> Objects.equals(personHistory.getUserID(), currentUserId))
+                .collect(Collectors.toList());
+    }
+
     @Override
     public PersonHistory getLastVersionOfPerson(Long personId){
         List<PersonHistory> history = this.getHistoryByPersonId(personId);

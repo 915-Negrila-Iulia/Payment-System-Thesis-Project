@@ -1,15 +1,15 @@
 <div class="container">
     <div class="balance-history-container">
           <div class="header-row-details">
-            <div>Total</div>
-            <div>Available</div>
-            <div>Timestamp</div>
+            <div class="total">Total</div>
+            <div class="available">Available</div>
+            <div class="timestamp">Timestamp</div>
           </div>
           <div class="box-details">
           <div *ngFor="let item of balanceHistory; let i = index;" class="row-details">
-            <p>{{item.total}}</p>
-            <p>{{item.available}}</p>
-            <p>{{item.timestamp | date: 'medium'}}</p>
+            <p class="total">{{item.total}}</p>
+            <p class="available">{{item.available}}</p>
+            <p class="timestamp">{{item.timestamp | date: 'medium'}}</p>
           </div>
         </div>
     </div>

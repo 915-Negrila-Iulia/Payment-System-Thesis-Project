@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { tap } from 'rxjs';
 import { Person } from '../person';
 import { PersonService } from '../person.service';
@@ -18,7 +18,9 @@ export class PersonsListComponent implements OnInit {
   objectType = 'PERSON';
   errorMessage='';
 
-  constructor(private personService: PersonService, private userService: UserService) { }
+  constructor(private personService: PersonService, private userService: UserService) { 
+    
+  }
 
   ngOnInit(): void {
     this.getPersons();
@@ -43,6 +45,34 @@ export class PersonsListComponent implements OnInit {
   getPersons(){
     this.personService.getAllPersons().subscribe(data => {
       this.persons = data;
+    })
+  }
+
+  getMyPersons(){
+    this.personService.getPersonsOfUser().subscribe(data => {
+      this.persons = data;
+      this.errorMessage = '';
+    })
+  }
+
+  getApprovePersons(){
+    this.personService.getPersonsByStatus('APPROVE').subscribe(data => {
+      this.persons = data;
+      this.errorMessage = '';
+    })
+  }
+
+  getActivePersons(){
+    this.personService.getPersonsByStatus('ACTIVE').subscribe(data => {
+      this.persons = data;
+      this.errorMessage = '';
+    })
+  }
+
+  getDeletedPersons(){
+    this.personService.getPersonsByStatus('DELETE').subscribe(data => {
+      this.persons = data;
+      this.errorMessage = '';
     })
   }
 

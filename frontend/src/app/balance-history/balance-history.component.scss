@@ -2,14 +2,27 @@
     height: 100%;
     width: 100%;
     margin: 0;
-    
-    .row-details, .header-row-details{
+
+.row-details, .header-row-details{
         display: flex;
-        gap: 12px;
+        align-content: center;
+        justify-content: center;
+
+        .total, .available{
+            width: 60px;
+        }
+
+        .timestamp{
+            width: 170px;
+        }
     }
 
     .header-row-details{
         font-weight: bold;
+
+        .timestamp{
+            margin-left: 40px;
+        }
     }
 
     .box-details{

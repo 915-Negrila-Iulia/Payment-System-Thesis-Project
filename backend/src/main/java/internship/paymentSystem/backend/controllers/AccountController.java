@@ -4,7 +4,9 @@ import internship.paymentSystem.backend.DTOs.BaseObjectDto;
 import internship.paymentSystem.backend.DTOs.CurrentUserDto;
 import internship.paymentSystem.backend.models.Account;
 import internship.paymentSystem.backend.models.AccountHistory;
+import internship.paymentSystem.backend.models.Person;
 import internship.paymentSystem.backend.models.User;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.services.interfaces.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,9 +40,19 @@ public class AccountController {
         return accountService.getHistoryOfAccounts();
     }
 
+    @GetMapping("/history/user/{currentUserId}")
+    public List<AccountHistory> getAccountsHistoryOfUser(@PathVariable Long currentUserId){
+        return accountService.getAccountsHistoryOfUser(currentUserId);
+    }
+
     @GetMapping("/history/{accountId}")
     public List<AccountHistory> getHistoryOfAccount(@PathVariable Long accountId){
         return accountService.getHistoryByAccountId(accountId);
+    }
+
+    @GetMapping("/status/{filterStatus}")
+    public List<Account> getAccountsByStatus(@PathVariable StatusEnum filterStatus){
+        return accountService.getAccountsByStatus(filterStatus);
     }
 
     @GetMapping("/valid")
@@ -51,6 +63,11 @@ public class AccountController {
     @GetMapping("/by-iban/{iban}")
     public Account getAccountByIban(@PathVariable String iban){
         return accountService.getAccountByIban(iban);
+    }
+
+    @GetMapping("/user/{currentUserId}")
+    public List<Account> getAccountsOfUser(@PathVariable Long currentUserId){
+        return accountService.getAccountsOfUser(currentUserId);
     }
 
     @PostMapping("/{currentUserId}")

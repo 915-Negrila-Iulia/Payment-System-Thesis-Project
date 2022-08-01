@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { last } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { CurrentUserDto } from './current-user-dto';
 import { ObjectDto } from './object-dto';
 import { Person } from './person';
@@ -10,7 +10,7 @@ import { PersonHistory } from './person-history';
   providedIn: 'root'
 })
 export class PersonService {
-  
+
   baseUrl = 'http://localhost:8080/api/persons';
   currentUserId = sessionStorage.getItem('userID');
   objectDto: ObjectDto = new ObjectDto();
@@ -30,6 +30,10 @@ export class PersonService {
     return this.httpClient.get<Person[]>(this.baseUrl+`/user/${this.currentUserId}`);
   }
 
+  getPersonsByStatus(status: string){
+    return this.httpClient.get<Person[]>(this.baseUrl+`/status/${status}`);
+  }
+
   getPersonByDetails(firstName: string, lastName: string, phoneNumber: string){
     return this.httpClient.get<Person>(this.baseUrl+`/${firstName}/${lastName}/${phoneNumber}`);
   }
@@ -40,6 +44,14 @@ export class PersonService {
 
   getHistoryOfPersons(){
     return this.httpClient.get<PersonHistory[]>(this.baseUrl+"/history");
+  }
+
+  getPersonsHistoryByPersonId(id: number | undefined){
+    return this.httpClient.get<PersonHistory[]>(this.baseUrl+`/history/${id}`);
+  }
+
+  getPersonsHistoryOfUser(){
+    return this.httpClient.get<PersonHistory[]>(this.baseUrl+`/history/user/${this.currentUserId}`);
   }
 
   updatePerson(id: number | undefined, person: Person){
@@ -62,4 +74,5 @@ export class PersonService {
     this.currentUserDto.objectId = id;
     return this.httpClient.put<Person>(this.baseUrl+"/reject",this.currentUserDto);
   }
+
 }

@@ -1,9 +1,8 @@
 package internship.paymentSystem.backend.services;
 
-import internship.paymentSystem.backend.models.Audit;
-import internship.paymentSystem.backend.models.PersonHistory;
-import internship.paymentSystem.backend.models.Transaction;
-import internship.paymentSystem.backend.models.TransactionHistory;
+import internship.paymentSystem.backend.DTOs.StatisticDto;
+import internship.paymentSystem.backend.models.*;
+import internship.paymentSystem.backend.models.bases.TransactionEntity;
 import internship.paymentSystem.backend.models.enums.*;
 import internship.paymentSystem.backend.repositories.ITransactionRepository;
 import internship.paymentSystem.backend.services.interfaces.*;
@@ -11,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService implements ITransactionService {
@@ -49,6 +51,20 @@ public class TransactionService implements ITransactionService {
     @Override
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
+    }
+
+    @Override
+    public List<Transaction> getTransactionsByStatus(StatusEnum filterStatus) {
+        return transactionRepository.findAll().stream()
+                .filter(transaction -> transaction.getStatus() == filterStatus)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Transaction> getTransactionsByAccountId(Long id) {
+        return transactionRepository.findAll().stream()
+                .filter(transaction -> Objects.equals(transaction.getAccountID(), id))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -95,7 +111,7 @@ public class TransactionService implements ITransactionService {
         if(Objects.equals(userId, currentUserId)) {
             if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_CREDIT) ||
                     Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))){
-                Double amount = transactionDetails.getAmount();
+                BigDecimal amount = transactionDetails.getAmount();
                 Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.DEPOSIT, amount,
                         accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
                 transactionRepository.save(transaction);
@@ -134,7 +150,7 @@ public class TransactionService implements ITransactionService {
         if(Objects.equals(userId, currentUserId)) {
             if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_DEBIT) ||
                     Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))) {
-                Double amount = transactionDetails.getAmount();
+                BigDecimal amount = transactionDetails.getAmount();
                 Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.WITHDRAWAL, amount,
                         accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
                 transactionRepository.save(transaction);
@@ -151,6 +167,37 @@ public class TransactionService implements ITransactionService {
         else{
             throw new Exception("Not allowed to make transaction");
         }
+    }
+
+    @Transactional
+    Transaction internalTransfer(Transaction transactionDetails, Long accountId, Long targetId, Long currentUserId){
+        BigDecimal amount = transactionDetails.getAmount();
+        String targetAccountIban = accountService.findAccountById(targetId).get().getIban();
+        Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL,
+                ActionTransactionEnum.TRANSFER, amount, accountId, targetId, targetAccountIban,
+                StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
+        transactionRepository.save(transaction);
+        transactionHistoryService.saveTransactionHistory(transaction);
+        balanceService.updateAvailableAmount(accountId, transaction.getId());
+        Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION,
+                OperationEnum.CREATE, currentUserId);
+        auditService.saveAudit(audit);
+        return transaction;
+    }
+
+    @Transactional
+    Transaction externalTransfer(Transaction transactionDetails, Long accountId, Long currentUserId){
+        BigDecimal amount = transactionDetails.getAmount();
+        Transaction transaction = new Transaction(TypeTransactionEnum.EXTERNAL,
+                ActionTransactionEnum.TRANSFER, amount, accountId, null, transactionDetails.getTargetIban(),
+                StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
+        transactionRepository.save(transaction);
+        transactionHistoryService.saveTransactionHistory(transaction);
+        balanceService.updateAvailableAmount(accountId, transaction.getId());
+        Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION,
+                OperationEnum.CREATE, currentUserId);
+        auditService.saveAudit(audit);
+        return transaction;
     }
 
     /**
@@ -172,45 +219,22 @@ public class TransactionService implements ITransactionService {
         if(Objects.equals(userId, currentUserId)) {
             if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_CREDIT) ||
                     Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))) {
-                if(!(Objects.equals(getStatusByAccountId(targetId),AccountStatusEnum.BLOCK_DEBIT) ||
-                        Objects.equals(getStatusByAccountId(targetId),AccountStatusEnum.BLOCKED))) {
-                    if(Objects.equals(getCurrencyByAccountId(accountId),getCurrencyByAccountId(targetId))) {
-                        if(transactionDetails.getType() == TypeTransactionEnum.INTERNAL) {
-                            Double amount = transactionDetails.getAmount();
-                            Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL,
-                                    ActionTransactionEnum.TRANSFER, amount, accountId,
-                                    StatusEnum.APPROVE, StatusEnum.ACTIVE);
-                            transaction.setTargetAccountID(targetId);
-                            transactionRepository.save(transaction);
-                            transactionHistoryService.saveTransactionHistory(transaction);
-                            balanceService.updateAvailableAmount(accountId, transaction.getId());
-                            Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION,
-                                    OperationEnum.CREATE, currentUserId);
-                            auditService.saveAudit(audit);
-                            return transaction;
+                if(transactionDetails.getType() == TypeTransactionEnum.INTERNAL) {
+                    if (!(Objects.equals(getStatusByAccountId(targetId), AccountStatusEnum.BLOCK_DEBIT) ||
+                            Objects.equals(getStatusByAccountId(targetId), AccountStatusEnum.BLOCKED))) {
+                        if (Objects.equals(getCurrencyByAccountId(accountId), getCurrencyByAccountId(targetId))) {
+                            // internal transfer
+                            return this.internalTransfer(transactionDetails, accountId, targetId, currentUserId);
+                        } else {
+                            throw new Exception("Currencies do not match. Not allowed to transfer");
                         }
-                        else{
-                            // ips transfer
-                            Double amount = transactionDetails.getAmount();
-                            Transaction transaction = new Transaction(TypeTransactionEnum.EXTERNAL,
-                                    ActionTransactionEnum.TRANSFER, amount, accountId,
-                                    StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
-                            transaction.setTargetAccountID(targetId);  // change to target iban - external
-                            transactionRepository.save(transaction);
-                            transactionHistoryService.saveTransactionHistory(transaction);
-                            balanceService.updateAvailableAmount(accountId, transaction.getId());
-                            Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION,
-                                    OperationEnum.CREATE, currentUserId);
-                            auditService.saveAudit(audit);
-                            return transaction;
-                        }
-                    }
-                    else{
-                        throw new Exception("Currencies do not match. Not allowed to transfer");
+                    } else {
+                        throw new Exception("Debit Blocked. Not allowed to receive");
                     }
                 }
                 else{
-                    throw new Exception("Debit Blocked. Not allowed to receive");
+                    // ips external transfer
+                    return this.externalTransfer(transactionDetails, accountId, currentUserId);
                 }
             }
             else{
@@ -350,5 +374,41 @@ public class TransactionService implements ITransactionService {
         else{
             throw new Exception("Authorize not required");
         }
+    }
+
+    private Long getCountStatisticByStatus(Long accountId,StatusEnum status){
+        List<Transaction> transactions = this.getTransactionsByAccountId(accountId);
+        return transactions.stream()
+                .filter(transaction -> transaction.getStatus() == status)
+                .count();
+    }
+
+    private BigDecimal getAmountStatisticByStatus(Long accountId, StatusEnum status){
+        List<Transaction> transactions = this.getTransactionsByAccountId(accountId);
+        return transactions.stream()
+                .filter(transaction -> transaction.getStatus() == status)
+                .map(TransactionEntity::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public List<StatisticDto> getStatisticsOfAccount(Long accountId) {
+        List<StatisticDto> statistics = new ArrayList<>();
+        StatisticDto approveStatus = new StatisticDto(StatusEnum.APPROVE,
+                this.getCountStatisticByStatus(accountId,StatusEnum.APPROVE),
+                this.getAmountStatisticByStatus(accountId,StatusEnum.APPROVE));
+        statistics.add(approveStatus);
+        StatisticDto authorizeStatus = new StatisticDto(StatusEnum.AUTHORIZE,
+                this.getCountStatisticByStatus(accountId,StatusEnum.AUTHORIZE),
+                this.getAmountStatisticByStatus(accountId,StatusEnum.AUTHORIZE));
+        statistics.add(authorizeStatus);
+        StatisticDto activeStatus = new StatisticDto(StatusEnum.ACTIVE,
+                this.getCountStatisticByStatus(accountId,StatusEnum.ACTIVE),
+                this.getAmountStatisticByStatus(accountId,StatusEnum.ACTIVE));
+        statistics.add(activeStatus);
+        StatisticDto deleteStatus = new StatisticDto(StatusEnum.DELETE,
+                this.getCountStatisticByStatus(accountId,StatusEnum.DELETE),
+                this.getAmountStatisticByStatus(accountId,StatusEnum.DELETE));
+        statistics.add(deleteStatus);
+        return statistics;
     }
 }

@@ -2,12 +2,11 @@ package internship.paymentSystem.backend.controllers;
 
 import internship.paymentSystem.backend.DTOs.BaseObjectDto;
 import internship.paymentSystem.backend.DTOs.CurrentUserDto;
-import internship.paymentSystem.backend.models.PersonHistory;
-import internship.paymentSystem.backend.models.TransactionHistory;
-import internship.paymentSystem.backend.models.User;
+import internship.paymentSystem.backend.DTOs.StatisticDto;
+import internship.paymentSystem.backend.models.*;
+import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.services.interfaces.ITransactionHistoryService;
 import internship.paymentSystem.backend.services.interfaces.ITransactionService;
-import internship.paymentSystem.backend.models.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +38,21 @@ public class TransactionController {
     @GetMapping("/history/{transactionId}")
     public List<TransactionHistory> getHistoryOfTransaction(@PathVariable Long transactionId){
         return transactionService.getHistoryByTransactionId(transactionId);
+    }
+
+    @GetMapping("/status/{filterStatus}")
+    public List<Transaction> getTransactionsByStatus(@PathVariable StatusEnum filterStatus){
+        return transactionService.getTransactionsByStatus(filterStatus);
+    }
+
+    @GetMapping("/account/{id}")
+    public List<Transaction> getTransactionsByAccountId(@PathVariable Long id){
+        return transactionService.getTransactionsByAccountId(id);
+    }
+
+    @GetMapping("/statistics/{accountId}")
+    public List<StatisticDto> getStatisticsOfAccount(@PathVariable Long accountId){
+        return transactionService.getStatisticsOfAccount(accountId);
     }
 
     @PostMapping("/{currentUserId}")
@@ -127,5 +141,4 @@ public class TransactionController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
 }
