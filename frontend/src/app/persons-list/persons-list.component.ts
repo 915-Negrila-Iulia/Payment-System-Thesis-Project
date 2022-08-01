@@ -51,24 +51,28 @@ export class PersonsListComponent implements OnInit {
   getMyPersons(){
     this.personService.getPersonsOfUser().subscribe(data => {
       this.persons = data;
+      this.errorMessage = '';
     })
   }
 
   getApprovePersons(){
     this.personService.getPersonsByStatus('APPROVE').subscribe(data => {
       this.persons = data;
+      this.errorMessage = '';
     })
   }
 
   getActivePersons(){
     this.personService.getPersonsByStatus('ACTIVE').subscribe(data => {
       this.persons = data;
+      this.errorMessage = '';
     })
   }
 
   getDeletedPersons(){
     this.personService.getPersonsByStatus('DELETE').subscribe(data => {
       this.persons = data;
+      this.errorMessage = '';
     })
   }
 

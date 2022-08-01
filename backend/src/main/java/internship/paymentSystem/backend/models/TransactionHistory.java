@@ -11,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,18 +31,18 @@ public class TransactionHistory extends TransactionEntity {
     @CreationTimestamp
     private LocalDateTime historyTimestamp;
 
-    public TransactionHistory(TypeTransactionEnum type, ActionTransactionEnum action, Double amount, Long accountID,
+    public TransactionHistory(TypeTransactionEnum type, ActionTransactionEnum action, BigDecimal amount, Long accountID,
                               StatusEnum status, StatusEnum nextStatus, Long transactionID) {
         super(type, action, amount, accountID, status, nextStatus);
         this.transactionID = transactionID;
     }
 
-    public TransactionHistory(TypeTransactionEnum type, ActionTransactionEnum action, Double amount, Long accountID,
+    public TransactionHistory(TypeTransactionEnum type, ActionTransactionEnum action, BigDecimal amount, Long accountID,
                               StatusEnum status, StatusEnum nextStatus) {
         super(type, action, amount, accountID, status, nextStatus);
     }
 
-    public TransactionHistory(TypeTransactionEnum type, ActionTransactionEnum action, Double amount, Long accountID,
+    public TransactionHistory(TypeTransactionEnum type, ActionTransactionEnum action, BigDecimal amount, Long accountID,
                        Long targetAccountID, String targetIban, StatusEnum status, StatusEnum nextStatus) {
         super(type, action, amount, accountID, targetAccountID, targetIban, status, nextStatus);
     }

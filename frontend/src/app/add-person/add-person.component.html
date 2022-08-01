@@ -1,18 +1,18 @@
 <div class="add-person-container">
     <form #myForm="ngForm" class="add-person-form" (ngSubmit) = "onSubmit();  myForm.resetForm()" [formGroup]="addPersonForm">
-        <label for="firstName">First name</label>
+        <label for="firstName">First Name</label>
         <input type="text" id="firstName" formControlName="firstName">
         <span *ngIf="firstName && firstName.invalid && firstName.touched">First name is invalid</span>
-        <label for="lastName">Last name</label>
+        <label for="lastName">Last Name</label>
         <input type="text" id="lastName" formControlName="lastName">
         <span *ngIf="lastName && lastName.invalid && lastName.touched">Last name is invalid</span>
         <label for="address">Address</label>
         <input type="text" id="address" formControlName="address">
         <span *ngIf="address && address.invalid && address.touched">Address is invalid</span>
-        <label for="dateOfBirth">Date of birth</label>
+        <label for="dateOfBirth">Date Of Birth</label>
         <input type="text" id="dateOfBirth" formControlName="dateOfBirth">
         <span *ngIf="dateOfBirth && dateOfBirth.invalid && dateOfBirth.touched">Date of birth is invalid</span>
-        <label for="phoneNumber">Phone number</label>
+        <label for="phoneNumber">Phone Number</label>
         <input type="text" id="phoneNumber" formControlName="phoneNumber">
         <span *ngIf="phoneNumber && phoneNumber.invalid && phoneNumber.touched">Phone number is invalid</span>
         <button class="add-button" type="submit" [disabled]="addPersonForm.invalid">ADD</button>

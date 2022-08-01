@@ -11,6 +11,7 @@ import internship.paymentSystem.backend.services.interfaces.IBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -67,10 +68,10 @@ public class BalanceService implements IBalanceService {
                 currentBalance.getAccountID());
         //if transaction.getAction() == ActionTransactionEnum.DEPOSIT => do nothing
         if(transaction.getAction() == ActionTransactionEnum.WITHDRAWAL){
-            updatedBalance.setAvailable(currentBalance.getAvailable() - transaction.getAmount());
+            updatedBalance.setAvailable(currentBalance.getAvailable().subtract(transaction.getAmount()));
         }
         else if(transaction.getAction() == ActionTransactionEnum.TRANSFER){
-            updatedBalance.setAvailable(currentBalance.getAvailable() - transaction.getAmount());
+            updatedBalance.setAvailable(currentBalance.getAvailable().subtract(transaction.getAmount()));
             //in target account => do nothing
         }
         balanceRepository.save(updatedBalance);
@@ -95,25 +96,25 @@ public class BalanceService implements IBalanceService {
         Balance updatedBalance = new Balance(currentBalance.getTotal(), currentBalance.getAvailable(),
                 currentBalance.getAccountID());
         if(transaction.getAction() == ActionTransactionEnum.DEPOSIT){
-            updatedBalance.setAvailable(currentBalance.getAvailable() + transaction.getAmount());
-            updatedBalance.setTotal(currentBalance.getTotal() + transaction.getAmount());
+            updatedBalance.setAvailable(currentBalance.getAvailable().add(transaction.getAmount()));
+            updatedBalance.setTotal(currentBalance.getTotal().add(transaction.getAmount()));
         }
         else if(transaction.getAction() == ActionTransactionEnum.WITHDRAWAL){
-            updatedBalance.setTotal(currentBalance.getTotal() - transaction.getAmount());
+            updatedBalance.setTotal(currentBalance.getTotal().subtract(transaction.getAmount()));
         }
         else if(transaction.getAction() == ActionTransactionEnum.TRANSFER &&
                 transaction.getStatus() == StatusEnum.ACTIVE){
             // if transaction action is TRANSFER -> ips handles the balance of target account
             //                                 -> total balance of current account is changed only after ips approval
-            updatedBalance.setTotal(currentBalance.getTotal() - transaction.getAmount());
+            updatedBalance.setTotal(currentBalance.getTotal().subtract(transaction.getAmount()));
 
             if(transaction.getType() == TypeTransactionEnum.INTERNAL){
                 // if transaction type is INTERNAL -> total balance of current account and target account are changed
                 Balance targetAccountBalance = this.getCurrentBalance(transaction.getTargetAccountID());
                 Balance updatedTargetAccountBalance = new Balance(targetAccountBalance.getTotal(),
                         targetAccountBalance.getAvailable(), targetAccountBalance.getAccountID());
-                updatedTargetAccountBalance.setAvailable(targetAccountBalance.getAvailable() + transaction.getAmount());
-                updatedTargetAccountBalance.setTotal(targetAccountBalance.getTotal() + transaction.getAmount());
+                updatedTargetAccountBalance.setAvailable(targetAccountBalance.getAvailable().add(transaction.getAmount()));
+                updatedTargetAccountBalance.setTotal(targetAccountBalance.getTotal().add(transaction.getAmount()));
                 balanceRepository.save(updatedTargetAccountBalance);
             }
         }
@@ -123,7 +124,7 @@ public class BalanceService implements IBalanceService {
 
     @Override
     public Balance createInitialBalance(Long accountId) {
-        Balance initialBalance = new Balance(0D,0D,accountId);
+        Balance initialBalance = new Balance(BigDecimal.ZERO,BigDecimal.ZERO,accountId);
         balanceRepository.save(initialBalance);
         return initialBalance;
     }
@@ -144,10 +145,10 @@ public class BalanceService implements IBalanceService {
                 currentBalance.getAccountID());
         //if transaction.getAction() == ActionTransactionEnum.DEPOSIT => do nothing
         if(transaction.getAction() == ActionTransactionEnum.WITHDRAWAL){
-            updatedBalance.setAvailable(currentBalance.getAvailable() + transaction.getAmount());
+            updatedBalance.setAvailable(currentBalance.getAvailable().add(transaction.getAmount()));
         }
         else if(transaction.getAction() == ActionTransactionEnum.TRANSFER){
-            updatedBalance.setAvailable(currentBalance.getAvailable() + transaction.getAmount());
+            updatedBalance.setAvailable(currentBalance.getAvailable().add(transaction.getAmount()));
             //in target account => do nothing
         }
         balanceRepository.save(updatedBalance);

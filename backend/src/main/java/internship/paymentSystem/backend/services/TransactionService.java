@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -110,7 +111,7 @@ public class TransactionService implements ITransactionService {
         if(Objects.equals(userId, currentUserId)) {
             if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_CREDIT) ||
                     Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))){
-                Double amount = transactionDetails.getAmount();
+                BigDecimal amount = transactionDetails.getAmount();
                 Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.DEPOSIT, amount,
                         accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
                 transactionRepository.save(transaction);
@@ -149,7 +150,7 @@ public class TransactionService implements ITransactionService {
         if(Objects.equals(userId, currentUserId)) {
             if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_DEBIT) ||
                     Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))) {
-                Double amount = transactionDetails.getAmount();
+                BigDecimal amount = transactionDetails.getAmount();
                 Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.WITHDRAWAL, amount,
                         accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
                 transactionRepository.save(transaction);
@@ -170,7 +171,7 @@ public class TransactionService implements ITransactionService {
 
     @Transactional
     Transaction internalTransfer(Transaction transactionDetails, Long accountId, Long targetId, Long currentUserId){
-        Double amount = transactionDetails.getAmount();
+        BigDecimal amount = transactionDetails.getAmount();
         String targetAccountIban = accountService.findAccountById(targetId).get().getIban();
         Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL,
                 ActionTransactionEnum.TRANSFER, amount, accountId, targetId, targetAccountIban,
@@ -186,7 +187,7 @@ public class TransactionService implements ITransactionService {
 
     @Transactional
     Transaction externalTransfer(Transaction transactionDetails, Long accountId, Long currentUserId){
-        Double amount = transactionDetails.getAmount();
+        BigDecimal amount = transactionDetails.getAmount();
         Transaction transaction = new Transaction(TypeTransactionEnum.EXTERNAL,
                 ActionTransactionEnum.TRANSFER, amount, accountId, null, transactionDetails.getTargetIban(),
                 StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
@@ -382,12 +383,12 @@ public class TransactionService implements ITransactionService {
                 .count();
     }
 
-    private Double getAmountStatisticByStatus(Long accountId,StatusEnum status){
+    private BigDecimal getAmountStatisticByStatus(Long accountId, StatusEnum status){
         List<Transaction> transactions = this.getTransactionsByAccountId(accountId);
         return transactions.stream()
                 .filter(transaction -> transaction.getStatus() == status)
                 .map(TransactionEntity::getAmount)
-                .reduce(0D, Double::sum);
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public List<StatisticDto> getStatisticsOfAccount(Long accountId) {

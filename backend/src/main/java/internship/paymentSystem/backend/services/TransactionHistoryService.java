@@ -27,6 +27,9 @@ public class TransactionHistoryService implements ITransactionHistoryService {
         if(transaction.getTargetAccountID() != null) {
             transactionHistory.setTargetAccountID(transaction.getTargetAccountID());
         }
+        if(transaction.getTargetIban() != null){
+            transactionHistory.setTargetIban(transaction.getTargetIban());
+        }
         return transactionHistoryRepository.save(transactionHistory);
     }
 

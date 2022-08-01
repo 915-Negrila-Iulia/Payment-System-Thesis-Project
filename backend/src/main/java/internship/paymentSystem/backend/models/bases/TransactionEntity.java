@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
@@ -30,7 +31,7 @@ public abstract class TransactionEntity extends BaseEntity{
     private ActionTransactionEnum action;
 
     @Column(name = "amount")
-    private Double amount;
+    private BigDecimal amount;
 
     @Column(name = "account_id")
     private Long accountID;
@@ -41,7 +42,7 @@ public abstract class TransactionEntity extends BaseEntity{
     @Column(name = "target_external_iban")
     private String targetIban;
 
-    public TransactionEntity(TypeTransactionEnum type, ActionTransactionEnum action, Double amount, Long accountID,
+    public TransactionEntity(TypeTransactionEnum type, ActionTransactionEnum action, BigDecimal amount, Long accountID,
                              StatusEnum status, StatusEnum nextStatus) {
         super(status, nextStatus);
         this.type = type;
@@ -50,7 +51,7 @@ public abstract class TransactionEntity extends BaseEntity{
         this.accountID = accountID;
     }
 
-    public TransactionEntity(TypeTransactionEnum type, ActionTransactionEnum action, Double amount, Long accountID,
+    public TransactionEntity(TypeTransactionEnum type, ActionTransactionEnum action, BigDecimal amount, Long accountID,
                              Long targetAccountID, String targetIban, StatusEnum status, StatusEnum nextStatus) {
         super(status, nextStatus);
         this.type = type;
