@@ -2,6 +2,7 @@ package internship.paymentSystem.backend.controllers;
 
 import internship.paymentSystem.backend.DTOs.BaseObjectDto;
 import internship.paymentSystem.backend.DTOs.CurrentUserDto;
+import internship.paymentSystem.backend.client.IpsClient;
 import internship.paymentSystem.backend.services.interfaces.IUserService;
 import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.models.UserHistory;
@@ -19,6 +20,9 @@ public class UserController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IpsClient ipsClient;
 
     @GetMapping("/users")
     public List<User> getUsers(){
