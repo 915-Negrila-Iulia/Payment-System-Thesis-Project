@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @MappedSuperclass
 @Data
@@ -41,6 +42,9 @@ public abstract class TransactionEntity extends BaseEntity{
 
     @Column(name = "target_external_iban")
     private String targetIban;
+
+    @Column(name = "reference")
+    private String reference = UUID.randomUUID().toString().replaceAll("-","");
 
     public TransactionEntity(TypeTransactionEnum type, ActionTransactionEnum action, BigDecimal amount, Long accountID,
                              StatusEnum status, StatusEnum nextStatus) {
