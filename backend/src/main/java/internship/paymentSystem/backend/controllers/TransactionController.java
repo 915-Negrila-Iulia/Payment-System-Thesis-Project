@@ -28,6 +28,7 @@ public class TransactionController {
 
     @GetMapping()
     public List<Transaction> getTransactions(){
+        ipsClient.sendMessage();
         return transactionService.getAllTransactions();
     }
 

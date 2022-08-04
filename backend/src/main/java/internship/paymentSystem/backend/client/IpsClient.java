@@ -14,11 +14,11 @@ import java.math.BigDecimal;
 @Component
 public class IpsClient {
 
-    private final String bicHeader = "INTIROB0";
+    private final String bicHeader = "INTNROB0";
     private final String protocolVersion = "1";
     private final String URL = "https://ipsdemo.montran.ro/rtp/";
 
-    private final String bicSender = "INTIROB0";
+    private final String bicSender = "INTNROB0";
     private final String bicReceiver = "RBNKTTPX";
 
     @Autowired
