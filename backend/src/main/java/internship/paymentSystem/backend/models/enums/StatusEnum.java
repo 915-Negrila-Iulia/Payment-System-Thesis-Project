@@ -4,5 +4,6 @@ public enum StatusEnum {
     ACTIVE,
     APPROVE,
     DELETE,
-    AUTHORIZE
+    AUTHORIZE,
+    AUTHORIZE_IPS
 }

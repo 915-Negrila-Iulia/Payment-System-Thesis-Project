@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class GenerateXML {
 
-    public static String generate(String bicSender, String idMessage, BigDecimal amount, String idTransaction,
+    public static String generate(String bicSender, BigDecimal amount, String idTransaction,
                                 String nameSender, String ibanSender, String bicReceiver, String nameReceiver,
                                 String ibanReceiver) {
 
@@ -28,7 +28,7 @@ public class GenerateXML {
 
         XMLGregorianCalendar datetime = getXMLGregorianCalendarNow();
 
-        idMessage = UUID.randomUUID().toString().replaceAll("-","");
+        String idMessage = UUID.randomUUID().toString().replaceAll("-","");
         idTransaction = UUID.randomUUID().toString().replaceAll("-","");
 
         String xml = "<env:Message xmlns:env=\"urn:montran:message.01\">\n" +

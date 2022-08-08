@@ -27,7 +27,7 @@ export class AddAccountComponent implements OnInit {
     })
 
     this.addAccountForm = new FormGroup({
-    countryCode: new FormControl('',[Validators.required, Validators.pattern('^[A-Z]{3}$')]),
+    countryCode: new FormControl('',[Validators.required, Validators.pattern('^[A-Z]{2}$')]),
     bankCode: new FormControl('',[Validators.required]),
     currency: new FormControl('',[Validators.required, Validators.pattern('^[A-Z]{3}$')]),
     accountStatus: new FormControl('',[Validators.required, Validators.pattern('^[A-Z ]{3,}$')]),

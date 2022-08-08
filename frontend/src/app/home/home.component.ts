@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TransactionService } from '../transaction.service';
 import { User } from '../user';
 import { UserService } from '../user.service';
 
@@ -49,5 +50,4 @@ export class HomeComponent implements OnInit {
     sessionStorage.removeItem('token');
     this.router.navigate(['/login']);
   }
-
 }

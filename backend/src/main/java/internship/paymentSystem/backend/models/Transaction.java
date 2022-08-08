@@ -30,6 +30,12 @@ public class Transaction extends TransactionEntity {
         super(type, action, amount, accountID, targetAccountID, targetIban, status, nextStatus);
     }
 
+    public Transaction(TypeTransactionEnum type, ActionTransactionEnum action, BigDecimal amount, Long accountID,
+                       Long targetAccountID, String targetIban, String bankName, String nameReceiver,
+                       StatusEnum status, StatusEnum nextStatus) {
+        super(type, action, amount, accountID, targetAccountID, targetIban, bankName, nameReceiver, status, nextStatus);
+    }
+
     public Transaction() {
 
     }

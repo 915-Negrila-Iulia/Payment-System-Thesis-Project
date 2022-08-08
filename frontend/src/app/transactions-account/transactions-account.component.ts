@@ -16,6 +16,7 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
   accountId: number | undefined;
   types: any = ['INTERNAL','EXTERNAL'];
   actions: any = ['DEPOSIT', 'WITHDRAWAL', 'TRANSFER'];
+  externalBanks: any = ['SCOTIA BANK', 'REPUBLIC BANK LIMITED'];
   transaction: Transaction = new Transaction();
   errorMessage = '';
   targetAccounts: any;
@@ -40,7 +41,9 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
       reenteredAmount: new FormControl('',[]),
       type: new FormControl('',[Validators.required]),
       action: new FormControl('',[Validators.required]),
-      targetAccount: new FormControl('',[])
+      targetAccount: new FormControl('',[]),
+      bankName: new FormControl('',[]),
+      nameReceiver: new FormControl('',[])
     })
   }
 
@@ -62,7 +65,7 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
     }
 
     if(myTransaction.amount === myTransaction.reenteredAmount || myTransaction.amount < 1000){
-
+ 
       this.accountService.getAccountByIban(targetIban).subscribe(data => {
         this.transaction.type = myTransaction.type;
         this.transaction.amount = myTransaction.amount;
@@ -76,7 +79,7 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
           this.transaction.targetIban = myTransaction.targetAccount;
         }
         this.transaction.status = "APPROVE";
-        this.transaction.nextStatus = "ACTIVE";
+        this.transaction.nextStatus = "AUTHORIZE";
         console.log(this.transaction);
         if(actionPerformed === "DEPOSIT"){
           this.transactionService.deposit(this.transaction).subscribe(data => {
@@ -97,6 +100,10 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
           });
         }
         else if(actionPerformed === "TRANSFER"){
+          if(myTransaction.type === 'EXTERNAL'){
+            this.transaction.bankName = myTransaction.bankName;
+            this.transaction.nameReceiver = myTransaction.nameReceiver;
+          }
           this.transactionService.transfer(this.transaction).subscribe(data => {
             console.log(data);
             window.location.reload();
@@ -135,6 +142,10 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
 
   get targetAccount(){
     return this.transactionForm.get('targetAccount');
+  }
+
+  get nameReceiver(){
+    return this.transactionForm.get('nameReceiver');
   }
 
   setIbanById(){

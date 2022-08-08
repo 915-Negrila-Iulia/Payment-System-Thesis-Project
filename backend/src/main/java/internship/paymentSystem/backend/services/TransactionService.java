@@ -1,6 +1,7 @@
 package internship.paymentSystem.backend.services;
 
 import internship.paymentSystem.backend.DTOs.StatisticDto;
+import internship.paymentSystem.backend.client.IpsClient;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.bases.TransactionEntity;
 import internship.paymentSystem.backend.models.enums.*;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.lang.Thread.sleep;
 
 @Service
 public class TransactionService implements ITransactionService {
@@ -37,6 +40,9 @@ public class TransactionService implements ITransactionService {
 
     @Autowired
     private IAuditService auditService;
+
+    @Autowired
+    private IpsClient ipsClient;
 
     @Override
     public Transaction saveTransaction(Transaction transaction) {
@@ -89,6 +95,16 @@ public class TransactionService implements ITransactionService {
 
     private String getCurrencyByAccountId(Long accountId){
         return accountService.findAccountById(accountId).get().getCurrency();
+    }
+
+    private String getIbanByAccountId(Long accountId){
+        return accountService.findAccountById(accountId).get().getIban();
+    }
+
+    private String getPersonOfAccount(Long accountId){
+        Long personId = accountService.findAccountById(accountId).get().getPersonID();
+        return personService.findPersonById(personId).get().getFirstName()+" "+
+                personService.findPersonById(personId).get().getLastName();
     }
 
     /**
@@ -185,18 +201,31 @@ public class TransactionService implements ITransactionService {
         return transaction;
     }
 
+    private String getBicOfBank(String bankName){
+        if(Objects.equals(bankName, "SCOTIA BANK"))
+            return "NOSCTTPS";
+        else if(Objects.equals(bankName, "REPUBLIC BANK LIMITED"))
+            return "RBNKTTPX";
+        return null;
+    }
+
     @Transactional
-    Transaction externalTransfer(Transaction transactionDetails, Long accountId, Long currentUserId){
+    Transaction externalTransfer(Transaction transactionDetails, Long accountId, Long currentUserId) throws Exception {
         BigDecimal amount = transactionDetails.getAmount();
+        String ibanReceiver = transactionDetails.getTargetIban();
+        String bankName = transactionDetails.getBankName();
+        String nameReceiver = transactionDetails.getNameReceiver();
+
         Transaction transaction = new Transaction(TypeTransactionEnum.EXTERNAL,
-                ActionTransactionEnum.TRANSFER, amount, accountId, null, transactionDetails.getTargetIban(),
-                StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
+                ActionTransactionEnum.TRANSFER, amount, accountId, null, ibanReceiver,
+                bankName, nameReceiver, StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
         transactionRepository.save(transaction);
         transactionHistoryService.saveTransactionHistory(transaction);
         balanceService.updateAvailableAmount(accountId, transaction.getId());
         Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION,
                 OperationEnum.CREATE, currentUserId);
         auditService.saveAudit(audit);
+
         return transaction;
     }
 
@@ -276,7 +305,12 @@ public class TransactionService implements ITransactionService {
                     .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
             transactionHistoryService.saveTransactionHistory(transaction);
             transaction.setStatus(transaction.getNextStatus());
-            transaction.setNextStatus(StatusEnum.ACTIVE);
+            if(transaction.getType() == TypeTransactionEnum.INTERNAL) {
+                transaction.setNextStatus(StatusEnum.ACTIVE);
+            }
+            else { // EXTERNAL transaction -> perform ips request
+                transaction.setNextStatus(StatusEnum.AUTHORIZE_IPS);
+            }
             Transaction activeTransaction = transactionRepository.save(transaction);
             balanceService.updateTotalAmount(transaction.getId());
             Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.APPROVE, currentUserId);
@@ -334,13 +368,63 @@ public class TransactionService implements ITransactionService {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
         if(transaction.getStatus() == StatusEnum.AUTHORIZE) {
-            transactionHistoryService.saveTransactionHistory(transaction);
-            transaction.setStatus(StatusEnum.ACTIVE);
-            Transaction authorizedTransaction = transactionRepository.save(transaction);
-            balanceService.updateTotalAmount(transaction.getId());
-            Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
-            auditService.saveAudit(audit);
-            return authorizedTransaction;
+            if(transaction.getType() == TypeTransactionEnum.INTERNAL) {
+                transactionHistoryService.saveTransactionHistory(transaction);
+                transaction.setStatus(StatusEnum.ACTIVE);
+                Transaction authorizedTransaction = transactionRepository.save(transaction);
+                balanceService.updateTotalAmount(transaction.getId());
+                Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
+                auditService.saveAudit(audit);
+                return authorizedTransaction;
+            }
+            else{ // EXTERNAL transaction -> perform ips request
+                transactionHistoryService.saveTransactionHistory(transaction);
+                transaction.setStatus(StatusEnum.AUTHORIZE_IPS);
+                transaction.setNextStatus(StatusEnum.ACTIVE);
+                Transaction authorizedTransaction = transactionRepository.save(transaction);
+                Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
+                auditService.saveAudit(audit);
+
+                BigDecimal amount = transaction.getAmount();
+                String referenceTransaction = transaction.getReference();
+                String nameSender = this.getPersonOfAccount(transaction.getAccountID());
+                String ibanSender = this.getIbanByAccountId(transaction.getAccountID());
+                String ibanReceiver = transaction.getTargetIban();
+                String bankName = transaction.getBankName();
+                String nameReceiver = transaction.getNameReceiver();
+                String bicReceiver = this.getBicOfBank(bankName);
+                String ipsResponse = ipsClient.sendPaymentRequestIPS(amount, referenceTransaction,
+                        nameSender, ibanSender, bicReceiver, nameReceiver,
+                        ibanReceiver);
+
+                // waiting for ips response
+                try {
+                    sleep(5000);
+                }
+                catch (Exception e){
+                    throw new Exception("Thread sleep not working");
+                }
+
+                if(Objects.equals(ipsResponse, "ACSP")){
+                    transactionHistoryService.saveTransactionHistory(transaction);
+                    transaction.setStatus(StatusEnum.ACTIVE);
+                    Transaction authorizedIpsTransaction = transactionRepository.save(transaction);
+                    balanceService.updateTotalAmount(transaction.getId());
+                    Audit auditIps = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
+                    auditService.saveAudit(auditIps);
+                    return authorizedIpsTransaction;
+                }
+                else{
+                    transactionHistoryService.saveTransactionHistory(transaction);
+                    transaction.setStatus(StatusEnum.DELETE);
+                    transaction.setNextStatus(StatusEnum.DELETE);
+                    Transaction rejectedTransaction = transactionRepository.save(transaction);
+                    balanceService.cancelAmountChanges(transaction.getId());
+                    audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.REJECT, 0L);
+                    auditService.saveAudit(audit);
+                    return rejectedTransaction;
+                }
+            }
         }
         else {
             throw new Exception("Authorize not required");
