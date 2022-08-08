@@ -19,7 +19,6 @@ public class IpsClient {
     private final String URL = "https://ipsdemo.montran.ro/rtp/";
 
     private final String bicSender = "INTNROB0";
-//    private final String bicReceiver = "RBNKTTPX";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -61,8 +60,6 @@ public class IpsClient {
         HttpEntity<String> entity = new HttpEntity<>(xml,headers);
         ResponseEntity<String> response = restTemplate.exchange(URL+"/Message",
                 HttpMethod.POST, entity, String.class);
-        //System.out.println(response.getBody());
-        System.out.println(response.getHeaders().get("x-montran-rtp-reqsts").get(0));
         return response.getHeaders().get("x-montran-rtp-reqsts").get(0);
     }
 

@@ -355,6 +355,46 @@ public class TransactionService implements ITransactionService {
         }
     }
 
+    private Transaction internalAuthorize(Transaction transaction){
+        transactionHistoryService.saveTransactionHistory(transaction);
+        transaction.setStatus(StatusEnum.ACTIVE);
+        Transaction authorizedTransaction = transactionRepository.save(transaction);
+        balanceService.updateTotalAmount(transaction.getId());
+        Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
+        auditService.saveAudit(audit);
+        return authorizedTransaction;
+    }
+
+    private void externalAuthorize(Transaction transaction){
+        transactionHistoryService.saveTransactionHistory(transaction);
+        transaction.setStatus(StatusEnum.AUTHORIZE_IPS);
+        transaction.setNextStatus(StatusEnum.ACTIVE);
+        Transaction authorizedTransaction = transactionRepository.save(transaction);
+        Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
+        auditService.saveAudit(audit);
+    }
+
+    private Transaction ipsAcceptTransaction(Transaction transaction){
+        transactionHistoryService.saveTransactionHistory(transaction);
+        transaction.setStatus(StatusEnum.ACTIVE);
+        Transaction authorizedIpsTransaction = transactionRepository.save(transaction);
+        balanceService.updateTotalAmount(transaction.getId());
+        Audit auditIps = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
+        auditService.saveAudit(auditIps);
+        return authorizedIpsTransaction;
+    }
+
+    private Transaction ipsRejectTransaction(Transaction transaction){
+        transactionHistoryService.saveTransactionHistory(transaction);
+        transaction.setStatus(StatusEnum.DELETE);
+        transaction.setNextStatus(StatusEnum.DELETE);
+        Transaction rejectedTransaction = transactionRepository.save(transaction);
+        balanceService.cancelAmountChanges(transaction.getId());
+        Audit auditIps = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.REJECT, 0L);
+        auditService.saveAudit(auditIps);
+        return rejectedTransaction;
+    }
+
     /**
      * Authorize transaction
      * Check if the transaction exists by using the given id and throw an exception otherwise
@@ -371,21 +411,10 @@ public class TransactionService implements ITransactionService {
                 .orElseThrow(() -> new RuntimeException("Transaction with id " + id + " not found"));
         if(transaction.getStatus() == StatusEnum.AUTHORIZE) {
             if(transaction.getType() == TypeTransactionEnum.INTERNAL) {
-                transactionHistoryService.saveTransactionHistory(transaction);
-                transaction.setStatus(StatusEnum.ACTIVE);
-                Transaction authorizedTransaction = transactionRepository.save(transaction);
-                balanceService.updateTotalAmount(transaction.getId());
-                Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
-                auditService.saveAudit(audit);
-                return authorizedTransaction;
+                return this.internalAuthorize(transaction);
             }
             else{ // EXTERNAL transaction -> perform ips request
-                transactionHistoryService.saveTransactionHistory(transaction);
-                transaction.setStatus(StatusEnum.AUTHORIZE_IPS);
-                transaction.setNextStatus(StatusEnum.ACTIVE);
-                Transaction authorizedTransaction = transactionRepository.save(transaction);
-                Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
-                auditService.saveAudit(audit);
+                this.externalAuthorize(transaction);
 
                 BigDecimal amount = transaction.getAmount();
                 String referenceTransaction = transaction.getReference();
@@ -408,23 +437,10 @@ public class TransactionService implements ITransactionService {
                 }
 
                 if(Objects.equals(ipsResponse, "ACSP")){
-                    transactionHistoryService.saveTransactionHistory(transaction);
-                    transaction.setStatus(StatusEnum.ACTIVE);
-                    Transaction authorizedIpsTransaction = transactionRepository.save(transaction);
-                    balanceService.updateTotalAmount(transaction.getId());
-                    Audit auditIps = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
-                    auditService.saveAudit(auditIps);
-                    return authorizedIpsTransaction;
+                    return this.ipsAcceptTransaction(transaction);
                 }
                 else{
-                    transactionHistoryService.saveTransactionHistory(transaction);
-                    transaction.setStatus(StatusEnum.DELETE);
-                    transaction.setNextStatus(StatusEnum.DELETE);
-                    Transaction rejectedTransaction = transactionRepository.save(transaction);
-                    balanceService.cancelAmountChanges(transaction.getId());
-                    audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.REJECT, 0L);
-                    auditService.saveAudit(audit);
-                    return rejectedTransaction;
+                    return this.ipsRejectTransaction(transaction);
                 }
             }
         }
