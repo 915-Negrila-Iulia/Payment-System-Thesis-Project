@@ -16,7 +16,7 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
   accountId: number | undefined;
   types: any = ['INTERNAL','EXTERNAL'];
   actions: any = ['DEPOSIT', 'WITHDRAWAL', 'TRANSFER'];
-  externalBanks: any = ['SCOTIA BANK', 'REPUBLIC BANK LIMITED'];
+  externalBanks: any = ['SCOTIA BANK', 'REPUBLIC BANK LIMITED', 'RBC ROYAL BANK'];
   transaction: Transaction = new Transaction();
   errorMessage = '';
   targetAccounts: any;

@@ -206,6 +206,8 @@ public class TransactionService implements ITransactionService {
             return "NOSCTTPS";
         else if(Objects.equals(bankName, "REPUBLIC BANK LIMITED"))
             return "RBNKTTPX";
+        else if (Objects.equals(bankName, "RBC ROYAL BANK"))
+            return "RBTTTTPX";
         return null;
     }
 
