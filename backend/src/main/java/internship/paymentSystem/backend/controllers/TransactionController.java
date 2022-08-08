@@ -3,15 +3,16 @@ package internship.paymentSystem.backend.controllers;
 import internship.paymentSystem.backend.DTOs.BaseObjectDto;
 import internship.paymentSystem.backend.DTOs.CurrentUserDto;
 import internship.paymentSystem.backend.DTOs.StatisticDto;
+import internship.paymentSystem.backend.client.IpsClient;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.enums.StatusEnum;
-import internship.paymentSystem.backend.services.interfaces.ITransactionHistoryService;
 import internship.paymentSystem.backend.services.interfaces.ITransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -21,6 +22,9 @@ public class TransactionController {
 
     @Autowired
     private ITransactionService transactionService;
+
+    @Autowired
+    private IpsClient ipsClient;
 
     @GetMapping()
     public List<Transaction> getTransactions(){
@@ -141,4 +145,5 @@ public class TransactionController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
 }

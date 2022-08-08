@@ -8,4 +8,6 @@ export class Transaction {
     status: string | undefined;
     nextStatus: string | undefined;
     targetIban: string | undefined;
+    bankName: string | undefined;
+    nameReceiver: string | undefined;
 }
