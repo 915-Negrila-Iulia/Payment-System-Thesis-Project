@@ -19,12 +19,12 @@ public abstract class BaseEntity {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    @ColumnDefault(value = "APPROVE")
+    @ColumnDefault(value = "'APPROVE'")
     private StatusEnum status;
 
     @Column(name = "next_status")
     @Enumerated(EnumType.STRING)
-    @ColumnDefault(value = "ACTIVE")
+    @ColumnDefault(value = "'ACTIVE'")
     private StatusEnum nextStatus;
 
     public BaseEntity(StatusEnum status, StatusEnum nextStatus) {

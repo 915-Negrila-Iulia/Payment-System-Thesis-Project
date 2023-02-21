@@ -35,7 +35,7 @@ public abstract class AccountEntity extends BaseEntity{
 
     @Column(name = "account_status")
     @Enumerated(EnumType.STRING)
-    @ColumnDefault(value = "OPEN")
+    @ColumnDefault(value = "'OPEN'")
     private AccountStatusEnum accountStatus;
 
     public AccountEntity(StatusEnum status, StatusEnum nextStatus, String iban, String countryCode, String bankCode,
