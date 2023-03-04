@@ -19,7 +19,8 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/accounts")
-@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://frontend-paymentsys.s3-website-eu-west-1.amazonaws.com")
 public class AccountController {
 
     @Autowired
