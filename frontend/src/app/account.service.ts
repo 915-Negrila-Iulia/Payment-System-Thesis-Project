@@ -11,6 +11,7 @@ import { ObjectDto } from './object-dto';
 export class AccountService {
 
   baseUrl = 'http://localhost:8080/api/accounts';
+  //baseUrl = 'http://backendpaymentsystem-env.eba-ffkt3wf3.eu-west-1.elasticbeanstalk.com/api/accounts';
   currentUserId = sessionStorage.getItem('userID');
   objectDto: ObjectDto = new ObjectDto();
   currentUserDto: CurrentUserDto = new CurrentUserDto();

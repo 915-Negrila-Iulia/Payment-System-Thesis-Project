@@ -155,4 +155,8 @@ export class AccountsListComponent implements OnInit, OnChanges {
     document.getElementById('container-accounts')!.style.opacity = '100%';
   }
 
+  filterItemsOfStatus(itemStatus: any){
+    return this.statusList.filter(x => x != itemStatus);
+  }
+
 }

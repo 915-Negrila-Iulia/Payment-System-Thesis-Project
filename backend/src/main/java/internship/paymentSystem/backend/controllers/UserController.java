@@ -2,8 +2,6 @@ package internship.paymentSystem.backend.controllers;
 
 import internship.paymentSystem.backend.DTOs.BaseObjectDto;
 import internship.paymentSystem.backend.DTOs.CurrentUserDto;
-import internship.paymentSystem.backend.client.IpsClient;
-import internship.paymentSystem.backend.config.GenerateXML;
 import internship.paymentSystem.backend.services.interfaces.IUserService;
 import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.models.UserHistory;
@@ -12,14 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-//@CrossOrigin(origins = "http://localhost:4200")
-@CrossOrigin(origins = "http://frontend-paymentsys.s3-website-eu-west-1.amazonaws.com")
+@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://frontend-paymentsys.s3-website-eu-west-1.amazonaws.com")
 public class UserController {
 
     @Autowired

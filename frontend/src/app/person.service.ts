@@ -12,6 +12,7 @@ import { PersonHistory } from './person-history';
 export class PersonService {
 
   baseUrl = 'http://localhost:8080/api/persons';
+  //baseUrl = 'http://backendpaymentsystem-env.eba-ffkt3wf3.eu-west-1.elasticbeanstalk.com/api/persons';
   currentUserId = sessionStorage.getItem('userID');
   objectDto: ObjectDto = new ObjectDto();
   currentUserDto: CurrentUserDto = new CurrentUserDto();

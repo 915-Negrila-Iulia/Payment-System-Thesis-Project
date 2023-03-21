@@ -11,10 +11,8 @@
         <span *ngIf="bankCode && bankCode.invalid && bankCode.touched">Bank code is invalid</span>
         <label for="currency">Currency</label>
         <input type="text" id="currency" formControlName="currency">
-        <span *ngIf="currency && currency.invalid && currency.touched">Currency is invalid</span>
         <label for="accountStatus">Account Status</label>
         <input type="text" id="accountStatus" formControlName="accountStatus">
-        <span *ngIf="accountStatus && accountStatus.invalid && accountStatus.touched">Account status is invalid</span>
         <label for="person">Choose Person</label>
         <select formControlName="person">
             <option></option>

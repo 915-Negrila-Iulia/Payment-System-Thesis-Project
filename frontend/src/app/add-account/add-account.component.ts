@@ -29,8 +29,8 @@ export class AddAccountComponent implements OnInit {
     this.addAccountForm = new FormGroup({
     countryCode: new FormControl('',[Validators.required, Validators.pattern('^[A-Z]{2}$')]),
     bankCode: new FormControl('',[Validators.required]),
-    currency: new FormControl('',[Validators.required, Validators.pattern('^[A-Z]{3}$')]),
-    accountStatus: new FormControl('',[Validators.required, Validators.pattern('^[A-Z ]{3,}$')]),
+    currency: new FormControl({value: 'EUR', disabled: true},Validators.required),
+    accountStatus: new FormControl({value: 'OPEN', disabled: true}, Validators.required),
     person: new FormControl('',[Validators.required]),
   })
   }
@@ -49,6 +49,8 @@ export class AddAccountComponent implements OnInit {
       this.account.personID = this.personDetails.id;
       this.account.status = "APPROVE";
       this.account.iban = "";
+      this.account.accountStatus = "OPEN";
+      this.account.currency = "EUR";
 
       this.accountService.addAccount(this.account).subscribe(data => {
         console.log(data);

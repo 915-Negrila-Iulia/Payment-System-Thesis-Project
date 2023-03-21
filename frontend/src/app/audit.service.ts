@@ -9,6 +9,7 @@ import { ObjectStateUtils } from './object-state-utils';
 export class AuditService {
 
   baseUrl = 'http://localhost:8080/api/audit';
+  //baseUrl = 'http://backendpaymentsystem-env.eba-ffkt3wf3.eu-west-1.elasticbeanstalk.com/api/audit';
 
   constructor(private httpClient: HttpClient) { }
 

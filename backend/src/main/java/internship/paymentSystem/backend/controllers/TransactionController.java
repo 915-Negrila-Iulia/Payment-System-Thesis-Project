@@ -3,7 +3,7 @@ package internship.paymentSystem.backend.controllers;
 import internship.paymentSystem.backend.DTOs.BaseObjectDto;
 import internship.paymentSystem.backend.DTOs.CurrentUserDto;
 import internship.paymentSystem.backend.DTOs.StatisticDto;
-import internship.paymentSystem.backend.client.IpsClient;
+import internship.paymentSystem.backend.client.Client;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.services.interfaces.ITransactionService;
@@ -12,20 +12,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/transactions")
-//@CrossOrigin(origins = "http://localhost:4200")
-@CrossOrigin(origins = "http://frontend-paymentsys.s3-website-eu-west-1.amazonaws.com")
+@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://frontend-paymentsys.s3-website-eu-west-1.amazonaws.com")
 public class TransactionController {
 
     @Autowired
     private ITransactionService transactionService;
 
     @Autowired
-    private IpsClient ipsClient;
+    private Client ipsClient;
 
     @GetMapping()
     public List<Transaction> getTransactions(){

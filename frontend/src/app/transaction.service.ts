@@ -12,6 +12,7 @@ import { TransactionHistory } from './transaction-history';
 export class TransactionService {
 
   baseUrl = "http://localhost:8080/api/transactions";
+  //baseUrl = 'http://backendpaymentsystem-env.eba-ffkt3wf3.eu-west-1.elasticbeanstalk.com/api/transactions';
   currentUserId = sessionStorage.getItem('userID');
 
   objectDto: ObjectDto = new ObjectDto();

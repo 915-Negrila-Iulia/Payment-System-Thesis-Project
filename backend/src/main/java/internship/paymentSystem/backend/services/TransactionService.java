@@ -1,7 +1,7 @@
 package internship.paymentSystem.backend.services;
 
 import internship.paymentSystem.backend.DTOs.StatisticDto;
-import internship.paymentSystem.backend.client.IpsClient;
+import internship.paymentSystem.backend.client.Client;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.bases.TransactionEntity;
 import internship.paymentSystem.backend.models.enums.*;
@@ -42,7 +42,7 @@ public class TransactionService implements ITransactionService {
     private IAuditService auditService;
 
     @Autowired
-    private IpsClient ipsClient;
+    private Client appClient;
 
     @Override
     public Transaction saveTransaction(Transaction transaction) {
@@ -146,6 +146,15 @@ public class TransactionService implements ITransactionService {
         }
     }
 
+    private void fraudCheck(Transaction transaction){
+        Long step = 0L;
+        BigDecimal amount = transaction.getAmount();
+        BigDecimal oldbalanceOrg = balanceService.getCurrentBalance(transaction.getAccountID()).getTotal();
+        BigDecimal oldbalanceDest = balanceService.getCurrentBalance(transaction.getTargetAccountID()).getTotal();
+        appClient.isFraudCheck(step, amount, oldbalanceOrg, oldbalanceOrg.subtract(amount),
+                oldbalanceDest, oldbalanceDest.add(amount));
+    }
+
     /**
      * Withdrawal amount of money
      * Check if user that wants to withdrawal is the owner of the account
@@ -163,6 +172,7 @@ public class TransactionService implements ITransactionService {
     public Transaction withdrawalTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
+        this.fraudCheck(transactionDetails);
         if(Objects.equals(userId, currentUserId)) {
             if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_DEBIT) ||
                     Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))) {
@@ -424,7 +434,7 @@ public class TransactionService implements ITransactionService {
                 String bankName = transaction.getBankName();
                 String nameReceiver = transaction.getNameReceiver();
                 String bicReceiver = this.getBicOfBank(bankName);
-                String ipsResponse = ipsClient.sendPaymentRequestIPS(amount, referenceTransaction,
+                String ipsResponse = appClient.sendPaymentRequestIPS(amount, referenceTransaction,
                         nameSender, ibanSender, bicReceiver, nameReceiver,
                         ibanReceiver);
 

@@ -11,6 +11,7 @@ import { UserHistory } from './user-history';
 export class UserService {
 
   baseUrl = 'http://localhost:8080/api';
+  //baseUrl = 'http://backendpaymentsystem-env.eba-ffkt3wf3.eu-west-1.elasticbeanstalk.com/api';
   currentUserId = Number(sessionStorage.getItem('userID'));
 
   objectDto: ObjectDto = new ObjectDto();

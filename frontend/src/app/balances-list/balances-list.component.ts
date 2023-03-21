@@ -53,21 +53,8 @@ export class BalancesListComponent implements OnInit {
       let startDateSplit = this.range.value['start'].toLocaleDateString().split('/');
       let endDateSplit = this.range.value['end'].toLocaleDateString().split('/');
 
-      let startYear = startDateSplit[2], startMonth = startDateSplit[0], startDay = startDateSplit[1];
-      let endYear = endDateSplit[2], endMonth = endDateSplit[0], endDay = endDateSplit[1];
-
-      if(startMonth<10){
-        startMonth = "0" + startMonth;
-      }
-      if(startDay<10){
-        startDay = "0" + startDay;
-      }
-      if(endMonth<10){
-        endMonth = "0" + endMonth;
-      }
-      if(endDay<10){
-        endDay = "0" + endDay;
-      }
+      let startYear = startDateSplit[2], startMonth = startDateSplit[1], startDay = startDateSplit[0];
+      let endYear = endDateSplit[2], endMonth = endDateSplit[1], endDay = endDateSplit[0];
 
       let startDate = startYear + "-" + startMonth + "-" + startDay;
       let endDate = endYear + "-" + endMonth + "-" + endDay;

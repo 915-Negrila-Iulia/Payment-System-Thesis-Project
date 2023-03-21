@@ -8,6 +8,7 @@ import { Balance } from './balance';
 export class BalanceService {
 
   baseUrl = 'http://localhost:8080/api';
+  //baseUrl = 'http://backendpaymentsystem-env.eba-ffkt3wf3.eu-west-1.elasticbeanstalk.com/api';
 
   constructor(private httpClient: HttpClient) { }
 

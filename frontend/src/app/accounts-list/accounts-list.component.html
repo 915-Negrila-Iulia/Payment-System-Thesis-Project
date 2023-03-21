@@ -30,7 +30,7 @@
             <td class="drop-down-div" [formGroup]="chooseAccountStatusFormGroup">
             <select formControlName="accountStatus" class="small-size-column">
                 <option>{{item.accountStatus}}</option>
-                <option *ngFor="let itemAccountStatus of statusList">{{itemAccountStatus}}</option>
+                <option *ngFor="let itemAccountStatus of filterItemsOfStatus(item.accountStatus)">{{itemAccountStatus}}</option>
             </select>
           </td>
             <td>{{getPersonDetails(item.personID)}}</td>

@@ -17,8 +17,8 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/persons")
-//@CrossOrigin(origins = "http://localhost:4200")
-@CrossOrigin(origins = "http://frontend-paymentsys.s3-website-eu-west-1.amazonaws.com")
+@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://frontend-paymentsys.s3-website-eu-west-1.amazonaws.com")
 public class PersonController {
 
     @Autowired
