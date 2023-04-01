@@ -23,5 +23,5 @@ public interface IBalanceService {
 
     void cancelAmountChanges(Long transactionId);
 
-    List<Balance> filterByDates(String startDate, String endDate);
+    List<Balance> filterByDates(String startDate, String endDate, List<Balance> balances);
 }

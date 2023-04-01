@@ -16,6 +16,10 @@ public interface ITransactionService {
 
     List<Transaction> getAllTransactions();
 
+    List<Transaction> getTransactionsOfUser(Long id);
+
+    List<TransactionHistory> getTransactionsHistoryOfUser(Long id);
+
     List<Transaction> getTransactionsByStatus(StatusEnum filterStatus);
 
     List<Transaction> getTransactionsByAccountId(Long id);

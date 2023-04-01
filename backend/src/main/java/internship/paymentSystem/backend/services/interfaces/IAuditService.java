@@ -12,6 +12,8 @@ public interface IAuditService {
 
     List<Audit> getAudit();
 
+    List<Audit> getAuditOfUser(Long id);
+
     List<Audit> getAuditOfObject(Long objectId, ObjectTypeEnum objectType);
 
     Long getUserThatMadeUpdates(Long objectId, ObjectTypeEnum objectType);

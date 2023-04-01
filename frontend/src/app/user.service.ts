@@ -13,6 +13,7 @@ export class UserService {
   baseUrl = 'http://localhost:8080/api';
   //baseUrl = 'http://backendpaymentsystem-env.eba-ffkt3wf3.eu-west-1.elasticbeanstalk.com/api';
   currentUserId = Number(sessionStorage.getItem('userID'));
+  role = sessionStorage.getItem('role');
 
   objectDto: ObjectDto = new ObjectDto();
   currentUserDto: CurrentUserDto = new CurrentUserDto();
@@ -36,7 +37,11 @@ export class UserService {
   }
 
   getHistoryOfUsers(){
-    return this.httpClient.get<UserHistory[]>(this.baseUrl+"/users/history");
+    return this.role=="ADMIN_ROLE" ? this.httpClient.get<UserHistory[]>(this.baseUrl+"/users/history") : this.getHistoryOfCurrentUser();
+  }
+
+  getHistoryOfCurrentUser(){
+    return this.httpClient.get<UserHistory[]>(this.baseUrl+`/users/history/${this.currentUserId}`);
   }
 
   updateUser(id: number, user: User){

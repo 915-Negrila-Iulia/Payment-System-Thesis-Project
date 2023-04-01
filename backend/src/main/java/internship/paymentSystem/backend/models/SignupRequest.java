@@ -1,10 +1,13 @@
 package internship.paymentSystem.backend.models;
 
 
+import internship.paymentSystem.backend.models.enums.RoleEnum;
+
 public class SignupRequest {
     private String username;
     private String email;
     private String password;
+    private RoleEnum role;
 
     public String getUsername() {
         return username;
@@ -29,4 +32,8 @@ public class SignupRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public RoleEnum getRole() {return role;}
+
+    public void setRole(RoleEnum role) {this.role = role;}
 }

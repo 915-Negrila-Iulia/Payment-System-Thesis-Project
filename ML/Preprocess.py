@@ -47,7 +47,7 @@ class DataProcess:
     def prep_data(self, col1, col2):
         """
         X: data columns (nameOrig, oldBalanceOrig, ...)
-        y: lable column (isFraud)
+        y: target column (isFraud)
         """
         #X = self.df.iloc[:,0:6].values # for visualization
         #X = self.df.iloc[:,1:6].values # train and test without 'step' and 'isFraud' column

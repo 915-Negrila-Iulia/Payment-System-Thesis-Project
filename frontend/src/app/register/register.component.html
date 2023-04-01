@@ -9,6 +9,8 @@
         <label for="password">Password</label>
         <input type="password" id="password" formControlName="password">
         <span *ngIf="password && password.invalid && password.touched">Password is invalid</span>
+        <mat-slide-toggle color="primary" formControlName="role" 
+        (change)="slideToggleChange($event)">Admin</mat-slide-toggle>
         <button class="register-button" type="submit" [disabled]="registerForm.invalid">Register</button>
     </form>
 </div>

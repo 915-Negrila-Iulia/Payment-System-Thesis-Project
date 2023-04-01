@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 export class UsersHomeComponent implements OnInit {
 
   show: string = "usersList";
+  role = sessionStorage.getItem('role');
 
   constructor(private router: Router) { }
 

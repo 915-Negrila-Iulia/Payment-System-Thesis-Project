@@ -1,12 +1,14 @@
 package internship.paymentSystem.backend.services;
 
 import internship.paymentSystem.backend.DTOs.StatisticDto;
+import internship.paymentSystem.backend.DTOs.TransactionBuilderContext;
 import internship.paymentSystem.backend.client.Client;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.bases.TransactionEntity;
 import internship.paymentSystem.backend.models.enums.*;
 import internship.paymentSystem.backend.repositories.ITransactionRepository;
 import internship.paymentSystem.backend.services.interfaces.*;
+import internship.paymentSystem.backend.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,8 +76,28 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
+    public List<Transaction> getTransactionsOfUser(Long id){
+        List<Account> accountsOfUser = accountService.getAccountsOfUser(id);
+        return transactionRepository.findAll().stream()
+                .filter(transaction -> accountsOfUser.stream()
+                        .anyMatch(account -> Objects.equals(account.getId(), transaction.getAccountID()) ||
+                                Objects.equals(account.getId(), transaction.getTargetAccountID())))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<TransactionHistory> getHistoryOfTransactions() {
         return transactionHistoryService.getHistoryOfTransactions();
+    }
+
+    @Override
+    public List<TransactionHistory> getTransactionsHistoryOfUser(Long id){
+        List<Account> accountsOfUser = accountService.getAccountsOfUser(id);
+        return transactionHistoryService.getHistoryOfTransactions().stream()
+                .filter(transactionHistory -> accountsOfUser.stream()
+                        .anyMatch(account -> Objects.equals(account.getId(), transactionHistory.getAccountID()) ||
+                                Objects.equals(account.getId(), transactionHistory.getTargetAccountID())))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -84,27 +106,35 @@ public class TransactionService implements ITransactionService {
     }
 
     private Long getUserIdOfAccount(Long accountId){
-        Long personId = accountService.findAccountById(accountId).get().getPersonID();
-        Long userId = personService.findPersonById(personId).get().getUserID();
-        return userId;
+        Long personId = accountService.findAccountById(accountId).isPresent() ?
+                accountService.findAccountById(accountId).get().getPersonID() : null;
+        return personService.findPersonById(personId).isPresent() ?
+                personService.findPersonById(personId).get().getUserID() : null;
     }
 
     private AccountStatusEnum getStatusByAccountId(Long accountId){
-        return accountService.findAccountById(accountId).get().getAccountStatus();
+        return accountService.findAccountById(accountId).isPresent() ?
+                accountService.findAccountById(accountId).get().getAccountStatus() : null;
     }
 
     private String getCurrencyByAccountId(Long accountId){
-        return accountService.findAccountById(accountId).get().getCurrency();
+        return accountService.findAccountById(accountId).isPresent() ?
+                accountService.findAccountById(accountId).get().getCurrency() : null;
     }
 
     private String getIbanByAccountId(Long accountId){
-        return accountService.findAccountById(accountId).get().getIban();
+        return accountService.findAccountById(accountId).isPresent() ?
+                accountService.findAccountById(accountId).get().getIban() : null;
     }
 
     private String getPersonOfAccount(Long accountId){
-        Long personId = accountService.findAccountById(accountId).get().getPersonID();
-        return personService.findPersonById(personId).get().getFirstName()+" "+
-                personService.findPersonById(personId).get().getLastName();
+        Long personId = accountService.findAccountById(accountId).isPresent() ?
+                accountService.findAccountById(accountId).get().getPersonID() : null;
+        String firstName = personService.findPersonById(personId).isPresent() ?
+                personService.findPersonById(personId).get().getFirstName() : null;
+        String lastName = personService.findPersonById(personId).isPresent() ?
+                personService.findPersonById(personId).get().getLastName() : null;
+        return firstName+" "+ lastName;
     }
 
     /**
@@ -124,26 +154,11 @@ public class TransactionService implements ITransactionService {
     public Transaction depositTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
-        if(Objects.equals(userId, currentUserId)) {
-            if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_CREDIT) ||
-                    Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))){
-                BigDecimal amount = transactionDetails.getAmount();
-                Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.DEPOSIT, amount,
-                        accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
-                transactionRepository.save(transaction);
-                transactionHistoryService.saveTransactionHistory(transaction);
-                balanceService.updateAvailableAmount(accountId, transaction.getId());
-                Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
-                auditService.saveAudit(audit);
-                return transaction;
-            }
-            else{
-                throw new Exception("Credit Blocked. Not allowed to deposit");
-            }
-        }
-        else{
-            throw new Exception("Not allowed to make transaction");
-        }
+        AccountStatusEnum accountStatus = getStatusByAccountId(accountId);
+        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,
+                accountStatus,accountStatus,transactionRepository,transactionHistoryService,balanceService,auditService);
+        BaseTransactionBuilder transactionBuilder = new DepositTransactionBuilder(context);
+        return transactionBuilder.buildTransaction();
     }
 
     private void fraudCheck(Transaction transaction){
@@ -172,43 +187,26 @@ public class TransactionService implements ITransactionService {
     public Transaction withdrawalTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
+        AccountStatusEnum accountStatus = getStatusByAccountId(accountId);
         this.fraudCheck(transactionDetails);
-        if(Objects.equals(userId, currentUserId)) {
-            if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_DEBIT) ||
-                    Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))) {
-                BigDecimal amount = transactionDetails.getAmount();
-                Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.WITHDRAWAL, amount,
-                        accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
-                transactionRepository.save(transaction);
-                transactionHistoryService.saveTransactionHistory(transaction);
-                balanceService.updateAvailableAmount(accountId, transaction.getId());
-                Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, currentUserId);
-                auditService.saveAudit(audit);
-                return transaction;
-            }
-            else{
-                throw new Exception("Debit Blocked. Not allowed to withdraw");
-            }
-        }
-        else{
-            throw new Exception("Not allowed to make transaction");
-        }
+        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,
+                accountStatus,accountStatus,transactionRepository,transactionHistoryService,balanceService,auditService);
+        BaseTransactionBuilder transactionBuilder = new WithdrawalTransactionBuilder(context);
+        return transactionBuilder.buildTransaction();
     }
 
     @Transactional
-    Transaction internalTransfer(Transaction transactionDetails, Long accountId, Long targetId, Long currentUserId){
-        BigDecimal amount = transactionDetails.getAmount();
-        String targetAccountIban = accountService.findAccountById(targetId).get().getIban();
-        Transaction transaction = new Transaction(TypeTransactionEnum.INTERNAL,
-                ActionTransactionEnum.TRANSFER, amount, accountId, targetId, targetAccountIban,
-                StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
-        transactionRepository.save(transaction);
-        transactionHistoryService.saveTransactionHistory(transaction);
-        balanceService.updateAvailableAmount(accountId, transaction.getId());
-        Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION,
-                OperationEnum.CREATE, currentUserId);
-        auditService.saveAudit(audit);
-        return transaction;
+    Transaction internalTransfer(Transaction transactionDetails, Long currentUserId) throws Exception {
+        Long accountId = transactionDetails.getAccountID();
+        Long targetId = transactionDetails.getTargetAccountID();
+        Long userId = this.getUserIdOfAccount(accountId);
+        AccountStatusEnum accountStatus = getStatusByAccountId(accountId);
+        AccountStatusEnum targetAccountStatus = getStatusByAccountId(targetId);
+        //this.fraudCheck(transactionDetails);
+        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,
+                accountStatus,targetAccountStatus,transactionRepository,transactionHistoryService,balanceService,auditService);
+        BaseTransactionBuilder transactionBuilder = new InternalTransferBuilder(context);
+        return transactionBuilder.buildTransaction();
     }
 
     private String getBicOfBank(String bankName){
@@ -222,23 +220,14 @@ public class TransactionService implements ITransactionService {
     }
 
     @Transactional
-    Transaction externalTransfer(Transaction transactionDetails, Long accountId, Long currentUserId) throws Exception {
-        BigDecimal amount = transactionDetails.getAmount();
-        String ibanReceiver = transactionDetails.getTargetIban();
-        String bankName = transactionDetails.getBankName();
-        String nameReceiver = transactionDetails.getNameReceiver();
-
-        Transaction transaction = new Transaction(TypeTransactionEnum.EXTERNAL,
-                ActionTransactionEnum.TRANSFER, amount, accountId, null, ibanReceiver,
-                bankName, nameReceiver, StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
-        transactionRepository.save(transaction);
-        transactionHistoryService.saveTransactionHistory(transaction);
-        balanceService.updateAvailableAmount(accountId, transaction.getId());
-        Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION,
-                OperationEnum.CREATE, currentUserId);
-        auditService.saveAudit(audit);
-
-        return transaction;
+    Transaction externalTransfer(Transaction transactionDetails, Long currentUserId) throws Exception {
+        Long accountId = transactionDetails.getAccountID();
+        Long userId = this.getUserIdOfAccount(accountId);
+        AccountStatusEnum accountStatus = getStatusByAccountId(accountId);
+        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,
+                accountStatus,accountStatus,transactionRepository,transactionHistoryService,balanceService,auditService);
+        BaseTransactionBuilder transactionBuilder = new ExternalTransferBuilder(context);
+        return transactionBuilder.buildTransaction();
     }
 
     /**
@@ -254,37 +243,9 @@ public class TransactionService implements ITransactionService {
     @Transactional
     @Override
     public Transaction transferTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
-        Long accountId = transactionDetails.getAccountID();
-        Long userId = this.getUserIdOfAccount(accountId);
-        Long targetId = transactionDetails.getTargetAccountID();
-        if(Objects.equals(userId, currentUserId)) {
-            if(!(Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCK_CREDIT) ||
-                    Objects.equals(getStatusByAccountId(accountId),AccountStatusEnum.BLOCKED))) {
-                if(transactionDetails.getType() == TypeTransactionEnum.INTERNAL) {
-                    if (!(Objects.equals(getStatusByAccountId(targetId), AccountStatusEnum.BLOCK_DEBIT) ||
-                            Objects.equals(getStatusByAccountId(targetId), AccountStatusEnum.BLOCKED))) {
-                        if (Objects.equals(getCurrencyByAccountId(accountId), getCurrencyByAccountId(targetId))) {
-                            // internal transfer
-                            return this.internalTransfer(transactionDetails, accountId, targetId, currentUserId);
-                        } else {
-                            throw new Exception("Currencies do not match. Not allowed to transfer");
-                        }
-                    } else {
-                        throw new Exception("Debit Blocked. Not allowed to receive");
-                    }
-                }
-                else{
-                    // ips external transfer
-                    return this.externalTransfer(transactionDetails, accountId, currentUserId);
-                }
-            }
-            else{
-                throw new Exception("Credit Blocked. Not allowed to send");
-            }
-        }
-        else{
-            throw new Exception("Not allowed to make transaction");
-        }
+        return transactionDetails.getType() == TypeTransactionEnum.INTERNAL ?
+                this.internalTransfer(transactionDetails,currentUserId) : // internal transfer
+                this.externalTransfer(transactionDetails,currentUserId); // ips external transfer
     }
 
     @Transactional

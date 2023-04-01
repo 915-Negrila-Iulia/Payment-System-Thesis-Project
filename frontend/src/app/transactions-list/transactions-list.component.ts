@@ -17,6 +17,7 @@ export class TransactionsListComponent implements OnInit {
   objectType = 'TRANSACTION';
   errorMessage='';
   selectedIban: string | undefined;
+  role = sessionStorage.getItem('role');
 
   constructor(private transactionService: TransactionService, private accountService: AccountService) { }
 
@@ -24,6 +25,7 @@ export class TransactionsListComponent implements OnInit {
     this.getTransactions();
     this.accountService.getAllAccounts().subscribe(data => {
       this.accounts = data;
+      console.log(data);
     })
   }
 

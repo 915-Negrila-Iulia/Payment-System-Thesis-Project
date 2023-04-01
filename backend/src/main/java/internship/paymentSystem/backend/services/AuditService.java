@@ -42,6 +42,13 @@ public class AuditService implements IAuditService {
     }
 
     @Override
+    public List<Audit> getAuditOfUser(Long id){
+        return auditRepository.findAll().stream()
+                .filter(audit -> Objects.equals(audit.getUserID(), id))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<Audit> getAuditOfObject(Long objectId, ObjectTypeEnum objectType){
         return auditRepository.findAll().stream()
                 .filter(audit -> Objects.equals(audit.getObjectID(), objectId) &&

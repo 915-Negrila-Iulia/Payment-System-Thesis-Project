@@ -75,9 +75,8 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
         if(data != null){
           this.transaction.targetAccountID = data.id;
         }
-        else{
-          this.transaction.targetIban = myTransaction.targetAccount;
-        }
+        this.transaction.targetIban = myTransaction.targetAccount;
+        
         this.transaction.status = "APPROVE";
         this.transaction.nextStatus = "AUTHORIZE";
         console.log(this.transaction);

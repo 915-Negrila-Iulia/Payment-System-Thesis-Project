@@ -5,6 +5,7 @@ import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.models.UserHistory;
 import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
 import internship.paymentSystem.backend.models.enums.OperationEnum;
+import internship.paymentSystem.backend.models.enums.RoleEnum;
 import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.repositories.IUserRepository;
 import internship.paymentSystem.backend.services.interfaces.IAuditService;
@@ -78,6 +79,12 @@ public class UserService implements IUserService {
         return userHistoryService.getHistoryByUserId(userId);
     }
 
+    @Override
+    public boolean isUserAdmin(Long id) {
+        RoleEnum role = userRepository.findById(id).get().getRole();
+        return role.equals(RoleEnum.ADMIN_ROLE);
+    }
+
     /**
      * Create user
      * Add a new record in 'UserHistory' table containing the initial state of the user
@@ -91,15 +98,20 @@ public class UserService implements IUserService {
     @Override
     public void signupUser(SignupRequest signUpRequest, Long currentUserId) {
         // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()),
-                StatusEnum.APPROVE,
-                StatusEnum.ACTIVE);
-        userRepository.save(user);
-        userHistoryService.saveUserHistory(user);
-        Audit audit = new Audit(user.getId(), ObjectTypeEnum.USER, OperationEnum.CREATE,currentUserId);
-        auditService.saveAudit(audit);
+        if(isUserAdmin(currentUserId)) {
+            User user = new User(signUpRequest.getUsername(),
+                    signUpRequest.getEmail(),
+                    encoder.encode(signUpRequest.getPassword()),
+                    signUpRequest.getRole(),
+                    StatusEnum.APPROVE,
+                    StatusEnum.ACTIVE);
+            userRepository.save(user);
+            userHistoryService.saveUserHistory(user);
+            Audit audit = new Audit(user.getId(), ObjectTypeEnum.USER, OperationEnum.CREATE, currentUserId);
+            auditService.saveAudit(audit);
+        } else {
+            throw new RuntimeException("You are not authorized to perform this operation");
+        }
     }
 
     /**
@@ -117,17 +129,21 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public User updateUser(Long id, Long currentUserId, User userDetails) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
-        this.userHistoryService.saveUserHistory(user);
-        user.setUsername(userDetails.getUsername());
-        user.setEmail(userDetails.getEmail());
-        user.setStatus(StatusEnum.APPROVE);
-        user.setNextStatus(StatusEnum.ACTIVE);
-        User updatedUser = userRepository.save(user);
-        Audit audit = new Audit(user.getId(), ObjectTypeEnum.USER, OperationEnum.UPDATE,currentUserId);
-        auditService.saveAudit(audit);
-        return updatedUser;
+        if(isUserAdmin(currentUserId)) {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
+            this.userHistoryService.saveUserHistory(user);
+            user.setUsername(userDetails.getUsername());
+            user.setEmail(userDetails.getEmail());
+            user.setStatus(StatusEnum.APPROVE);
+            user.setNextStatus(StatusEnum.ACTIVE);
+            User updatedUser = userRepository.save(user);
+            Audit audit = new Audit(user.getId(), ObjectTypeEnum.USER, OperationEnum.UPDATE, currentUserId);
+            auditService.saveAudit(audit);
+            return updatedUser;
+        } else {
+            throw new RuntimeException("You are not authorized to perform this operation");
+        }
     }
 
     /**
@@ -144,7 +160,8 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public User approveUser(Long id, Long currentUserId) throws Exception {
-        if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), currentUserId)) {
+        if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), currentUserId) &&
+                isUserAdmin(currentUserId)) {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
             userHistoryService.saveUserHistory(user);
@@ -173,7 +190,8 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public User rejectUser(Long id, Long currentUserId) throws Exception {
-        if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), currentUserId)) {
+        if(!Objects.equals(auditService.getUserThatMadeUpdates(id, ObjectTypeEnum.USER), currentUserId) &&
+                isUserAdmin(currentUserId)) {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
             UserHistory lastVersion = userHistoryService.getLastVersionOfUser(id);
@@ -212,15 +230,20 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public User deleteUser(Long id, Long currentUserId) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
-        userHistoryService.saveUserHistory(user);
-        user.setStatus(StatusEnum.APPROVE);
-        user.setNextStatus(StatusEnum.DELETE);
-        User deletedUser = userRepository.save(user);
-        Audit audit = new Audit(user.getId(),ObjectTypeEnum.USER,OperationEnum.DELETE,currentUserId);
-        auditService.saveAudit(audit);
-        return deletedUser;
+        if(isUserAdmin(currentUserId)) {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
+            userHistoryService.saveUserHistory(user);
+            user.setStatus(StatusEnum.APPROVE);
+            user.setNextStatus(StatusEnum.DELETE);
+            User deletedUser = userRepository.save(user);
+            Audit audit = new Audit(user.getId(), ObjectTypeEnum.USER, OperationEnum.DELETE, currentUserId);
+            auditService.saveAudit(audit);
+            return deletedUser;
+        }
+        else{
+            throw new RuntimeException("You are not authorized to perform this operation");
+        }
     }
 
 }

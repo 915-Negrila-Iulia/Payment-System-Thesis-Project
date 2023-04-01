@@ -1,6 +1,6 @@
 <div id="container-accounts" *ngIf="!doTransaction">
   <br>
-  <div class="filter-buttons-div">
+  <div *ngIf="role === 'ADMIN_ROLE'" class="filter-buttons-div">
     <button (click)="getMyAccounts()">My Accounts</button>
     <button (click)="getApproveAccounts()">Approve</button>
     <button (click)="getActiveAccounts()">Active</button>
@@ -40,9 +40,9 @@
               [disabled] = "item.status !== 'ACTIVE'">update</button></td>
             <td class="td-button"><button class="deleteButton" (click)="deleteAccount(item.id)"
               [disabled] = "item.status !== 'ACTIVE'">delete</button></td>  
-            <td class="td-button"><button class="approveButton" (click)="approveAccount(item.id)"
+            <td *ngIf="role === 'ADMIN_ROLE'" class="td-button"><button class="approveButton" (click)="approveAccount(item.id)"
               [disabled] = "item.status !== 'APPROVE'">approve</button></td>
-            <td class="td-button"><button class="rejectButton" (click)="rejectAccount(item.id)"
+            <td *ngIf="role === 'ADMIN_ROLE'" class="td-button"><button class="rejectButton" (click)="rejectAccount(item.id)"
               [disabled] = "item.status !== 'APPROVE'">reject</button></td>
             <td class="td-button"><button class="balanceButton" (click)="selectAccount(item.id); openPopup()"
               [disabled] = "item.status === 'DELETE'">details</button></td>

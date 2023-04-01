@@ -1,6 +1,6 @@
 <div class="container">
     <br>
-    <div class="filter-buttons-div">
+    <div *ngIf="role === 'ADMIN_ROLE'" class="filter-buttons-div">
       <button (click)="getMyPersons()">My Persons</button>
       <button (click)="getApprovePersons()">Approve</button>
       <button (click)="getActivePersons()">Active</button>
@@ -35,9 +35,9 @@
               [disabled] = "item.status !== 'ACTIVE'">update</button></td>
             <td class="td-button"><button class="updateButton" (click)="deletePerson(item.id)"
               [disabled] = "item.status !== 'ACTIVE'">delete</button></td>
-            <td class="td-button"><button class="approveButton" (click)="approvePerson(item.id)"
+            <td *ngIf="role === 'ADMIN_ROLE'" class="td-button"><button class="approveButton" (click)="approvePerson(item.id)"
               [disabled] = "item.status !== 'APPROVE'">approve</button></td>
-            <td class="td-button"><button class="rejectButton" (click)="rejectPerson(item.id)"
+            <td *ngIf="role === 'ADMIN_ROLE'" class="td-button"><button class="rejectButton" (click)="rejectPerson(item.id)"
               [disabled] = "item.status !== 'APPROVE'">reject</button></td>
           </tr>
         </table>

@@ -22,6 +22,7 @@ export class AuditListComponent implements OnInit, OnDestroy {
   historyRoute: any;
   displayedColumns: string[] = ['#', 'objectId', 'objectType', 'operation', 'user', 'timestamp'];
   dataSource!: MatTableDataSource<Audit>;
+  role = sessionStorage.getItem('role');
   
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
@@ -29,6 +30,12 @@ export class AuditListComponent implements OnInit, OnDestroy {
   constructor(private auditService: AuditService, private userService: UserService, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
+    if(this.role == "ADMIN_ROLE"){
+      this.displayedColumns = ['#', 'objectId', 'objectType', 'operation', 'user', 'timestamp'];
+    }
+    else{
+      this.displayedColumns = ['#', 'objectType', 'operation', 'timestamp'];
+    }
     this.subscribe = this.activatedRoute.paramMap.subscribe(params => {
       this.objectId = Number(params.get('id'));
       this.objectType = params.get('obj');

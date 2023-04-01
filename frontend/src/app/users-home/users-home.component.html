@@ -1,7 +1,7 @@
 <div class="container">
     <div class="top-bar-container">
         <button (click)="viewUsers()">USERS</button>
-        <button (click)="registerUser()">REGISTER</button>
+        <button *ngIf="role==='ADMIN_ROLE'" (click)="registerUser()">REGISTER</button>
         <button (click)="viewHistory()">HISTORY</button>
     </div>
     <app-users-list *ngIf="show==='usersList'"></app-users-list>

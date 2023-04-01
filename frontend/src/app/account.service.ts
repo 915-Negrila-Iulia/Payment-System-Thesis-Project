@@ -15,6 +15,7 @@ export class AccountService {
   currentUserId = sessionStorage.getItem('userID');
   objectDto: ObjectDto = new ObjectDto();
   currentUserDto: CurrentUserDto = new CurrentUserDto();
+  role = sessionStorage.getItem('role');
 
   constructor(private httpClient: HttpClient) { }
 
@@ -23,7 +24,7 @@ export class AccountService {
   }
 
   getAllAccounts(){
-    return this.httpClient.get<Account[]>(this.baseUrl);
+    return this.role=="ADMIN_ROLE" ? this.httpClient.get<Account[]>(this.baseUrl) : this.getAccountsOfUser();
   }
 
   getValidAccounts(){
@@ -43,7 +44,7 @@ export class AccountService {
   }
 
   getHistoryOfAccounts(){
-    return this.httpClient.get<AccountHistory[]>(this.baseUrl+"/history");
+    return this.role=="ADMIN_ROLE" ?  this.httpClient.get<AccountHistory[]>(this.baseUrl+"/history") : this.getAccountsHistoryOfUser();
   }
 
   getAccountsHistoryOfUser(){

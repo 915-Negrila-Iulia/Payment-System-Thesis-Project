@@ -17,6 +17,7 @@ export class PersonsListComponent implements OnInit {
   users: User[] = [];
   objectType = 'PERSON';
   errorMessage='';
+  role = sessionStorage.getItem('role');
 
   constructor(private personService: PersonService, private userService: UserService) { 
     

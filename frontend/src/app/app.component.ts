@@ -12,6 +12,8 @@ export class AppComponent {
   title = 'frontend';
   token = sessionStorage.getItem('token');
   username = sessionStorage.getItem('username');
+  role = sessionStorage.getItem('role');
+  displayRole = (this.role == "ADMIN_ROLE") ? "Admin" : "User";
 
   constructor(private router: Router) { }
 

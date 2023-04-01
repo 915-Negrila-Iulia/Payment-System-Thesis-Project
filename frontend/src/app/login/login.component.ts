@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
   sessionId: any = "";
   userID: any;
   username: any ="";
+  role: any = "";
 
   constructor(private userService: UserService, private router: Router) { }
 
@@ -45,6 +46,7 @@ export class LoginComponent implements OnInit {
         sessionStorage.setItem('token', this.sessionId);
         sessionStorage.setItem('userID', this.userID);
         sessionStorage.setItem('username',this.username);
+        sessionStorage.setItem('role', data.role);
         console.log(this.username);
         this.goToHomePage();
       }

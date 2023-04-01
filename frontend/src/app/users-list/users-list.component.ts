@@ -19,6 +19,7 @@ export class UsersListComponent implements OnInit, AfterViewInit {
   modifierUserID: number | undefined;
   objectType = 'USER';
   errorMessage = '';
+  role = sessionStorage.getItem('role');
 
   displayedColumns: string[] = ['#', 'username', 'email', 'status', 'next status', 'actions'];
   dataSource!: MatTableDataSource<User>;

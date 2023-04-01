@@ -1,5 +1,6 @@
 package internship.paymentSystem.backend.services;
 
+import internship.paymentSystem.backend.models.Account;
 import internship.paymentSystem.backend.models.Transaction;
 import internship.paymentSystem.backend.models.TransactionHistory;
 import internship.paymentSystem.backend.repositories.ITransactionHistoryRepository;

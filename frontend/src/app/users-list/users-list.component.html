@@ -9,7 +9,7 @@
         <th>Email</th>
         <th>Status</th>
         <th>Next Status</th>
-        <th colspan="4">Actions</th>
+        <th *ngIf="role==='ADMIN_ROLE'" colspan="4">Actions</th>
     </tr>
     <tr *ngFor="let item of users; let i = index;">
       <td><a [routerLink]="['/audit-list',item.id,objectType]">{{i+1}}</a></td>
@@ -17,13 +17,13 @@
       <td class="td-input"><input type="text" [(ngModel)]="users[i].email" #email="ngModel"></td>
       <td>{{item.status}}</td>
       <td>{{item.nextStatus}}</td>
-      <td class="td-button"><button class="updateButton" (click)="updateUser(item.id,item.username,email,item.password,item.status)"
+      <td *ngIf="role==='ADMIN_ROLE'" class="td-button"><button class="updateButton" (click)="updateUser(item.id,item.username,email,item.password,item.status)"
         [disabled] = "item.status !== 'ACTIVE'">update</button></td>
-      <td class="td-button"><button class="deleteButton" (click)="deleteUser(item.id)"
+      <td *ngIf="role==='ADMIN_ROLE'" class="td-button"><button class="deleteButton" (click)="deleteUser(item.id)"
         [disabled] = "item.status !== 'ACTIVE'">delete</button></td>
-      <td class="td-button"><button class="approveButton" (click)="approveUser(item.id)"
+      <td *ngIf="role==='ADMIN_ROLE'" class="td-button"><button class="approveButton" (click)="approveUser(item.id)"
         [disabled] = "item.status !== 'APPROVE'">approve</button></td>
-      <td class="td-button"><button class="rejectButton" (click)="rejectUser(item.id)"
+      <td *ngIf="role==='ADMIN_ROLE'" class="td-button"><button class="rejectButton" (click)="rejectUser(item.id)"
         [disabled] = "item.status !== 'APPROVE'">reject</button></td>
     </tr>
   </table>

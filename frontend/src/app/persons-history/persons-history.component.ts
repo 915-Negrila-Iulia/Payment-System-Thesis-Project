@@ -18,6 +18,7 @@ export class PersonsHistoryComponent implements OnInit, OnDestroy {
   users: User[] = [];
   persons: any; 
   selectedPerson: any;
+  role = sessionStorage.getItem('role');
 
   displayedColumns: string[] = ['#', 'firstName', 'lastName', 'address', 'dateOfBirth', 'phoneNumber', 'user', 'status', 'next status', 'timestamp'];
   dataSource!: MatTableDataSource<PersonHistory>;

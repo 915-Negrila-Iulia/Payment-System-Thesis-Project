@@ -1,5 +1,6 @@
 package internship.paymentSystem.backend.services;
 
+import internship.paymentSystem.backend.config.MyLogger;
 import internship.paymentSystem.backend.models.Account;
 import internship.paymentSystem.backend.models.AccountHistory;
 import internship.paymentSystem.backend.models.Person;
@@ -54,10 +55,11 @@ public class AccountHistoryService implements IAccountHistoryService {
     @Override
     public AccountHistory getLastVersionOfAccount(Long id) {
         List<AccountHistory> history = this.getHistoryByAccountId(id);
-        AccountHistory findLastVersion = history.stream().max(Comparator.comparing(AccountHistory::getTimestamp)).get();
-        AccountHistory lastVersion = new AccountHistory(findLastVersion.getIban(), findLastVersion.getCountryCode(),
-                findLastVersion.getBankCode(), findLastVersion.getCurrency(), findLastVersion.getAccountStatus());
-        return lastVersion;
+        AccountHistory findLastVersion =
+                history.stream().max(Comparator.comparing(AccountHistory::getTimestamp)).isPresent() ?
+                        history.stream().max(Comparator.comparing(AccountHistory::getTimestamp)).get() : null;
+        return findLastVersion != null ? new AccountHistory(findLastVersion.getIban(), findLastVersion.getCountryCode(),
+                findLastVersion.getBankCode(), findLastVersion.getCurrency(), findLastVersion.getAccountStatus()) : null;
     }
 
     @Override

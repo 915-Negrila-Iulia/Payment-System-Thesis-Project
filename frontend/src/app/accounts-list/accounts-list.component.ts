@@ -24,6 +24,7 @@ export class AccountsListComponent implements OnInit, OnChanges {
   persons: Person[] = [];
   objectType= 'ACCOUNT';
   errorMessage='';
+  role = sessionStorage.getItem('role');
   chooseAccountStatusFormGroup = new FormGroup({
     accountStatus: new FormControl()
   });

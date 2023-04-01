@@ -19,6 +19,7 @@ export class AccountsHistoryComponent implements OnInit {
   persons: Person[] = [];
   accounts: Account[] = [];
   selectedIban: any;
+  role = sessionStorage.getItem('role');
 
   displayedColumns: string[] = ['#', 'iban', 'countryCode', 'bankCode', 'currency', 'account status', 'person', 'status', 'next status', 'timestamp'];
   dataSource!: MatTableDataSource<AccountHistory>;

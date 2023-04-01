@@ -3,6 +3,7 @@ package internship.paymentSystem.backend.services.interfaces;
 import internship.paymentSystem.backend.models.SignupRequest;
 import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.models.UserHistory;
+import internship.paymentSystem.backend.models.enums.RoleEnum;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,8 @@ public interface IUserService {
     User rejectUser(Long id, Long currentUserId) throws Exception;
 
     User deleteUser(Long id, Long currentUserId);
+
+    boolean isUserAdmin(Long id);
 
     void signupUser(SignupRequest signUpRequest, Long currentUserId);
 }

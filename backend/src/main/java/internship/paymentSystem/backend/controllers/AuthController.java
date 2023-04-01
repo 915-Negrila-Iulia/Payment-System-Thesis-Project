@@ -1,5 +1,6 @@
 package internship.paymentSystem.backend.controllers;
 
+import internship.paymentSystem.backend.config.MyLogger;
 import internship.paymentSystem.backend.jwt.JwtUtils;
 import internship.paymentSystem.backend.models.JwtResponse;
 import internship.paymentSystem.backend.models.LoginRequest;
@@ -22,6 +23,8 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 public class AuthController {
 
+    private final MyLogger LOGGER = MyLogger.getInstance();
+
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -33,6 +36,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        LOGGER.logInfo("HTTP Request -- Post Login Authenticate User");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -43,11 +47,13 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
-                userDetails.getEmail()));
+                userDetails.getEmail(),
+                userDetails.getRole()));
     }
 
     @PostMapping("/signup/{currentUserId}")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, @PathVariable Long currentUserId) {
+        LOGGER.logInfo("HTTP Request -- Post Signup Register User");
         userService.signupUser(signUpRequest,currentUserId);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }

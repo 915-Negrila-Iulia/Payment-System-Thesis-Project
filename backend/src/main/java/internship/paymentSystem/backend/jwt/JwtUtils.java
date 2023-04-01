@@ -2,6 +2,7 @@ package internship.paymentSystem.backend.jwt;
 
 import java.util.Date;
 
+import internship.paymentSystem.backend.config.MyLogger;
 import internship.paymentSystem.backend.services.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import io.jsonwebtoken.*;
 
 @Component
 public class JwtUtils {
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+    private final MyLogger LOGGER = MyLogger.getInstance();
 
     @Value("${bezkoder.app.jwtSecret}")
     private String jwtSecret;
@@ -34,15 +35,15 @@ public class JwtUtils {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
-            logger.error("Invalid JWT signature: {}", e.getMessage());
+            LOGGER.logError("Invalid JWT signature: "+ e.getMessage());
         } catch (MalformedJwtException e) {
-            logger.error("Invalid JWT token: {}", e.getMessage());
+            LOGGER.logError("Invalid JWT token: "+ e.getMessage());
         } catch (ExpiredJwtException e) {
-            logger.error("JWT token is expired: {}", e.getMessage());
+            LOGGER.logError("JWT token is expired: "+ e.getMessage());
         } catch (UnsupportedJwtException e) {
-            logger.error("JWT token is unsupported: {}", e.getMessage());
+            LOGGER.logError("JWT token is unsupported: "+ e.getMessage());
         } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty: {}", e.getMessage());
+            LOGGER.logError("JWT claims string is empty: "+ e.getMessage());
         }
         return false;
     }

@@ -42,6 +42,7 @@ import { ObjectStatusHistoryComponent } from './object-status-history/object-sta
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TransactionsHomeComponent } from './transactions-home/transactions-home.component';
 import { TransactionsHistoryComponent } from './transactions-history/transactions-history.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
@@ -89,6 +90,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     MatTableModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatSlideToggleModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],

@@ -14,6 +14,7 @@ export class TransactionService {
   baseUrl = "http://localhost:8080/api/transactions";
   //baseUrl = 'http://backendpaymentsystem-env.eba-ffkt3wf3.eu-west-1.elasticbeanstalk.com/api/transactions';
   currentUserId = sessionStorage.getItem('userID');
+  role = sessionStorage.getItem('role');
 
   objectDto: ObjectDto = new ObjectDto();
   currentUserDto: CurrentUserDto = new CurrentUserDto();
@@ -21,7 +22,11 @@ export class TransactionService {
   constructor(private httpClient: HttpClient) { }
 
   getAllTransactions(){
-    return this.httpClient.get<Transaction[]>(this.baseUrl);
+    return this.role=="ADMIN_ROLE" ?  this.httpClient.get<Transaction[]>(this.baseUrl) : this.getAllTransactionsByUserId();
+  }
+
+  getAllTransactionsByUserId(){
+    return this.httpClient.get<Transaction[]>(this.baseUrl+`/user/${this.currentUserId}`);
   }
 
   getTransactionsByAccountId(id: number | undefined){
@@ -33,7 +38,11 @@ export class TransactionService {
   }
 
   getHistoryOfTransactions(){
-    return this.httpClient.get<TransactionHistory[]>(this.baseUrl+"/history");
+    return this.role=="ADMIN_ROLE" ?  this.httpClient.get<TransactionHistory[]>(this.baseUrl+"/history") : this.getTransactionsHistoryOfCurrentUser();
+  }
+
+  getTransactionsHistoryOfCurrentUser(){
+    return this.httpClient.get<TransactionHistory[]>(this.baseUrl+`/history/user/${this.currentUserId}`);
   }
 
   deposit(transaction: Transaction){

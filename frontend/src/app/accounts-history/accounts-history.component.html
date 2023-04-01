@@ -1,7 +1,7 @@
 <div class="container">
   <br>
   <div class="filter-buttons-div">
-    <button class="my-accounts-button" (click)="getMyAccountsHistory()">My Accounts</button>
+    <button  *ngIf="role === 'ADMIN_ROLE'" class="my-accounts-button" (click)="getMyAccountsHistory()">My Accounts</button>
     <div class="drop-down">
       <button class="filter-button" (click)="filterByIban()">Choose Iban</button>
       <select  [(ngModel)]="selectedIban">

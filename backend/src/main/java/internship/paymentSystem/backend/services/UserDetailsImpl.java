@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 import internship.paymentSystem.backend.models.User;
+import internship.paymentSystem.backend.models.enums.RoleEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,21 +16,25 @@ public class UserDetailsImpl implements UserDetails {
     private Long id;
     private String username;
     private String email;
+    private RoleEnum role;
 
     @JsonIgnore
     private String password;
-    public UserDetailsImpl(Long id, String username, String email, String password) {
+
+    public UserDetailsImpl(Long id, String username, String email, String password, RoleEnum role) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
     public static UserDetailsImpl build(User user) {
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getPassword());
+                user.getPassword(),
+                user.getRole());
     }
 
     public Long getId() {
@@ -54,6 +59,8 @@ public class UserDetailsImpl implements UserDetails {
     public String getUsername() {
         return username;
     }
+
+    public RoleEnum getRole() {return role;}
 
     @Override
     public boolean isAccountNonExpired() {

@@ -16,6 +16,7 @@ export class PersonService {
   currentUserId = sessionStorage.getItem('userID');
   objectDto: ObjectDto = new ObjectDto();
   currentUserDto: CurrentUserDto = new CurrentUserDto();
+  role = sessionStorage.getItem('role');
 
   constructor(private httpClient: HttpClient) { }
 
@@ -24,7 +25,7 @@ export class PersonService {
   }
 
   getAllPersons(){
-    return this.httpClient.get<Person[]>(this.baseUrl);
+    return this.role=="ADMIN_ROLE" ?  this.httpClient.get<Person[]>(this.baseUrl) : this.getPersonsOfUser();
   }
 
   getPersonsOfUser(){
@@ -44,7 +45,7 @@ export class PersonService {
   }
 
   getHistoryOfPersons(){
-    return this.httpClient.get<PersonHistory[]>(this.baseUrl+"/history");
+    return this.role=="ADMIN_ROLE" ? this.httpClient.get<PersonHistory[]>(this.baseUrl+"/history") : this.getPersonsHistoryOfUser();
   }
 
   getPersonsHistoryByPersonId(id: number | undefined){

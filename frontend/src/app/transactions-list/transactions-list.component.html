@@ -8,10 +8,10 @@
           <option *ngFor="let itemAccount of accounts">{{itemAccount.iban}}</option>
       </select>
     </div>
-    <button class="my-transactions-button" (click)="getApproveTransactions()">Approve</button>
-    <button class="my-transactions-button" (click)="getAuthorizeTransactions()">Authorize</button>
-    <button class="my-transactions-button" (click)="getActiveTransactions()">Active</button>
-    <button class="my-transactions-button" (click)="getDeletedTransactions()">Delete</button>
+    <button *ngIf="role === 'ADMIN_ROLE'" class="my-transactions-button" (click)="getApproveTransactions()">Approve</button>
+    <button *ngIf="role === 'ADMIN_ROLE'" class="my-transactions-button" (click)="getAuthorizeTransactions()">Authorize</button>
+    <button *ngIf="role === 'ADMIN_ROLE'" class="my-transactions-button" (click)="getActiveTransactions()">Active</button>
+    <button *ngIf="role === 'ADMIN_ROLE'" class="my-transactions-button" (click)="getDeletedTransactions()">Delete</button>
   </div>
   <br>
   <div class="transactions-list-container">
@@ -26,7 +26,7 @@
             <th>Action</th>
             <th>Status</th>
             <th>Next Status</th>
-            <th colspan="2">Actions</th>
+            <th *ngIf="role === 'ADMIN_ROLE'" colspan="2">Actions</th>
         </tr>
         <tr *ngFor="let item of transactions; let i = index;">
           <td><a [routerLink]="['/audit-list',item.id,objectType]">{{i+1}}</a></td>
@@ -38,9 +38,9 @@
           <td>{{item.action}}</td>
           <td>{{item.status}}</td>
           <td>{{item.nextStatus}}</td>
-          <td class="td-button"><button class="approveButton" (click)="approveTransaction(item.id)"
+          <td *ngIf="role === 'ADMIN_ROLE'" class="td-button"><button class="approveButton" (click)="approveTransaction(item.id)"
             [disabled] = "item.status !== 'APPROVE'">approve</button></td>
-          <td class="td-button"><button class="rejectButton" (click)="rejectTransaction(item.id)"
+          <td *ngIf="role === 'ADMIN_ROLE'" class="td-button"><button class="rejectButton" (click)="rejectTransaction(item.id)"
             [disabled] = "item.status !== 'APPROVE'">reject</button></td>
         </tr>
       </table>

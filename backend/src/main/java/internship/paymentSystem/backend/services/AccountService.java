@@ -1,9 +1,6 @@
 package internship.paymentSystem.backend.services;
 
-import internship.paymentSystem.backend.models.Account;
-import internship.paymentSystem.backend.models.AccountHistory;
-import internship.paymentSystem.backend.models.Audit;
-import internship.paymentSystem.backend.models.Person;
+import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.enums.AccountStatusEnum;
 import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
 import internship.paymentSystem.backend.models.enums.OperationEnum;
@@ -86,6 +83,15 @@ public class AccountService implements IAccountService {
     }
 
     @Override
+    public List<Balance> getBalancesOfUser(Long id){
+        List<Account> userAccounts = this.getAccountsOfUser(id);
+        return balanceService.getAllBalances().stream()
+                .filter(balance -> userAccounts.stream()
+                        .anyMatch(account -> Objects.equals(account.getId(), balance.getAccountID())))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<Account> getAccountsByStatus(StatusEnum filterStatus) {
         return accountRepository.findAll().stream()
                 .filter(account -> account.getStatus() == filterStatus)
@@ -115,7 +121,7 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public List<AccountHistory> getAccountsHistoryOfUser(Long currentUserId) {
+    public List<AccountHistory>  getAccountsHistoryOfUser(Long currentUserId) {
         List<AccountHistory> userAccountsHistory = new ArrayList<>();
         List<Person> userPersons = personService.getPersonsOfUser(currentUserId);
         for(Person person:  userPersons){

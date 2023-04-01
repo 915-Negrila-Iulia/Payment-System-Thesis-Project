@@ -2,15 +2,21 @@ from collections import Counter
 
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
+from sklearn import svm
+from sklearn.naive_bayes import BernoulliNB, MultinomialNB, GaussianNB
+from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix, average_precision_score
+from sklearn.model_selection import train_test_split, cross_val_score, KFold, GridSearchCV, cross_validate, \
+    cross_val_predict
+from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.metrics import classification_report, confusion_matrix, average_precision_score, roc_auc_score, \
+    mean_squared_error, accuracy_score, precision_score, recall_score, f1_score, make_scorer, roc_curve, auc
 import matplotlib.pyplot as plt
 import seaborn as sns
 from imblearn.over_sampling import SMOTE, RandomOverSampler
 from imblearn.pipeline import Pipeline
+from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBClassifier
 import pickle
 from faker import Faker
@@ -24,6 +30,9 @@ class TransactionsData:
         # Load the csv file
         self.df = pd.read_csv(filename)
         self.df.drop(['isFlaggedFraud'], inplace=True, axis=1)
+        self.df = self.df.rename(columns={'oldbalanceOrg': 'oldBalanceSender', 'newbalanceOrig': 'newBalanceSender', \
+                                'oldbalanceDest': 'oldBalanceReceiver', 'newbalanceDest': 'newBalanceReceiver'})
+
 
     def exploratory_data_analysis(self):
         # basic info about dataset -> (6362620 rows, 11 cols)
@@ -82,24 +91,24 @@ class TransactionsData:
         not_frauds = self.df[(self.df.isFraud == 0) & transactions_type_criteria]
         print("Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
               " from fraudulent transactions".format(
-            len(frauds[(frauds.oldbalanceDest == 0) & (frauds.newbalanceDest == 0)
+            len(frauds[(frauds.oldBalanceReceiver == 0) & (frauds.newBalanceReceiver == 0)
                        & (frauds.amount != 0)]) / (1.0 * len(frauds)))) # 0.4955558261293072%
         print("Non-Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
               " from genuine transactions".format(
-            len(not_frauds[(not_frauds.oldbalanceDest == 0) & (not_frauds.newbalanceDest == 0)
+            len(not_frauds[(not_frauds.oldBalanceReceiver == 0) & (not_frauds.newBalanceReceiver == 0)
                            & (not_frauds.amount != 0)]) / (1.0 * len(not_frauds)))) # 0.0006176245277308345%
         # seeing the differences of % between results (fraud and not-fraud) above it seems that
         # (oldOrigBalance == newOrigBalance == 0 and amount != 0) could be an indicator of fraud
         print("Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
               " from fraudulent transactions".format(
-            len(frauds[(frauds.oldbalanceOrg == 0) & (frauds.newbalanceOrig == 0)
+            len(frauds[(frauds.oldBalanceSender == 0) & (frauds.newBalanceSender == 0)
                        & (frauds.amount != 0)]) / (1.0 * len(frauds)))) # 0.0030439547059539756%
         print("Non-Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
               " from genuine transactions".format(
-            len(not_frauds[(not_frauds.oldbalanceOrg == 0) & (not_frauds.newbalanceOrig == 0)
+            len(not_frauds[(not_frauds.oldBalanceSender == 0) & (not_frauds.newBalanceSender == 0)
                            & (not_frauds.amount != 0)]) / (1.0 * len(not_frauds)))) # 0.32873940872846197%
 
-    def visualization(self):
+    def visualize_data(self):
         # correlation matrix
         # the closer the value is to 1 or -1, the stronger the relationship
         # the closer the value is to 0, the weaker the relationship
@@ -163,7 +172,7 @@ class TransactionsData:
         plt.show()
         # => from hour 0 to hour 9 genuine transactions occur rarely
         # => frauds occur at similar rates any hour of the day
-        # => we create a new feature 'HourOfDay' = step%24
+        # => we create a new feature for the hour of the day: 'timeInHours' = step%24
 
     def clean_data(self):
         # from EDA => fraud occurs only in TRANSFER and CASH_OUT transactions
@@ -171,26 +180,248 @@ class TransactionsData:
         self.df = self.df[(self.df.type == 'TRANSFER') | (self.df.type == 'CASH_OUT')]
 
         # eliminate irrelevant columns
-        self.df.drop(['nameOrig', 'nameDest', 'isFlaggedFraud'], inplace=True, axis=1)
+        self.df.drop(['nameOrig', 'nameDest'], inplace=True, axis=1)
 
         # Binary-encoding of labelled data in 'type'
         self.df.loc[self.df.type == 'TRANSFER', 'type'] = 0
         self.df.loc[self.df.type == 'CASH_OUT', 'type'] = 1
         self.df['type'] = pd.to_numeric(self.df['type'])
 
+        # based on discussion => we create a new feature 'timeInHours' = step%24
+        # and drop the step column because we do not need it anymore
+        # and also the web app will provide info about 'step' only about 'timeInHours'
+        self.df['timeInHours'] = np.nan
+        self.df.timeInHours = self.df.step % 24
+        self.df.drop(['step'], inplace=True, axis=1)
+
         # info about dataset after cleaning -> -> (2770409 rows, 8 cols)
         # so we reduced dataset from 6362620 rows to 2770409 rows
         print('INFO after clean:')
         print('shape: {}'.format(self.df.shape))
         self.df.info()
+        # see first elements
+        print(self.df.head())
 
         # basic statistics
         print('STATISTICS:')
         print(self.df.describe())
 
+    def prep_data(self):
+        """
+        X: data columns (nameOrig, oldBalanceOrig, ...)
+        y: target column (isFraud)
+        """
+        x_columns = ['type', 'amount', 'oldBalanceSender', 'newBalanceSender', 'oldBalanceReceiver',
+                     'newBalanceReceiver', 'timeInHours']
+        X = self.df.loc[:, x_columns].values
+        y = self.df["isFraud"].values
+        return X,y
+
+    """
+        Unscaled, Normalized, Standardize Data
+    """
+    def scaling_data(self, model):
+        # Unscaled
+        X, y = self.prep_data()
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=50)
+
+        # Normalization
+        X_train_norm = MinMaxScaler().fit_transform(X_train) # transform training data
+        X_test_norm = MinMaxScaler().fit_transform(X_test) # transform test data
+
+        # Standardization
+        X_train_stand = StandardScaler().fit_transform(X_train) # transform the training data column
+        X_test_stand = StandardScaler().fit_transform(X_test) # transform the testing data column
+
+        # apply scaling to ML algo
+        # raw, normalized and standardized training and testing data
+        trainX = [X_train, X_train_norm, X_train_stand]
+        testX = [X_test, X_test_norm, X_test_stand]
+
+        # RMSE = Root Mean Square Error -> standard way to measure the error of a model in predicting quantitative data
+        rmse = []
+
+        # model fitting and measuring RMSE
+        for i in range(len(trainX)):
+            # fit
+            model.fit(trainX[i], y_train)
+            # predict
+            pred = model.predict(testX[i])
+            # RMSE
+            rmse.append(np.sqrt(mean_squared_error(y_test, pred)))
+
+        # visualizing the result
+        print(str(model))
+        df_rmse = pd.DataFrame({'RMSE': rmse}, index=['Original', 'Normalized', 'Standardized'])
+        print(df_rmse)
+
+    """
+        Run given classifier with default params
+    """
+    def classification(self, model):
+        X, y = self.prep_data()
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=50)
+
+        clf = model.fit(X_train,y_train)
+        probabilities = clf.predict_proba(X_test)
+        predicted = model.predict(X_test)
+
+        print("report:\n", classification_report(y_test, predicted))
+        conf_mat = confusion_matrix(y_true=y_test, y_pred=predicted)
+        print("confMatrx:\n", conf_mat)
+        print("AUPRC: ", average_precision_score(y_test, probabilities[:,1]))
+        print("score: ", clf.score(X_test, y_test))
+        print("k-fold cross validation: ", cross_val_score(clf, X, y, cv=5))
+
+    """
+        The data is highly unbalanced, the positive class (frauds) account for 0.01% of all transactions. 
+        So I will be measuring the accuracy using the Area Under the Precision-Recall Curve (AUPRC). 
+        Confusion matrix accuracy is not meaningful for unbalanced classification.
+    """
+    def ml_func(self, algorithm):
+        features, target = self.prep_data()
+        X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2)
+
+        # train and fit regression model
+        model = algorithm()
+        model.fit(X_train, y_train)
+
+        # predict
+        train_preds = model.predict(X_train)
+        test_preds = model.predict(X_test)
+
+        # evaluate
+        train_accuracy = roc_auc_score(y_train, train_preds)
+        test_accuracy = roc_auc_score(y_test, test_preds)
+        # report = classification_report(y_test, test_preds)
+
+        print(str(algorithm))
+        print("------------------------")
+        print(f"Training Accuracy: {(train_accuracy * 100):.4}%")
+        print(f"Test Accuracy:     {(test_accuracy * 100):.4}%")
+
+        # store accuracy in a new dataframe
+        score_logreg = [algorithm, train_accuracy, test_accuracy]
+        models = pd.DataFrame([score_logreg])
+
+    def kfold_scores(self, model, X, y, param_grid, n_folds=5, scoring='accuracy'):
+        """
+        Performs k-fold cross-validation to tune the hyperparameters of a machine learning model.
+
+        Parameters:
+            model (sklearn estimator): The machine learning model to tune.
+            X (array-like): The input features for the model.
+            y (array-like): The target variable for the model.
+            param_grid (dict): The hyperparameters to tune and their possible values.
+            n_folds (int): The number of folds to use for cross-validation. Default is 5.
+            scoring (str): The scoring metric to use for cross-validation. Default is 'accuracy'.
+
+        Returns:
+            best_params (dict): The best hyperparameters found during cross-validation.
+            best_score (float): The score achieved with the best hyperparameters found.
+        """
+        # Create a k-fold cross-validation object
+        kf = KFold(n_splits=n_folds, shuffle=True, random_state=42)
+
+        # Create a grid search objects
+        grid = GridSearchCV(model, param_grid=param_grid, cv=kf, scoring=scoring)
+
+        # Fit the grid search object to the data
+        grid.fit(X, y)
+
+        # Return the best hyperparameters and the score achieved with them
+        best_params = grid.best_params_
+        best_score = grid.best_score_
+
+        return best_params, best_score
+
+    def tune_hyperparameters(self):
+        features, target = self.prep_data()
+        X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2)
+
+        # Create an instance of the model
+        #model = LogisticRegression()
+        #model = XGBClassifier()
+        #model = RandomForestClassifier()
+        #model = GaussianNB()
+        model = KNeighborsClassifier()
+        # Define the hyperparameters to tune
+        # param_grid = {'C': [0.001, 0.01, 0.1, 1, 10, 100]} # LR
+        ### use n_jobs = -1 to enable parallel processing and make use of all CPU cores
+        # param_grid = {'n_estimators': [200],
+        #               'max_depth': [7],
+        #               'learning_rate': [0.8],
+        #               'n_jobs': [14]} # XGBoost
+        # param_grid = {'n_estimators': [200],
+        #               'max_depth': [10], # A higher value may lead to overfitting, while a lower value may lead to underfitting
+        #               'min_samples_split': [8], # A higher value may prevent overfitting, while a lower value may lead to overfitting
+        #               'n_jobs': [14]} # RF
+        #param_grid = {} # NB
+        param_grid = {
+            'n_neighbors': [3, 5], # default = 5
+            'weights': ['uniform'], # default
+            'algorithm': ['auto'], # default
+            'p': [2], # default = 2 = (Euclidean distance)
+            'n_jobs': [14]
+        }
+
+        # Define the scoring metrics
+        scoring = {'accuracy': make_scorer(accuracy_score), 'precision': make_scorer(precision_score),
+                   'recall': make_scorer(recall_score), 'f1': make_scorer(f1_score),
+                   'average_precision': make_scorer(average_precision_score), 'roc_auc': make_scorer(roc_auc_score)}
+
+        # Perform the grid search
+        grid_search = GridSearchCV(model, param_grid=param_grid, cv=5, scoring=scoring, refit=False)
+        grid_search.fit(X_train, y_train)
+
+        # Print the results
+        print("Scores:\n",grid_search.cv_results_)
+
+    def plot_AUC_ROC(self, model):
+        features, target = self.prep_data()
+        X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2)
+
+        # train classifier on training data
+        model.fit(X_train, y_train)
+
+        # Predict probabilities for the testing data
+        probas = model.predict_proba(X_test)
+        y_scores = probas[:, 1]  # Keep only the positive class probabilities
+
+        # calculate ROC curve
+        # fpr = false positive rate
+        # tpr = true positive rate
+        # thr = thresholds
+        fpr, tpr, thresholds = roc_curve(y_test, y_scores)
+        roc_auc = auc(fpr, tpr)
+
+        # Plot ROC curve and AUC score
+        plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
+        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC curve')
+        plt.legend(loc="lower right")
+        plt.show()
+
 
 
 td = TransactionsData()
-td.visualization()
+#td.visualize_data()
 #td.exploratory_data_analysis()
-#td.clean_data()
+td.clean_data()
+td.tune_hyperparameters()
+
+#td.plot_AUC_ROC(LogisticRegression(C=0.01))
+
+#rmse
+#td.scaling_data(svm.SVR(kernel='rbf', C=1))
+
+#list of all classifiers that I will run for base models
+# algorithms = [LogisticRegression, RandomForestClassifier, XGBClassifier, svm.SVC]
+
+#running each model and print accuracy scores
+# for algorithm in algorithms:
+#     td.ml_func(algorithm)

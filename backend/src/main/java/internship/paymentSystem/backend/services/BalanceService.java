@@ -1,5 +1,6 @@
 package internship.paymentSystem.backend.services;
 
+import internship.paymentSystem.backend.models.Account;
 import internship.paymentSystem.backend.models.enums.ActionTransactionEnum;
 import internship.paymentSystem.backend.models.Balance;
 import internship.paymentSystem.backend.models.Transaction;
@@ -155,13 +156,13 @@ public class BalanceService implements IBalanceService {
     }
 
     @Override
-    public List<Balance> filterByDates(String startDate, String endDate) {
+    public List<Balance> filterByDates(String startDate, String endDate, List<Balance> balances) {
         String startDateString = startDate + " 00:00:00";
         String endDateString = endDate + " 23:59:59";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime startDateTime = LocalDateTime.parse(startDateString, formatter);
         LocalDateTime endDateTime = LocalDateTime.parse(endDateString, formatter);
-        return balanceRepository.findAll().stream()
+        return balances.stream()
                 .filter(balance -> !(balance.getTimestamp().isBefore(startDateTime)
                                     || balance.getTimestamp().isAfter(endDateTime)))
                 .collect(Collectors.toList());

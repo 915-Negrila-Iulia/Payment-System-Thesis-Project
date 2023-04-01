@@ -2,6 +2,7 @@ package internship.paymentSystem.backend.client;
 
 import internship.paymentSystem.backend.DTOs.CheckTransactionDto;
 import internship.paymentSystem.backend.config.GenerateXML;
+import internship.paymentSystem.backend.config.MyLogger;
 import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,8 @@ import java.util.Objects;
 
 @Component
 public class Client {
+
+    private final MyLogger LOGGER = MyLogger.getInstance();
 
     private final String bicHeader = "INTNROB0";
     private final String protocolVersion = "1";
@@ -26,7 +29,7 @@ public class Client {
 
     public void isFraudCheck(Long step, BigDecimal amount, BigDecimal oldbalanceOrg, BigDecimal newbalanceOrig,
                              BigDecimal oldbalanceDest, BigDecimal newbalanceDest){
-
+        LOGGER.logInfo("Check Fraud");
         CheckTransactionDto checkTransaction = new CheckTransactionDto(step, amount, oldbalanceOrg, newbalanceOrig,
                 oldbalanceDest, newbalanceDest);
 
@@ -64,6 +67,7 @@ public class Client {
     public String sendPaymentRequestIPS(BigDecimal amount, String idTransaction,
                                       String nameSender, String ibanSender, String bicReceiver, String nameReceiver,
                                       String ibanReceiver){
+        LOGGER.logInfo("Send IPS Request");
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-MONTRAN-RTP-Channel",bicHeader);
         headers.set("X-MONTRAN-RTP-Version",protocolVersion);
