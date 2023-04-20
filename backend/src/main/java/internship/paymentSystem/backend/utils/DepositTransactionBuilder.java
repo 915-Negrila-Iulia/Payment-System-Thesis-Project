@@ -24,11 +24,17 @@ public class DepositTransactionBuilder extends BaseTransactionBuilder {
     }
 
     @Override
-    protected Transaction createTransaction() {
+    protected void fraudValidation() throws Exception{
+        //do nothing
+        //deposit transactions cannot be frauds
+    }
+
+    @Override
+    protected Transaction createTransaction(StatusEnum status, StatusEnum nextStatus) {
         BigDecimal amount = context.getTransactionDetails().getAmount();
         Long accountId = context.getTransactionDetails().getAccountID();
         return new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.DEPOSIT, amount,
-                accountId, StatusEnum.APPROVE, StatusEnum.ACTIVE);
+                accountId, status, nextStatus);
     }
 
 }

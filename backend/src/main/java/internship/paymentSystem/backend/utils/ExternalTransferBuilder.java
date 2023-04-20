@@ -1,6 +1,7 @@
 package internship.paymentSystem.backend.utils;
 
 import internship.paymentSystem.backend.DTOs.TransactionBuilderContext;
+import internship.paymentSystem.backend.models.Balance;
 import internship.paymentSystem.backend.models.Transaction;
 import internship.paymentSystem.backend.models.enums.AccountStatusEnum;
 import internship.paymentSystem.backend.models.enums.ActionTransactionEnum;
@@ -21,10 +22,14 @@ public class ExternalTransferBuilder extends BaseTransactionBuilder {
         if(Objects.equals(context.getAccountStatus(), AccountStatusEnum.BLOCK_CREDIT)){
             throw new Exception("Credit Blocked. Not allowed to send");
         }
+        Balance currentBalance = context.getBalanceService().getCurrentBalance(context.getAccountId());
+        if(context.getTransactionDetails().getAmount().compareTo(currentBalance.getTotal()) > 0){
+            throw new Exception("Insufficient funds");
+        }
     }
 
     @Override
-    protected Transaction createTransaction() {
+    protected Transaction createTransaction(StatusEnum status, StatusEnum nextStatus) {
         BigDecimal amount = context.getTransactionDetails().getAmount();
         String ibanReceiver = context.getTransactionDetails().getTargetIban();
         String bankName = context.getTransactionDetails().getBankName();

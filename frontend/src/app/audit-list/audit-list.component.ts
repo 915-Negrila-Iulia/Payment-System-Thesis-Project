@@ -70,6 +70,9 @@ export class AuditListComponent implements OnInit, OnDestroy {
   }
  
   getUsername(id: number | undefined){
+    if(id === -1){
+      return 'fds';
+    }
     if(id === 0){
       return 'ips';
     }

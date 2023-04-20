@@ -2,11 +2,14 @@ from collections import Counter
 
 import pandas as pd
 import numpy as np
+from imblearn.combine import SMOTETomek, SMOTEENN
+from imblearn.under_sampling import RandomUnderSampler, TomekLinks
 from sklearn import svm
 from sklearn.naive_bayes import BernoulliNB, MultinomialNB, GaussianNB
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, BaggingClassifier, VotingClassifier, AdaBoostClassifier
 from sklearn.model_selection import train_test_split, cross_val_score, KFold, GridSearchCV, cross_validate, \
     cross_val_predict
 from sklearn.linear_model import LogisticRegression, SGDClassifier
@@ -15,15 +18,19 @@ from sklearn.metrics import classification_report, confusion_matrix, average_pre
 import matplotlib.pyplot as plt
 import seaborn as sns
 from imblearn.over_sampling import SMOTE, RandomOverSampler
-from imblearn.pipeline import Pipeline
+from imblearn.pipeline import Pipeline, make_pipeline
 from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
 import pickle
 from faker import Faker
 import random
 
+from ClassifierUtils import ClassifierUtils
+
 # Setting to display all columns
 pd.set_option('display.max_columns', None)
+
 
 class TransactionsData:
     def __init__(self, filename="transactions.csv"):
@@ -31,8 +38,8 @@ class TransactionsData:
         self.df = pd.read_csv(filename)
         self.df.drop(['isFlaggedFraud'], inplace=True, axis=1)
         self.df = self.df.rename(columns={'oldbalanceOrg': 'oldBalanceSender', 'newbalanceOrig': 'newBalanceSender', \
-                                'oldbalanceDest': 'oldBalanceReceiver', 'newbalanceDest': 'newBalanceReceiver'})
-
+                                          'oldbalanceDest': 'oldBalanceReceiver',
+                                          'newbalanceDest': 'newBalanceReceiver'})
 
     def exploratory_data_analysis(self):
         # basic info about dataset -> (6362620 rows, 11 cols)
@@ -43,7 +50,7 @@ class TransactionsData:
         # basic statistics, with regular format
         print('STATISTICS:')
         print(self.df.describe().apply(lambda s: s.apply('{0:.5f}'.format)))
-        categorical_values = self.df[['type','nameOrig','nameDest']]
+        categorical_values = self.df[['type', 'nameOrig', 'nameDest']]
         print(categorical_values.describe())
 
         # maximum sum of missing values on each column = 0 -> No. missing values
@@ -61,7 +68,8 @@ class TransactionsData:
         print("Types of fraudulent transactions: {}".format(types))
         transfer_frauds = self.df[(self.df.isFraud == 1) & (self.df.type == 'TRANSFER')]
         cash_out_frauds = self.df[(self.df.isFraud == 1) & (self.df.type == 'CASH_OUT')]
-        print("No. of TRANSFER frauds: {}\nNo. of CASH_OUT frauds: {}".format(len(transfer_frauds), len(cash_out_frauds)))
+        print(
+            "No. of TRANSFER frauds: {}\nNo. of CASH_OUT frauds: {}".format(len(transfer_frauds), len(cash_out_frauds)))
 
         # because numbers calculated above are so close we have a theory regarding frauds:
         # fraud transaction = transfer funds to a specific account and then cash_out from that account
@@ -92,21 +100,21 @@ class TransactionsData:
         print("Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
               " from fraudulent transactions".format(
             len(frauds[(frauds.oldBalanceReceiver == 0) & (frauds.newBalanceReceiver == 0)
-                       & (frauds.amount != 0)]) / (1.0 * len(frauds)))) # 0.4955558261293072%
+                       & (frauds.amount != 0)]) / (1.0 * len(frauds))))  # 0.4955558261293072%
         print("Non-Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
               " from genuine transactions".format(
             len(not_frauds[(not_frauds.oldBalanceReceiver == 0) & (not_frauds.newBalanceReceiver == 0)
-                           & (not_frauds.amount != 0)]) / (1.0 * len(not_frauds)))) # 0.0006176245277308345%
+                           & (not_frauds.amount != 0)]) / (1.0 * len(not_frauds))))  # 0.0006176245277308345%
         # seeing the differences of % between results (fraud and not-fraud) above it seems that
         # (oldOrigBalance == newOrigBalance == 0 and amount != 0) could be an indicator of fraud
         print("Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
               " from fraudulent transactions".format(
             len(frauds[(frauds.oldBalanceSender == 0) & (frauds.newBalanceSender == 0)
-                       & (frauds.amount != 0)]) / (1.0 * len(frauds)))) # 0.0030439547059539756%
+                       & (frauds.amount != 0)]) / (1.0 * len(frauds))))  # 0.0030439547059539756%
         print("Non-Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
               " from genuine transactions".format(
             len(not_frauds[(not_frauds.oldBalanceSender == 0) & (not_frauds.newBalanceSender == 0)
-                           & (not_frauds.amount != 0)]) / (1.0 * len(not_frauds)))) # 0.32873940872846197%
+                           & (not_frauds.amount != 0)]) / (1.0 * len(not_frauds))))  # 0.32873940872846197%
 
     def visualize_data(self):
         # correlation matrix
@@ -121,17 +129,17 @@ class TransactionsData:
         type = self.df.type.value_counts()
         transaction = type.index
         count = type.values
-        plt.figure(figsize=(8,8))
+        plt.figure(figsize=(8, 8))
         plt.pie(count, labels=transaction, autopct='%1.0f%%')
         plt.legend(loc='upper left')
         plt.show()
 
         # no. of fraud and genuine transactions for each type
-        plt.figure(figsize=(12,8))
+        plt.figure(figsize=(12, 8))
         ax = sns.countplot(x='type', hue='isFraud', data=self.df)
         plt.title('Types of Transaction - Fraud and Genuine')
         for p in ax.patches:
-            ax.annotate('{:.1f}'.format(p.get_height()), (p.get_x()+0.1, p.get_height()+50))
+            ax.annotate('{:.1f}'.format(p.get_height()), (p.get_x() + 0.1, p.get_height() + 50))
         plt.show()
 
         # transactions (fraud and genuine) on each day of the week
@@ -145,7 +153,7 @@ class TransactionsData:
         genuine_hours = genuine.step % no_hours
         # fraud transactions(red) and genuine transactions(green) on each day of the week
         plt.subplot(1, 2, 1)
-        fraud_days.hist(bins=no_days,color="red")
+        fraud_days.hist(bins=no_days, color="red")
         plt.title('Daily Frauds')
         plt.xlabel('Day of the Week')
         plt.ylabel('No. of transactions')
@@ -215,23 +223,24 @@ class TransactionsData:
                      'newBalanceReceiver', 'timeInHours']
         X = self.df.loc[:, x_columns].values
         y = self.df["isFraud"].values
-        return X,y
+        return X, y
 
     """
         Unscaled, Normalized, Standardize Data
     """
+
     def scaling_data(self, model):
         # Unscaled
         X, y = self.prep_data()
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=50)
 
         # Normalization
-        X_train_norm = MinMaxScaler().fit_transform(X_train) # transform training data
-        X_test_norm = MinMaxScaler().fit_transform(X_test) # transform test data
+        X_train_norm = MinMaxScaler().fit_transform(X_train)  # transform training data
+        X_test_norm = MinMaxScaler().fit_transform(X_test)  # transform test data
 
         # Standardization
-        X_train_stand = StandardScaler().fit_transform(X_train) # transform the training data column
-        X_test_stand = StandardScaler().fit_transform(X_test) # transform the testing data column
+        X_train_stand = StandardScaler().fit_transform(X_train)  # transform the training data column
+        X_test_stand = StandardScaler().fit_transform(X_test)  # transform the testing data column
 
         # apply scaling to ML algo
         # raw, normalized and standardized training and testing data
@@ -241,35 +250,42 @@ class TransactionsData:
         # RMSE = Root Mean Square Error -> standard way to measure the error of a model in predicting quantitative data
         rmse = []
 
+        # Calculate the cross-validation scores before standardization
+        scores_before = cross_val_score(model, X_train, y_train, cv=5)
+        scores_after = cross_val_score(model, X_train_norm, y_train, cv=5)
+
+        print("\nBefore ",scores_before.mean(),"\nAfter",scores_after.mean())
+
         # model fitting and measuring RMSE
-        for i in range(len(trainX)):
-            # fit
-            model.fit(trainX[i], y_train)
-            # predict
-            pred = model.predict(testX[i])
-            # RMSE
-            rmse.append(np.sqrt(mean_squared_error(y_test, pred)))
+        # for i in range(len(trainX)):
+        #     # fit
+        #     model.fit(trainX[i], y_train)
+        #     # predict
+        #     pred = model.predict(testX[i])
+        #     # RMSE
+        #     rmse.append(np.sqrt(mean_squared_error(y_test, pred)))
 
         # visualizing the result
-        print(str(model))
-        df_rmse = pd.DataFrame({'RMSE': rmse}, index=['Original', 'Normalized', 'Standardized'])
-        print(df_rmse)
+        # print(str(model))
+        # df_rmse = pd.DataFrame({'RMSE': rmse}, index=['Original', 'Normalized', 'Standardized'])
+        # print(df_rmse)
 
     """
         Run given classifier with default params
     """
+
     def classification(self, model):
         X, y = self.prep_data()
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=50)
 
-        clf = model.fit(X_train,y_train)
+        clf = model.fit(X_train, y_train)
         probabilities = clf.predict_proba(X_test)
         predicted = model.predict(X_test)
 
         print("report:\n", classification_report(y_test, predicted))
         conf_mat = confusion_matrix(y_true=y_test, y_pred=predicted)
         print("confMatrx:\n", conf_mat)
-        print("AUPRC: ", average_precision_score(y_test, probabilities[:,1]))
+        print("AUPRC: ", average_precision_score(y_test, probabilities[:, 1]))
         print("score: ", clf.score(X_test, y_test))
         print("k-fold cross validation: ", cross_val_score(clf, X, y, cv=5))
 
@@ -278,6 +294,7 @@ class TransactionsData:
         So I will be measuring the accuracy using the Area Under the Precision-Recall Curve (AUPRC). 
         Confusion matrix accuracy is not meaningful for unbalanced classification.
     """
+
     def ml_func(self, algorithm):
         features, target = self.prep_data()
         X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2)
@@ -335,35 +352,35 @@ class TransactionsData:
 
         return best_params, best_score
 
+    def sampling(self, method, X, y):
+        X_resampled, y_resampled = method.fit_resample(X,y)
+        return X_resampled, y_resampled
+
     def tune_hyperparameters(self):
         features, target = self.prep_data()
         X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2)
 
-        # Create an instance of the model
-        #model = LogisticRegression()
-        #model = XGBClassifier()
-        #model = RandomForestClassifier()
-        #model = GaussianNB()
-        model = KNeighborsClassifier()
-        # Define the hyperparameters to tune
-        # param_grid = {'C': [0.001, 0.01, 0.1, 1, 10, 100]} # LR
-        ### use n_jobs = -1 to enable parallel processing and make use of all CPU cores
-        # param_grid = {'n_estimators': [200],
-        #               'max_depth': [7],
-        #               'learning_rate': [0.8],
-        #               'n_jobs': [14]} # XGBoost
-        # param_grid = {'n_estimators': [200],
-        #               'max_depth': [10], # A higher value may lead to overfitting, while a lower value may lead to underfitting
-        #               'min_samples_split': [8], # A higher value may prevent overfitting, while a lower value may lead to overfitting
-        #               'n_jobs': [14]} # RF
-        #param_grid = {} # NB
-        param_grid = {
-            'n_neighbors': [3, 5], # default = 5
-            'weights': ['uniform'], # default
-            'algorithm': ['auto'], # default
-            'p': [2], # default = 2 = (Euclidean distance)
-            'n_jobs': [14]
-        }
+        #X_resampled, y_resampled = self.sampling(RandomUnderSampler(), X_train, y_train)
+        #X_resampled, y_resampled = self.sampling(SMOTE(), X_train, y_train)
+        #X_resampled, y_resampled = self.sampling(SMOTETomek(), X_train, y_train)
+        #X_resampled, y_resampled = self.sampling(SMOTEENN(), X_train, y_train)
+
+        # Create an instance of the model and define the hyperparameters to tune
+        # use n_jobs = -1 to enable parallel processing and make use of all CPU cores
+        LR = ClassifierUtils(LogisticRegression(), {'C': [0.001, 0.01, 0.1, 1, 10, 100]})
+        XGB = ClassifierUtils(XGBClassifier(), {'n_estimators': [200], 'max_depth': [7], 'learning_rate': [0.8],
+                                                'n_jobs': [14]})
+        RF = ClassifierUtils(RandomForestClassifier(), {'n_estimators': [200], 'max_depth': [10],
+                                                        'min_samples_split': [8], 'n_jobs': [14]})
+        NB = ClassifierUtils(GaussianNB(), {})
+        KNN = ClassifierUtils(KNeighborsClassifier(), {'n_neighbors': [3, 5, 7], 'n_jobs': [14]})
+        ADA = ClassifierUtils(AdaBoostClassifier(), {'n_estimators': [100]})
+        LGBM = ClassifierUtils(LGBMClassifier(), {'max_depth': [7]})
+        MLP = ClassifierUtils(MLPClassifier(), {})
+
+        lr = LogisticRegression(C=0.01)
+        rf = RandomForestClassifier(max_depth=5)
+        bagging_model = BaggingClassifier(base_estimator=lr, n_estimators=10)
 
         # Define the scoring metrics
         scoring = {'accuracy': make_scorer(accuracy_score), 'precision': make_scorer(precision_score),
@@ -371,11 +388,28 @@ class TransactionsData:
                    'average_precision': make_scorer(average_precision_score), 'roc_auc': make_scorer(roc_auc_score)}
 
         # Perform the grid search
-        grid_search = GridSearchCV(model, param_grid=param_grid, cv=5, scoring=scoring, refit=False)
+
+        # hyperparameters tunning
+        grid_search = GridSearchCV(MLP.get_model(), param_grid={}, cv=5, scoring=scoring, refit=False)
+        # grid_search = GridSearchCV(bagging_model, param_grid={}, cv=5, scoring=scoring, refit=False) # for bagging
         grid_search.fit(X_train, y_train)
 
         # Print the results
-        print("Scores:\n",grid_search.cv_results_)
+        print("Scores:\n", grid_search.cv_results_)
+
+        # for mo in [LR.get_model(), NB.get_model(), KNN.get_model(), XGB.get_model(), RF.get_model()]:
+        #     # sampling
+        #     grid_search = GridSearchCV(mo, param_grid={}, cv=5, scoring=scoring, refit=False)
+        #     grid_search.fit(X_resampled, y_resampled)
+        #
+        #     # Print only mean results
+        #     print(mo,"Scores:\n", grid_search.cv_results_)
+        #     print(f"Mean accuracy: {grid_search.cv_results_['mean_test_accuracy'][0]}")
+        #     print(f"Mean precision: {grid_search.cv_results_['mean_test_precision'][0]}")
+        #     print(f"Mean recall: {grid_search.cv_results_['mean_test_recall'][0]}")
+        #     print(f"Mean f1: {grid_search.cv_results_['mean_test_f1'][0]}")
+        #     print(f"Mean average precision: {grid_search.cv_results_['mean_test_average_precision'][0]}")
+        #     print(f"Mean roc auc: {grid_search.cv_results_['mean_test_roc_auc'][0]}")
 
     def plot_AUC_ROC(self, model):
         features, target = self.prep_data()
@@ -407,21 +441,20 @@ class TransactionsData:
         plt.show()
 
 
-
 td = TransactionsData()
-#td.visualize_data()
-#td.exploratory_data_analysis()
+# td.visualize_data()
+# td.exploratory_data_analysis()
 td.clean_data()
 td.tune_hyperparameters()
 
-#td.plot_AUC_ROC(LogisticRegression(C=0.01))
+# td.plot_AUC_ROC(LogisticRegression(C=0.01))
 
-#rmse
-#td.scaling_data(svm.SVR(kernel='rbf', C=1))
+# rmse
+#td.scaling_data(KNeighborsClassifier())
 
-#list of all classifiers that I will run for base models
+# list of all classifiers that I will run for base models
 # algorithms = [LogisticRegression, RandomForestClassifier, XGBClassifier, svm.SVC]
 
-#running each model and print accuracy scores
+# running each model and print accuracy scores
 # for algorithm in algorithms:
 #     td.ml_func(algorithm)

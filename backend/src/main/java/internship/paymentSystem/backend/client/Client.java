@@ -1,5 +1,8 @@
 package internship.paymentSystem.backend.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import internship.paymentSystem.backend.DTOs.CheckTransactionDto;
 import internship.paymentSystem.backend.config.GenerateXML;
 import internship.paymentSystem.backend.config.MyLogger;
@@ -27,8 +30,8 @@ public class Client {
     @Autowired
     private RestTemplate restTemplate;
 
-    public void isFraudCheck(Long step, BigDecimal amount, BigDecimal oldbalanceOrg, BigDecimal newbalanceOrig,
-                             BigDecimal oldbalanceDest, BigDecimal newbalanceDest){
+    public String isFraudCheck(Long step, BigDecimal amount, BigDecimal oldbalanceOrg, BigDecimal newbalanceOrig,
+                             BigDecimal oldbalanceDest, BigDecimal newbalanceDest) throws JsonProcessingException {
         LOGGER.logInfo("Check Fraud");
         CheckTransactionDto checkTransaction = new CheckTransactionDto(step, amount, oldbalanceOrg, newbalanceOrig,
                 oldbalanceDest, newbalanceDest);
@@ -38,7 +41,10 @@ public class Client {
         HttpEntity<CheckTransactionDto> request = new HttpEntity<>(checkTransaction, headers);
         ResponseEntity<String> response = restTemplate.exchange(fraudCheckURL+"/predict",
                 HttpMethod.POST, request, String.class);
-        System.out.printf(Objects.requireNonNull(response.getBody()));
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode responseNode = mapper.readTree(response.getBody());
+        String predictionValue = responseNode.get("prediction").asText();
+        return predictionValue;
     }
 
     public void getPositions(){

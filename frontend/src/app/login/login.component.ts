@@ -47,7 +47,6 @@ export class LoginComponent implements OnInit {
         sessionStorage.setItem('userID', this.userID);
         sessionStorage.setItem('username',this.username);
         sessionStorage.setItem('role', data.role);
-        console.log(this.username);
         this.goToHomePage();
       }
       else{

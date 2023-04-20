@@ -1,8 +1,10 @@
 package internship.paymentSystem.backend.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import internship.paymentSystem.backend.DTOs.StatisticDto;
 import internship.paymentSystem.backend.DTOs.TransactionBuilderContext;
 import internship.paymentSystem.backend.client.Client;
+import internship.paymentSystem.backend.config.MyLogger;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.bases.TransactionEntity;
 import internship.paymentSystem.backend.models.enums.*;
@@ -10,10 +12,12 @@ import internship.paymentSystem.backend.repositories.ITransactionRepository;
 import internship.paymentSystem.backend.services.interfaces.*;
 import internship.paymentSystem.backend.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +29,10 @@ import static java.lang.Thread.sleep;
 @Service
 public class TransactionService implements ITransactionService {
 
+    private final MyLogger LOGGER = MyLogger.getInstance();
+    private static final long INTERVAL = 60 * 1000; // scheduler should run every minute
+    private static final long EXPIRATION_TIME = 5; // suspicious transactions should expire after 5 minutes
+
     @Autowired
     private ITransactionRepository transactionRepository;
 
@@ -33,6 +41,9 @@ public class TransactionService implements ITransactionService {
 
     @Autowired
     private IBalanceService balanceService;
+
+    @Autowired
+    private IUserService userService;
 
     @Autowired
     private IPersonService personService;
@@ -45,6 +56,9 @@ public class TransactionService implements ITransactionService {
 
     @Autowired
     private Client appClient;
+
+    @Autowired
+    private IEmailService emailService;
 
     @Override
     public Transaction saveTransaction(Transaction transaction) {
@@ -155,13 +169,16 @@ public class TransactionService implements ITransactionService {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
         AccountStatusEnum accountStatus = getStatusByAccountId(accountId);
-        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,
-                accountStatus,accountStatus,transactionRepository,transactionHistoryService,balanceService,auditService);
+        String userEmail = userService.findUserById(currentUserId).isPresent() ?
+                userService.findUserById(currentUserId).get().getEmail() : null;
+        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,accountId,
+                accountStatus,accountStatus,transactionRepository,transactionHistoryService,balanceService,auditService,
+                appClient, userEmail, emailService);
         BaseTransactionBuilder transactionBuilder = new DepositTransactionBuilder(context);
         return transactionBuilder.buildTransaction();
     }
 
-    private void fraudCheck(Transaction transaction){
+    private void fraudCheck(Transaction transaction) throws JsonProcessingException {
         Long step = 0L;
         BigDecimal amount = transaction.getAmount();
         BigDecimal oldbalanceOrg = balanceService.getCurrentBalance(transaction.getAccountID()).getTotal();
@@ -188,9 +205,12 @@ public class TransactionService implements ITransactionService {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
         AccountStatusEnum accountStatus = getStatusByAccountId(accountId);
-        this.fraudCheck(transactionDetails);
-        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,
-                accountStatus,accountStatus,transactionRepository,transactionHistoryService,balanceService,auditService);
+        //this.fraudCheck(transactionDetails);
+        String userEmail = userService.findUserById(currentUserId).isPresent() ?
+                userService.findUserById(currentUserId).get().getEmail() : null;
+        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,accountId,
+                accountStatus,accountStatus,transactionRepository,transactionHistoryService,balanceService,auditService,
+                appClient, userEmail, emailService);
         BaseTransactionBuilder transactionBuilder = new WithdrawalTransactionBuilder(context);
         return transactionBuilder.buildTransaction();
     }
@@ -203,8 +223,11 @@ public class TransactionService implements ITransactionService {
         AccountStatusEnum accountStatus = getStatusByAccountId(accountId);
         AccountStatusEnum targetAccountStatus = getStatusByAccountId(targetId);
         //this.fraudCheck(transactionDetails);
-        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,
-                accountStatus,targetAccountStatus,transactionRepository,transactionHistoryService,balanceService,auditService);
+        String userEmail = userService.findUserById(currentUserId).isPresent() ?
+                userService.findUserById(currentUserId).get().getEmail() : null;
+        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,accountId,
+                accountStatus,targetAccountStatus,transactionRepository,transactionHistoryService,balanceService,
+                auditService, appClient, userEmail, emailService);
         BaseTransactionBuilder transactionBuilder = new InternalTransferBuilder(context);
         return transactionBuilder.buildTransaction();
     }
@@ -224,8 +247,11 @@ public class TransactionService implements ITransactionService {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
         AccountStatusEnum accountStatus = getStatusByAccountId(accountId);
-        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,
-                accountStatus,accountStatus,transactionRepository,transactionHistoryService,balanceService,auditService);
+        String userEmail = userService.findUserById(currentUserId).isPresent() ?
+                userService.findUserById(currentUserId).get().getEmail() : null;
+        TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,accountId,
+                accountStatus,accountStatus,transactionRepository,transactionHistoryService,balanceService,auditService,
+                appClient, userEmail, emailService);
         BaseTransactionBuilder transactionBuilder = new ExternalTransferBuilder(context);
         return transactionBuilder.buildTransaction();
     }
@@ -258,6 +284,48 @@ public class TransactionService implements ITransactionService {
         Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE,currentUserId);
         auditService.saveAudit(audit);
         return transaction;
+    }
+
+    @Transactional
+    @Override
+    public Transaction confirmSuspectTransaction(String reference) throws Exception {
+        LOGGER.logInfo("Confirm suspect transaction with reference: " + reference);
+        Transaction transaction = transactionRepository.findByReference(reference);
+        if(transaction == null){
+            throw new Exception("Sorry, the reference link is invalid. Please try again later or contact our support.");
+        }
+        if(transaction.getStatus() != StatusEnum.SUSPECTED_FRAUD){ // transaction expired or already confirmed
+            throw new Exception("Sorry, the transaction expired or has already been confirmed. Please contact our support.");
+        }
+        transactionHistoryService.saveTransactionHistory(transaction);
+        Long accountId = transaction.getAccountID();
+        balanceService.updateAvailableAmount(accountId, transaction.getId());
+        transaction.setStatus(StatusEnum.APPROVE);
+        transaction.setNextStatus(StatusEnum.ACTIVE);
+        transactionRepository.save(transaction);
+        Audit currentAudit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CONFIRM,-1L);
+        auditService.saveAudit(currentAudit);
+        return transaction;
+    }
+
+    @Scheduled(fixedDelay = INTERVAL)
+    @Transactional
+    public void markExpiredTransactions(){
+        LOGGER.logInfo("Scheduled check for transactions that should expire");
+        LocalDateTime currentTime = LocalDateTime.now();
+        List<Transaction> transactions = getTransactionsByStatus(StatusEnum.SUSPECTED_FRAUD);
+        for(Transaction transaction : transactions){
+            // the first audit record of the transaction => creation details
+            LocalDateTime creationTimestamp = auditService
+                    .getAuditOfObject(transaction.getId(), ObjectTypeEnum.TRANSACTION).get(0).getTimestamp();
+            if(creationTimestamp.isBefore(currentTime.minusMinutes(EXPIRATION_TIME))){ // transaction expired
+                transactionHistoryService.saveTransactionHistory(transaction);
+                transaction.setStatus(transaction.getNextStatus()); // set status as Fraud
+                transactionRepository.save(transaction);
+                Audit currentAudit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.FRAUD,-1L);
+                auditService.saveAudit(currentAudit);
+            }
+        }
     }
 
     /**

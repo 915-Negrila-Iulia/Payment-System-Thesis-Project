@@ -1,0 +1,131 @@
+import time
+
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score, roc_auc_score, \
+    average_precision_score
+from sklearn.model_selection import cross_validate
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
+
+from data_preprocessing import DataPreprocessing
+
+
+class ModelComparison:
+
+    def __init__(self):
+        self.data_preprocessing = DataPreprocessing()
+        self.classifiers = [GaussianNB(), LogisticRegression(), KNeighborsClassifier(), DecisionTreeClassifier(),
+                            RandomForestClassifier(), XGBClassifier()]
+        self.classifier_names = ['Gaussian NB', 'Logistic Regression', 'KNN', 'Decision Tree', 'Random Forest',
+                                 'XGBoost']
+
+    def basic_comparison(self):
+        """
+        Compare classifiers based on multiple evaluation metrics
+        Display the results and also store them in a csv file
+        :return: -
+        """
+        X_train, X_test, y_train, y_test = self.data_preprocessing.split_train_test_data()
+        results = []
+
+        for classifier, name in zip(self.classifiers, self.classifier_names):
+
+            start_time_train = time.time()
+            classifier.fit(X_train, y_train)
+            end_time_train = time.time()
+            train_time = end_time_train - start_time_train
+
+            start_time_test = time.time()
+            y_pred = classifier.predict(X_test)
+            end_time_test = time.time()
+            test_time = end_time_test - start_time_test
+
+            cm = confusion_matrix(y_test, y_pred)
+            precision = precision_score(y_test, y_pred)
+            recall = recall_score(y_test, y_pred)
+            f1 = f1_score(y_test, y_pred)
+            accuracy = accuracy_score(y_test, y_pred)
+            auroc = roc_auc_score(y_test, y_pred)
+            auprc = average_precision_score(y_test, y_pred)
+
+            print(f"Results for {name}:")
+            print(f"Confusion Matrix:\n{cm}")
+            print(f"Precision: {precision}")
+            print(f"Recall: {recall}")
+            print(f"F1 Score: {f1}")
+            print(f"Accuracy: {accuracy}")
+            print(f"Area Under ROC Curve: {auroc}")
+            print(f"Area Under PR Curve: {auprc}")
+            print(f"Training time: {train_time}")
+            print(f"Testing time: {test_time}")
+            print("----------------------------------------")
+
+            result = {
+                'Classifier': name,
+                'Confusion Matrix': cm,
+                'Precision': precision,
+                'Recall': recall,
+                'Accuracy': accuracy,
+                'F1': f1,
+                'AUROC': auroc,
+                'AUPRC': auprc,
+                'Training times (s)': train_time,
+                'Testing times(s)': test_time
+            }
+
+            results.append(result)
+
+        df_results = pd.DataFrame(results)
+
+        df_results.to_csv('../results/basics.csv', index=False)
+
+    def basic_cross_validation_comparison(self):
+        """
+        Compare classifiers based on multiple evaluation metrics
+        Use cross validation and compare the means of the results
+        Store them in a csv file
+        :return: -
+        """
+        X, y = self.data_preprocessing.partition_data()
+        results = []
+        scoring = ['precision', 'recall', 'accuracy', 'f1', 'roc_auc', 'average_precision']
+
+        for classifier, name in zip(self.classifiers, self.classifier_names):
+
+            classifier_scores = cross_validate(classifier, X, y, cv=5, scoring=scoring)
+
+            precision_mean = classifier_scores['test_precision'].mean()
+            recall_mean = classifier_scores['test_recall'].mean()
+            f1_mean = classifier_scores['test_f1'].mean()
+            accuracy_mean = classifier_scores['test_accuracy'].mean()
+            auroc_mean = classifier_scores['test_roc_auc'].mean()
+            auprc_mean = classifier_scores['test_average_precision'].mean()
+            train_time = classifier_scores['fit_time'].mean()
+            test_time = classifier_scores['score_time'].mean()
+
+            result = {
+                'Classifier': name,
+                'Precision': precision_mean,
+                'Recall': recall_mean,
+                'Accuracy': accuracy_mean,
+                'F1': f1_mean,
+                'AUROC': auroc_mean,
+                'AUPRC': auprc_mean,
+                'Training time (s)': train_time,
+                'Testing time (s)': test_time
+            }
+
+            results.append(result)
+
+        df_results = pd.DataFrame(results)
+
+        df_results.to_csv('../results/basics_means.csv', index=False)
+
+
+mc = ModelComparison()
+#mc.basic_comparison()
+mc.basic_cross_validation_comparison()

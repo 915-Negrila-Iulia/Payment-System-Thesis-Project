@@ -7,6 +7,7 @@ import internship.paymentSystem.backend.client.Client;
 import internship.paymentSystem.backend.config.MyLogger;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.enums.StatusEnum;
+import internship.paymentSystem.backend.services.interfaces.IEmailService;
 import internship.paymentSystem.backend.services.interfaces.ITransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -183,4 +184,16 @@ public class TransactionController {
         }
     }
 
+    @GetMapping("/confirm-suspect-transaction/{token}")
+    public ResponseEntity<?> confirmSuspectTransaction(@PathVariable String token){
+        try{
+            Transaction transaction = transactionService.confirmSuspectTransaction(token);
+            LOGGER.logInfo("HTTP Request -- Confirm Transfer Transaction");
+            return ResponseEntity.ok("The transaction has been confirmed successfully. Thank you for your cooperation.");
+        }
+        catch(Exception e){
+            LOGGER.logError("HTTP Request -- Confirm Transfer Transaction Failed: "+e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

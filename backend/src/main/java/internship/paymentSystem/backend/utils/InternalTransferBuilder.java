@@ -1,6 +1,7 @@
 package internship.paymentSystem.backend.utils;
 
 import internship.paymentSystem.backend.DTOs.TransactionBuilderContext;
+import internship.paymentSystem.backend.models.Balance;
 import internship.paymentSystem.backend.models.Transaction;
 import internship.paymentSystem.backend.models.enums.AccountStatusEnum;
 import internship.paymentSystem.backend.models.enums.ActionTransactionEnum;
@@ -27,16 +28,20 @@ public class InternalTransferBuilder extends BaseTransactionBuilder {
         if(Objects.equals(context.getTargetAccountStatus(), AccountStatusEnum.BLOCK_DEBIT)){
             throw new Exception("Debit Blocked. Not allowed to receive");
         }
+        Balance currentBalance = context.getBalanceService().getCurrentBalance(context.getAccountId());
+        if(context.getTransactionDetails().getAmount().compareTo(currentBalance.getTotal()) > 0){
+            throw new Exception("Insufficient funds");
+        }
     }
 
     @Override
-    protected Transaction createTransaction() {
+    protected Transaction createTransaction(StatusEnum status, StatusEnum nextStatus) {
         BigDecimal amount = context.getTransactionDetails().getAmount();
         Long targetId = context.getTransactionDetails().getTargetAccountID();
         String targetAccountIban = context.getTransactionDetails().getTargetIban();
         Long accountId = context.getTransactionDetails().getAccountID();
         return new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.TRANSFER, amount,
-                accountId, targetId, targetAccountIban, StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
+                accountId, targetId, targetAccountIban, status, nextStatus);
     }
 
 }

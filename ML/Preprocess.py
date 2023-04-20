@@ -157,7 +157,7 @@ class DataProcess:
         classifier.fit(X_train, y_train.values.ravel())
 
         # Make pickle file of our model
-        pickle.dump(classifier, open("RFmodel.pkl", "wb"))
+        pickle.dump(classifier, open("app/model/RFmodel.pkl", "wb"))
 
     def syntheticData(self):
         random.seed(44)

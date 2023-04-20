@@ -27,7 +27,4 @@ public class CheckTransactionDto {
     private BigDecimal oldBalanceDest;
 
     private BigDecimal newBalanceDest;
-
-
-
 }
