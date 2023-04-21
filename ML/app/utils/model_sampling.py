@@ -9,10 +9,15 @@ from app.utils.data_preprocessing import DataPreprocessing
 
 
 class ModelSampling:
+    """
+    Based on preprocessed data
+    Use multiple methods for sampling only the training data and save to csv file
+    Also save testing data to csv file
+    """
 
     def __init__(self):
         self.samplers = [RandomUnderSampler(), RandomOverSampler(), TomekLinks(), EditedNearestNeighbours(), SMOTE(),
-                          SMOTETomek(), SMOTEENN()]
+                         SMOTETomek(), SMOTEENN()]
         self.sampler_names = ['RandomUnderSampling', 'RandomOverSampling', 'TomekLink', 'ENN', 'SMOTE',
                                'SMOTETomek', 'SMOTEENN']
         self.data_preprocessing = DataPreprocessing()
@@ -28,6 +33,7 @@ class ModelSampling:
         :return: -
         """
         df_combined_set = pd.concat([pd.DataFrame(X_set), pd.DataFrame(y_set)], axis=1)
+        df_combined_set.columns = self.data_preprocessing.get_column_names()
         df_combined_set.to_csv(filename, index=False)
 
     def separate_sets_from_csv(self, filename):
@@ -64,8 +70,13 @@ class ModelSampling:
 
             self.save_set_to_csv(X_resampled, y_resampled, f"../data/training_{name}.csv")
 
+    def prepare_model_sampling(self):
+        """
+        Based on the original dataset
+        Save X_test and y_test in a csv
+        And for each sampling method used, save the new X_train and y_train in a csv
+        :return: -
+        """
+        self.save_testing_set()
+        self.sample_training_set()
 
-# todo: test the code
-ms = ModelSampling()
-ms.save_testing_set()
-ms.sample_training_set()

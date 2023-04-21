@@ -4,9 +4,14 @@ from sklearn.model_selection import train_test_split
 
 
 class DataPreprocessing:
+    """
+    Load original data from csv file
+    Rename headers
+    Clean data
+    """
 
     def __init__(self, filename='../data/transactions.csv'):
-        self.df = pd.read_csv(filename)  # Load the csv file
+        self.df = pd.read_csv(filename)
         self.rename_headers()
         self.clean_data()
 
@@ -29,6 +34,7 @@ class DataPreprocessing:
         2.  Eliminate irrelevant columns
         3.  Convert to binary the 'type' column ('TRANSFER' = 0 and 'CASH_OUT' = 1)
         4.  Based on 'step' column create new feature 'timeInHours' = step%24
+            And move this new column to the first position
         :return: -
         """
         self.df = self.df[(self.df.type == 'TRANSFER') | (self.df.type == 'CASH_OUT')]
@@ -41,6 +47,9 @@ class DataPreprocessing:
 
         self.df['timeInHours'] = np.nan
         self.df.timeInHours = self.df.step % 24
+        cols = self.df.columns.tolist()
+        cols = [cols[-1]] + cols[:-1]
+        self.df = self.df[cols]
         self.df.drop(['step'], inplace=True, axis=1)
 
     def partition_data(self, dataset):
@@ -49,8 +58,8 @@ class DataPreprocessing:
         :param dataset: dataset to be split
         :return: X and y after the split
         """
-        x_columns = ['type', 'amount', 'oldBalanceSender', 'newBalanceSender', 'oldBalanceReceiver',
-                     'newBalanceReceiver', 'timeInHours']
+        x_columns = ['timeInHours', 'type', 'amount', 'oldBalanceSender', 'newBalanceSender', 'oldBalanceReceiver',
+                     'newBalanceReceiver']
         X = dataset.loc[:, x_columns].values
         y = dataset['isFraud'].values
         return X, y
@@ -66,3 +75,11 @@ class DataPreprocessing:
         X_train, X_test, y_train, y_test = train_test_split(features, target,
                                                             test_size=test_size, random_state=random_state)
         return X_train, X_test, y_train, y_test
+
+    def get_column_names(self):
+        return self.df.columns.tolist()
+
+
+# dp = DataPreprocessing()
+# print(dp.df)
+# print(dp.get_column_names())

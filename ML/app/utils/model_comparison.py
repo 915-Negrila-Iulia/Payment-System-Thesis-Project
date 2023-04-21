@@ -11,6 +11,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
+from app.utils.model_sampling import ModelSampling
 from data_preprocessing import DataPreprocessing
 
 
@@ -18,18 +19,24 @@ class ModelComparison:
 
     def __init__(self):
         self.data_preprocessing = DataPreprocessing()
+        self.model_sampling = ModelSampling()
         self.classifiers = [GaussianNB(), LogisticRegression(), KNeighborsClassifier(), DecisionTreeClassifier(),
                             RandomForestClassifier(), XGBClassifier()]
         self.classifier_names = ['Gaussian NB', 'Logistic Regression', 'KNN', 'Decision Tree', 'Random Forest',
                                  'XGBoost']
 
-    def basic_comparison(self):
+    def basic_comparison(self, X_train, X_test, y_train, y_test, recordName="", filename='../results/basics.csv'):
         """
         Compare classifiers based on multiple evaluation metrics
         Display the results and also store them in a csv file
+        :param X_train: set of feature values for training ML model
+        :param X_test: set of feature values for testing ML model
+        :param y_train: set of target value for training ML model
+        :param y_test: set of target value for testing ML model
+        :param recordName: name of a method used, besides the classifier's name
+        :param filename: path of csv file to save the results
         :return: -
         """
-        X_train, X_test, y_train, y_test = self.data_preprocessing.split_train_test_data()
         results = []
 
         for classifier, name in zip(self.classifiers, self.classifier_names):
@@ -52,7 +59,7 @@ class ModelComparison:
             auroc = roc_auc_score(y_test, y_pred)
             auprc = average_precision_score(y_test, y_pred)
 
-            print(f"Results for {name}:")
+            print(f"Results for {name} with {recordName}:")
             print(f"Confusion Matrix:\n{cm}")
             print(f"Precision: {precision}")
             print(f"Recall: {recall}")
@@ -65,7 +72,7 @@ class ModelComparison:
             print("----------------------------------------")
 
             result = {
-                'Classifier': name,
+                'Classifier': name+" "+recordName,
                 'Confusion Matrix': cm,
                 'Precision': precision,
                 'Recall': recall,
@@ -81,7 +88,7 @@ class ModelComparison:
 
         df_results = pd.DataFrame(results)
 
-        df_results.to_csv('../results/basics.csv', index=False)
+        df_results.to_csv(filename, index=False)
 
     def basic_cross_validation_comparison(self):
         """
@@ -90,7 +97,7 @@ class ModelComparison:
         Store them in a csv file
         :return: -
         """
-        X, y = self.data_preprocessing.partition_data()
+        X, y = self.data_preprocessing.partition_data(self.data_preprocessing.df)
         results = []
         scoring = ['precision', 'recall', 'accuracy', 'f1', 'roc_auc', 'average_precision']
 
@@ -125,7 +132,24 @@ class ModelComparison:
 
         df_results.to_csv('../results/basics_means.csv', index=False)
 
+    def basic_comparison_on_sample_data(self):
+        """
+        Use sampled data saved in csv files
+        To compare classifiers
+        And store the results in a csv file
+        :return: -
+        """
+        X_test, y_test = self.model_sampling.separate_sets_from_csv('../data/testing_data.csv')
+
+        for sampler_name in self.model_sampling.sampler_names:
+
+            X_train, y_train = self.model_sampling.separate_sets_from_csv(f"../data/training_{sampler_name}.csv")
+            self.basic_comparison(X_train, X_test, y_train, y_test,
+                                  recordName=sampler_name, filename='../results/basics_and_sampling.csv')
+
 
 mc = ModelComparison()
-#mc.basic_comparison()
-mc.basic_cross_validation_comparison()
+#X_train, X_test, y_train, y_test = mc.data_preprocessing.split_train_test_data()
+#mc.basic_comparison(X_train, X_test, y_train, y_test)
+#mc.basic_cross_validation_comparison()
+mc.basic_comparison_on_sample_data()
