@@ -20,12 +20,12 @@ class ModelComparison:
     def __init__(self):
         self.data_preprocessing = DataPreprocessing()
         self.model_sampling = ModelSampling()
-        self.classifiers = [GaussianNB(), LogisticRegression(), KNeighborsClassifier(), DecisionTreeClassifier(),
-                            RandomForestClassifier(), XGBClassifier()]
-        self.classifier_names = ['Gaussian NB', 'Logistic Regression', 'KNN', 'Decision Tree', 'Random Forest',
-                                 'XGBoost']
+        self.classifiers = [GaussianNB(), LogisticRegression(), KNeighborsClassifier()]#, DecisionTreeClassifier(),
+                            #RandomForestClassifier(), XGBClassifier()]
+        self.classifier_names = ['Gaussian NB', 'Logistic Regression', 'KNN']#, 'Decision Tree', 'Random Forest',
+                                 #'XGBoost']
 
-    def basic_comparison(self, X_train, X_test, y_train, y_test, recordName="", filename='../results/basics.csv'):
+    def basic_comparison_util(self, X_train, X_test, y_train, y_test, recordName=""):
         """
         Compare classifiers based on multiple evaluation metrics
         Display the results and also store them in a csv file
@@ -35,7 +35,7 @@ class ModelComparison:
         :param y_test: set of target value for testing ML model
         :param recordName: name of a method used, besides the classifier's name
         :param filename: path of csv file to save the results
-        :return: -
+        :return: list of results
         """
         results = []
 
@@ -86,9 +86,12 @@ class ModelComparison:
 
             results.append(result)
 
-        df_results = pd.DataFrame(results)
+        return results
 
-        df_results.to_csv(filename, index=False)
+    def basic_comparison(self):
+        X_train, X_test, y_train, y_test = mc.data_preprocessing.split_train_test_data()
+        results = self.basic_comparison_util(X_train, X_test, y_train, y_test)
+        self.save_list_to_csv(results,'../results/basics.csv')
 
     def basic_cross_validation_comparison(self):
         """
@@ -132,6 +135,11 @@ class ModelComparison:
 
         df_results.to_csv('../results/basics_means.csv', index=False)
 
+    def save_list_to_csv(self, list, filename):
+        df = pd.DataFrame(list)
+        df.to_csv(filename, index=False)
+
+
     def basic_comparison_on_sample_data(self):
         """
         Use sampled data saved in csv files
@@ -139,13 +147,16 @@ class ModelComparison:
         And store the results in a csv file
         :return: -
         """
+        final_results = []
         X_test, y_test = self.model_sampling.separate_sets_from_csv('../data/testing_data.csv')
 
         for sampler_name in self.model_sampling.sampler_names:
 
             X_train, y_train = self.model_sampling.separate_sets_from_csv(f"../data/training_{sampler_name}.csv")
-            self.basic_comparison(X_train, X_test, y_train, y_test,
-                                  recordName=sampler_name, filename='../results/basics_and_sampling.csv')
+            results_per_sample = self.basic_comparison_util(X_train, X_test, y_train, y_test, recordName=sampler_name)
+            final_results.extend(results_per_sample)
+
+        self.save_list_to_csv(final_results, '../results/basics_and_sampling.csv')
 
 
 mc = ModelComparison()
