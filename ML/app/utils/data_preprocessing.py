@@ -10,32 +10,32 @@ class DataPreprocessing:
     Clean data
     """
 
-    def __init__(self, filename='../data/transactions.csv'):
-        self.df = pd.read_csv(filename)
+    def __init__(self):
+        self.df = pd.read_csv('../data/transactions.csv')
         self.rename_headers()
-        self.clean_data()
 
     def rename_headers(self):
         """
         Rename original header columns to be more clear
         Also remove the insignificant 'isFlaggedFraud' column
-        :return: -
+        :return: data with headers renamed
         """
         self.df.drop(['isFlaggedFraud'], inplace=True, axis=1)
         self.df = self.df.rename(columns={'oldbalanceOrg': 'oldBalanceSender', 'newbalanceOrig': 'newBalanceSender', \
                                           'oldbalanceDest': 'oldBalanceReceiver',
                                           'newbalanceDest': 'newBalanceReceiver'})
+        return self.df
 
     def clean_data(self):
         """
         Modifications done on the original dataset:
         1.  Based on EDA only 'TRANSFER' and 'CASH_OUT' transactions can be fraudulent
             So remove the transactions that have other types
-        2.  Eliminate irrelevant columns
+        2.  Based on EDA eliminate irrelevant columns
         3.  Convert to binary the 'type' column ('TRANSFER' = 0 and 'CASH_OUT' = 1)
         4.  Based on 'step' column create new feature 'timeInHours' = step%24
             And move this new column to the first position
-        :return: -
+        :return: cleaned data also with headers renamed
         """
         self.df = self.df[(self.df.type == 'TRANSFER') | (self.df.type == 'CASH_OUT')]
 
@@ -51,6 +51,8 @@ class DataPreprocessing:
         cols = [cols[-1]] + cols[:-1]
         self.df = self.df[cols]
         self.df.drop(['step'], inplace=True, axis=1)
+
+        return self.df
 
     def partition_data(self, dataset):
         """

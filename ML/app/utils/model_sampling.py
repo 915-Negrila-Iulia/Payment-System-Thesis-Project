@@ -16,12 +16,13 @@ class ModelSampling:
     """
 
     def __init__(self):
-        self.samplers = [RandomUnderSampler(), RandomOverSampler()]#, TomekLinks(), EditedNearestNeighbours(), SMOTE(),
-                         #SMOTETomek(), SMOTEENN()]
-        self.sampler_names = ['RandomUnderSampling', 'RandomOverSampling']#, 'TomekLink', 'ENN', 'SMOTE',
-                              # 'SMOTETomek', 'SMOTEENN']
         self.data_preprocessing = DataPreprocessing()
+        self.data_preprocessing.clean_data()
         self.X_train, self.X_test, self.y_train, self.y_test = self.data_preprocessing.split_train_test_data()
+        self.samplers = [RandomUnderSampler(), RandomOverSampler(), TomekLinks(), EditedNearestNeighbours(), SMOTE(),
+                         SMOTETomek(), SMOTEENN()]
+        self.sampler_names = ['RandomUnderSampling', 'RandomOverSampling', 'TomekLink', 'ENN', 'SMOTE',
+                               'SMOTETomek', 'SMOTEENN']
 
     def save_set_to_csv(self, X_set, y_set, filename):
         """

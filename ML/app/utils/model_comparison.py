@@ -16,9 +16,13 @@ from data_preprocessing import DataPreprocessing
 
 
 class ModelComparison:
+    """
+    Compare performance of ML classifiers
+    """
 
     def __init__(self):
         self.data_preprocessing = DataPreprocessing()
+        self.data_preprocessing.clean_data()
         self.model_sampling = ModelSampling()
         self.classifiers = [GaussianNB(), LogisticRegression(), KNeighborsClassifier()]#, DecisionTreeClassifier(),
                             #RandomForestClassifier(), XGBClassifier()]
@@ -89,7 +93,7 @@ class ModelComparison:
         return results
 
     def basic_comparison(self):
-        X_train, X_test, y_train, y_test = mc.data_preprocessing.split_train_test_data()
+        X_train, X_test, y_train, y_test = self.data_preprocessing.split_train_test_data()
         results = self.basic_comparison_util(X_train, X_test, y_train, y_test)
         self.save_list_to_csv(results,'../results/basics.csv')
 
@@ -159,8 +163,7 @@ class ModelComparison:
         self.save_list_to_csv(final_results, '../results/basics_and_sampling.csv')
 
 
-mc = ModelComparison()
-#X_train, X_test, y_train, y_test = mc.data_preprocessing.split_train_test_data()
-#mc.basic_comparison(X_train, X_test, y_train, y_test)
-#mc.basic_cross_validation_comparison()
-mc.basic_comparison_on_sample_data()
+# mc = ModelComparison()
+# mc.basic_comparison()
+# mc.basic_cross_validation_comparison()
+# mc.basic_comparison_on_sample_data()
