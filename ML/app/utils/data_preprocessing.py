@@ -84,4 +84,5 @@ class DataPreprocessing:
 
 # dp = DataPreprocessing()
 # print(dp.df)
+# print(dp.clean_data())
 # print(dp.get_column_names())

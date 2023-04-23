@@ -13,8 +13,10 @@ def predict():
     :return: result of the prediction as a JSON response
     """
     input_json = request.get_json(force=True)
+    print(input_json)
     float_features = [float(x) for x in input_json.values()]
     features = [np.array(float_features)]
+    print(features)
     prediction = predict_transaction(features)
     resp = {'prediction': prediction}
     return jsonify(resp)

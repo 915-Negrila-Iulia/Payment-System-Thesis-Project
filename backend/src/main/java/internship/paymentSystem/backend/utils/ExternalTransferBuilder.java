@@ -41,4 +41,10 @@ public class ExternalTransferBuilder extends BaseTransactionBuilder {
                 bankName, nameReceiver, StatusEnum.APPROVE, StatusEnum.AUTHORIZE);
     }
 
+    @Override
+    protected void fraudValidation() throws Exception{
+        //do nothing
+        //in case of external transactions other bank will do the fraud validation
+    }
+
 }

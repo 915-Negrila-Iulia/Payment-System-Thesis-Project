@@ -1,7 +1,7 @@
 import pickle
 
-best_model = pickle.load(open('app/model/RFmodel.pkl', "rb"))
-
+#best_model = pickle.load(open('app/model/RFmodel.pkl', "rb"))
+best_model = pickle.load(open('app/model/XGBmodel.pkl', "rb"))
 
 def predict_transaction(data):
     """

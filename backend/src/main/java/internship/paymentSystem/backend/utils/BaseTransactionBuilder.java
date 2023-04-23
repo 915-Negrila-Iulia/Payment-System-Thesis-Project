@@ -4,10 +4,7 @@ import internship.paymentSystem.backend.DTOs.TransactionBuilderContext;
 import internship.paymentSystem.backend.models.Audit;
 import internship.paymentSystem.backend.models.Balance;
 import internship.paymentSystem.backend.models.Transaction;
-import internship.paymentSystem.backend.models.enums.AccountStatusEnum;
-import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
-import internship.paymentSystem.backend.models.enums.OperationEnum;
-import internship.paymentSystem.backend.models.enums.StatusEnum;
+import internship.paymentSystem.backend.models.enums.*;
 import internship.paymentSystem.backend.services.TransactionService;
 import org.springframework.mail.SimpleMailMessage;
 
@@ -73,13 +70,15 @@ public abstract class BaseTransactionBuilder {
     }
 
     protected void fraudValidation() throws Exception{
-        Long step = 0L;
+        LocalDateTime now = LocalDateTime.now();
+        int timeInHours = now.getHour();
         Long accountId = context.getTransactionDetails().getAccountID();
         Long targetAccountId = context.getTransactionDetails().getTargetAccountID();
         BigDecimal amount = context.getTransactionDetails().getAmount();
+        ActionTransactionEnum type = context.getTransactionDetails().getAction();
         BigDecimal oldbalanceOrg = context.getBalanceService().getCurrentBalance(accountId).getTotal();
         BigDecimal oldbalanceDest = context.getBalanceService().getCurrentBalance(targetAccountId).getTotal();
-        String response = context.getAppClient().isFraudCheck(step, amount, oldbalanceOrg, oldbalanceOrg.subtract(amount),
+        String response = context.getAppClient().isFraudCheck(timeInHours, type, amount, oldbalanceOrg, oldbalanceOrg.subtract(amount),
                 oldbalanceDest, oldbalanceDest.add(amount));
         System.out.println(response);
         System.out.println("account id and target id: " + accountId + ", " + targetAccountId);

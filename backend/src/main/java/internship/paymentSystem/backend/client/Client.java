@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import internship.paymentSystem.backend.DTOs.CheckTransactionDto;
 import internship.paymentSystem.backend.config.GenerateXML;
 import internship.paymentSystem.backend.config.MyLogger;
+import internship.paymentSystem.backend.models.enums.ActionTransactionEnum;
+import internship.paymentSystem.backend.models.enums.TypeTransactionEnum;
 import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,10 +32,15 @@ public class Client {
     @Autowired
     private RestTemplate restTemplate;
 
-    public String isFraudCheck(Long step, BigDecimal amount, BigDecimal oldbalanceOrg, BigDecimal newbalanceOrig,
-                             BigDecimal oldbalanceDest, BigDecimal newbalanceDest) throws JsonProcessingException {
+    public String isFraudCheck(int timeInHours, ActionTransactionEnum type, BigDecimal amount, BigDecimal oldbalanceOrg,
+                               BigDecimal newbalanceOrig, BigDecimal oldbalanceDest, BigDecimal newbalanceDest) throws JsonProcessingException {
         LOGGER.logInfo("Check Fraud");
-        CheckTransactionDto checkTransaction = new CheckTransactionDto(step, amount, oldbalanceOrg, newbalanceOrig,
+        int type_converted;
+        if(type.equals(ActionTransactionEnum.TRANSFER))
+            type_converted = 0;
+        else
+            type_converted = 1;
+        CheckTransactionDto checkTransaction = new CheckTransactionDto(timeInHours, type_converted, amount, oldbalanceOrg, newbalanceOrig,
                 oldbalanceDest, newbalanceDest);
 
         HttpHeaders headers = new HttpHeaders();

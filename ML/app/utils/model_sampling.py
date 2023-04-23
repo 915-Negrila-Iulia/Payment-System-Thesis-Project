@@ -80,4 +80,3 @@ class ModelSampling:
         """
         self.save_testing_set()
         self.sample_training_set()
-

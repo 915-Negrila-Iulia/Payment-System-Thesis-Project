@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -16,7 +17,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CheckTransactionDto {
 
-    private Long step;
+    private int timeInHours;
+
+    private int type;
 
     private BigDecimal amount;
 

@@ -178,15 +178,6 @@ public class TransactionService implements ITransactionService {
         return transactionBuilder.buildTransaction();
     }
 
-    private void fraudCheck(Transaction transaction) throws JsonProcessingException {
-        Long step = 0L;
-        BigDecimal amount = transaction.getAmount();
-        BigDecimal oldbalanceOrg = balanceService.getCurrentBalance(transaction.getAccountID()).getTotal();
-        BigDecimal oldbalanceDest = balanceService.getCurrentBalance(transaction.getTargetAccountID()).getTotal();
-        appClient.isFraudCheck(step, amount, oldbalanceOrg, oldbalanceOrg.subtract(amount),
-                oldbalanceDest, oldbalanceDest.add(amount));
-    }
-
     /**
      * Withdrawal amount of money
      * Check if user that wants to withdrawal is the owner of the account

@@ -1,3 +1,4 @@
+import pickle
 import time
 
 import pandas as pd
@@ -12,6 +13,7 @@ from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
 from app.utils.model_sampling import ModelSampling
+from app.utils.model_tuning import ModelTuning
 from data_preprocessing import DataPreprocessing
 
 
@@ -24,10 +26,10 @@ class ModelComparison:
         self.data_preprocessing = DataPreprocessing()
         self.data_preprocessing.clean_data()
         self.model_sampling = ModelSampling()
-        self.classifiers = [GaussianNB(), LogisticRegression(), KNeighborsClassifier()]#, DecisionTreeClassifier(),
-                            #RandomForestClassifier(), XGBClassifier()]
-        self.classifier_names = ['Gaussian NB', 'Logistic Regression', 'KNN']#, 'Decision Tree', 'Random Forest',
-                                 #'XGBoost']
+        self.classifiers = [GaussianNB(), LogisticRegression(), KNeighborsClassifier(), DecisionTreeClassifier(),
+                            RandomForestClassifier(), XGBClassifier()]
+        self.classifier_names = ['Gaussian NB', 'Logistic Regression', 'KNN', 'Decision Tree', 'Random Forest',
+                                 'XGBoost']
 
     def basic_comparison_util(self, X_train, X_test, y_train, y_test, recordName=""):
         """
@@ -162,8 +164,51 @@ class ModelComparison:
 
         self.save_list_to_csv(final_results, '../results/basics_and_sampling.csv')
 
+    def tuning_comparison_XGBoost(self):
+        """
 
-# mc = ModelComparison()
+        :return:
+        """
+        params = {'n_estimators': [100, 200, 400], 'max_depth': [3, 5, 7], 'learning_rate': [0.01, 0.2, 0.8]}
+        mt = ModelTuning(XGBClassifier(), params)
+        X_train, y_train = self.model_sampling.separate_sets_from_csv(f"../data/training_SMOTETomek.csv")
+        tuning_results = mt.tune(X_train, y_train)
+
+        print(tuning_results)
+        results = []
+
+        for i, params in enumerate(tuning_results['params']):
+
+            result = {
+                'XGBoost + SMOTETomek params': params,
+                'Precision': tuning_results['mean_test_precision'][i],
+                'Recall': tuning_results['mean_test_recall'][i],
+                'Accuracy': tuning_results['mean_test_accuracy'][i],
+                'F1': tuning_results['mean_test_f1'][i],
+                'AUROC': tuning_results['mean_test_roc_auc'][i],
+                'AUPRC': tuning_results['mean_test_average_precision'][i],
+                'Training time (s)': tuning_results['mean_fit_time'][i],
+                'Testing time (s)': tuning_results['mean_score_time'][i]
+            }
+
+            results.append(result)
+
+        df_results = pd.DataFrame(results)
+
+        df_results.to_csv('../results/tuning_xgb.csv', index=False)
+
+    def save_best_model(self):
+        # Instantiate the model
+        classifier = XGBClassifier()
+
+        X_train, y_train = self.model_sampling.separate_sets_from_csv(f"../data/training_SMOTETomek.csv")
+        classifier.fit(X_train, y_train)
+
+        # Make pickle file of our model
+        pickle.dump(classifier, open("../model/XGBmodel.pkl", "wb"))
+
+mc = ModelComparison()
 # mc.basic_comparison()
 # mc.basic_cross_validation_comparison()
 # mc.basic_comparison_on_sample_data()
+mc.tuning_comparison_XGBoost()

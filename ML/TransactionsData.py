@@ -97,21 +97,21 @@ class TransactionsData:
         transactions_type_criteria = (self.df.type == 'TRANSFER') | (self.df.type == 'CASH_OUT')
         frauds = self.df[(self.df.isFraud == 1) & transactions_type_criteria]
         not_frauds = self.df[(self.df.isFraud == 0) & transactions_type_criteria]
-        print("Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
+        print("Fraudulent transactions with (oldBalanceReceiver == newBalanceReceiver == 0 and amount != 0): \n{}%"
               " from fraudulent transactions".format(
             len(frauds[(frauds.oldBalanceReceiver == 0) & (frauds.newBalanceReceiver == 0)
                        & (frauds.amount != 0)]) / (1.0 * len(frauds))))  # 0.4955558261293072%
-        print("Non-Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
+        print("Non-Fraudulent transactions with (oldBalanceReceiver == newBalanceReceiver == 0 and amount != 0): \n{}%"
               " from genuine transactions".format(
             len(not_frauds[(not_frauds.oldBalanceReceiver == 0) & (not_frauds.newBalanceReceiver == 0)
                            & (not_frauds.amount != 0)]) / (1.0 * len(not_frauds))))  # 0.0006176245277308345%
         # seeing the differences of % between results (fraud and not-fraud) above it seems that
         # (oldOrigBalance == newOrigBalance == 0 and amount != 0) could be an indicator of fraud
-        print("Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
+        print("Fraudulent transactions with (oldBalanceSender == newBalanceSender == 0 and amount != 0): \n{}%"
               " from fraudulent transactions".format(
             len(frauds[(frauds.oldBalanceSender == 0) & (frauds.newBalanceSender == 0)
                        & (frauds.amount != 0)]) / (1.0 * len(frauds))))  # 0.0030439547059539756%
-        print("Non-Fraudulent transactions with (oldOrigBalance == newOrigBalance == 0 and amount != 0): \n{}%"
+        print("Non-Fraudulent transactions with (oldBalanceSender == newBalanceSender == 0 and amount != 0): \n{}%"
               " from genuine transactions".format(
             len(not_frauds[(not_frauds.oldBalanceSender == 0) & (not_frauds.newBalanceSender == 0)
                            & (not_frauds.amount != 0)]) / (1.0 * len(not_frauds))))  # 0.32873940872846197%
