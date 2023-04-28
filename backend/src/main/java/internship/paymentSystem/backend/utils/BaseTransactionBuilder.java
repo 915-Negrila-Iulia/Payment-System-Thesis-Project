@@ -59,7 +59,7 @@ public abstract class BaseTransactionBuilder {
                 "Transaction date: "+ timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "\n" +
                 "Transaction amount: "+ suspectTransaction.getAmount() + " EUR\n\n" +
                 "As part of our fraud prevention measures, we are required to confirm that you authorized this transaction " +
-                "within the next 5 minutes, otherwise the transaction will automatically expire. " +
+                "within the next 2 minutes, otherwise the transaction will automatically expire. " +
                 "Please click the link below to confirm the transaction:\n"+
                 "http://localhost:8080/api/transactions/confirm-suspect-transaction/" +
                 suspectTransaction.getReference() + "\n\n" +

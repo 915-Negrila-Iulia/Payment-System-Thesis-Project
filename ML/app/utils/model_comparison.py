@@ -178,6 +178,7 @@ class ModelComparison:
         results = []
 
         for i, params in enumerate(tuning_results['params']):
+            print(i)
 
             result = {
                 'XGBoost + SMOTETomek params': params,

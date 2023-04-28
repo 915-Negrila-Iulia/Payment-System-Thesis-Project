@@ -31,7 +31,7 @@ public class TransactionService implements ITransactionService {
 
     private final MyLogger LOGGER = MyLogger.getInstance();
     private static final long INTERVAL = 60 * 1000; // scheduler should run every minute
-    private static final long EXPIRATION_TIME = 5; // suspicious transactions should expire after 5 minutes
+    private static final long EXPIRATION_TIME = 2; // suspicious transactions should expire after 2 minutes
 
     @Autowired
     private ITransactionRepository transactionRepository;
