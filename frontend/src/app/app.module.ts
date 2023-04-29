@@ -43,8 +43,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TransactionsHomeComponent } from './transactions-home/transactions-home.component';
 import { TransactionsHistoryComponent } from './transactions-history/transactions-history.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDialogModule } from '@angular/material/dialog';
+
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { TransactionErrorComponent } from './transaction-error/transaction-error.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +76,8 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     BalancesListComponent,
     ObjectStatusHistoryComponent,
     TransactionsHomeComponent,
-    TransactionsHistoryComponent
+    TransactionsHistoryComponent,
+    TransactionErrorComponent
   ],
   imports: [
     BrowserModule,
@@ -91,6 +96,8 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     MatDatepickerModule,
     MatNativeDateModule,
     MatSlideToggleModule,
+    MatDialogModule,
+    NgxChartsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],

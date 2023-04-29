@@ -5,6 +5,7 @@ import internship.paymentSystem.backend.DTOs.CurrentUserDto;
 import internship.paymentSystem.backend.DTOs.StatisticDto;
 import internship.paymentSystem.backend.client.Client;
 import internship.paymentSystem.backend.config.MyLogger;
+import internship.paymentSystem.backend.customExceptions.FraudException;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.services.interfaces.IEmailService;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -163,6 +165,11 @@ public class TransactionController {
                     transactionDto.getObject(), transactionDto.getCurrentUserDto().getCurrentUserId());
             LOGGER.logInfo("HTTP Request -- Put Withdrawal Transaction");
             return ResponseEntity.ok(transaction);
+        }
+        catch(FraudException fe){
+            LOGGER.logError("HTTP Request -- Put Withdrawal Transaction Failed: "+fe.getMessage());
+            return new ResponseEntity<>(fe.getMessage()+"|"+fe.getFraudProbability(),
+                    HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS);
         }
         catch(Exception e){
             LOGGER.logError("HTTP Request -- Put Withdrawal Transaction Failed: "+e.getMessage());

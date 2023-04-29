@@ -8,6 +8,7 @@ import { BalanceService } from '../balance.service';
 import { Person } from '../person';
 import { PersonService } from '../person.service';
 
+
 @Component({
   selector: 'app-accounts-list',
   templateUrl: './accounts-list.component.html',

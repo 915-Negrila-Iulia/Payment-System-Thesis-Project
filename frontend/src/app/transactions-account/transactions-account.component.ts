@@ -5,6 +5,9 @@ import { AccountService } from '../account.service';
 import { Transaction } from '../transaction';
 import { TransactionService } from '../transaction.service';
 
+import { MatDialog } from '@angular/material/dialog';
+import { TransactionErrorComponent } from '../transaction-error/transaction-error.component';
+
 @Component({
   selector: 'app-transactions-account',
   templateUrl: './transactions-account.component.html',
@@ -22,10 +25,11 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
   targetAccounts: any;
   accountDetails: Account = new Account();
   transactionForm: any;
+  fraudProbability: number = 0;
 
   // targetIban: any;
 
-  constructor(private accountService: AccountService, private transactionService: TransactionService) { }
+  constructor(private accountService: AccountService, private transactionService: TransactionService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.setIbanById();
@@ -86,7 +90,7 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
             window.location.reload();
           },
           error => {
-            this.errorMessage = error.error;
+            this.handleError(error);
           });
         }
         else if(actionPerformed === "WITHDRAWAL"){
@@ -95,7 +99,7 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
             window.location.reload();
           },
           error => {
-            this.errorMessage = error.error;
+            this.handleError(error);
           });
         }
         else if(actionPerformed === "TRANSFER"){
@@ -108,18 +112,18 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
             window.location.reload();
           },
           error => {
-            console.log(error);
-            this.errorMessage = error.error;
+            this.handleError(error);
           });
         }
       },
       err => {
-        console.log("null");
-        console.log(err);
+        this.handleError(err);
       })
     }
     else{
       this.errorMessage = "Reentered Amount is not the same";
+      this.fraudProbability = 0;
+      this.showTransactionError();
     }
 }
 
@@ -153,6 +157,25 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
         iban: data.iban
       });
     })
+  }
+
+  showTransactionError() {
+    this.dialog.open(TransactionErrorComponent, {
+      data: {"errorMessage": this.errorMessage, "fraudProbability": this.fraudProbability}
+    });
+  }
+
+  handleError(error: any){
+    console.log(error.status);
+    if(error.status === 451){
+      const fraudValues = error.error.split("|");
+      this.errorMessage = fraudValues[0];
+      this.fraudProbability = fraudValues[1];
+    } else {
+      this.errorMessage = error.error;
+    }
+    console.log(error);
+    this.showTransactionError();
   }
 
 }

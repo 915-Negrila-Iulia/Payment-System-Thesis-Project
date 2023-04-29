@@ -4,6 +4,7 @@ import { AccountService } from '../account.service';
 import { Transaction } from '../transaction';
 import { TransactionService } from '../transaction.service';
 
+
 @Component({
   selector: 'app-transactions-list',
   templateUrl: './transactions-list.component.html',
@@ -104,4 +105,16 @@ export class TransactionsListComponent implements OnInit {
     })
   }
 
+  getSuspectedFraudTransactions(){
+    this.transactionService.getTransactionsByStatus('SUSPECTED_FRAUD').subscribe(data => {
+      this.transactions = data;
+    })
+  }
+
+  getFraudTransactions(){
+    this.transactionService.getTransactionsByStatus('FRAUD').subscribe(data => {
+      this.transactions = data;
+    })
+  }
+  
 }

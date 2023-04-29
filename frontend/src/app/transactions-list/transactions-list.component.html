@@ -12,6 +12,8 @@
     <button *ngIf="role === 'ADMIN_ROLE'" class="my-transactions-button" (click)="getAuthorizeTransactions()">Authorize</button>
     <button *ngIf="role === 'ADMIN_ROLE'" class="my-transactions-button" (click)="getActiveTransactions()">Active</button>
     <button *ngIf="role === 'ADMIN_ROLE'" class="my-transactions-button" (click)="getDeletedTransactions()">Delete</button>
+    <button *ngIf="role === 'ADMIN_ROLE'" class="my-transactions-button" (click)="getSuspectedFraudTransactions()">Flagged</button>
+    <button *ngIf="role === 'ADMIN_ROLE'" class="my-transactions-button" (click)="getFraudTransactions()">Fraud</button>
   </div>
   <br>
   <div class="transactions-list-container">

@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Error</h2>
+<div mat-dialog-content>
+  <p>{{errorMessage}}</p>
+  <ngx-charts-pie-chart *ngIf="fraudProbability !== 0" class="fraud-pie-chart"
+    [customColors]="pieChartColors"
+    [results]="[{name: 'Fraud', value: fraudProbability}, {name: 'Not Fraud', value: 1-fraudProbability}]"
+    [view]="[400, 300]"
+    [doughnut]="true"
+    [explodeSlices]="false"
+    [gradient]="false"
+    [labels]="true"
+    [legend]="false"
+    [animations]="true"
+  ></ngx-charts-pie-chart>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="true">Close</button>
+</div>

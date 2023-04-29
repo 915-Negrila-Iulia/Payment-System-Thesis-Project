@@ -1,6 +1,7 @@
 package internship.paymentSystem.backend.utils;
 
 import internship.paymentSystem.backend.DTOs.TransactionBuilderContext;
+import internship.paymentSystem.backend.customExceptions.FraudException;
 import internship.paymentSystem.backend.models.Audit;
 import internship.paymentSystem.backend.models.Balance;
 import internship.paymentSystem.backend.models.Transaction;
@@ -11,6 +12,7 @@ import org.springframework.mail.SimpleMailMessage;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -78,16 +80,19 @@ public abstract class BaseTransactionBuilder {
         ActionTransactionEnum type = context.getTransactionDetails().getAction();
         BigDecimal oldbalanceOrg = context.getBalanceService().getCurrentBalance(accountId).getTotal();
         BigDecimal oldbalanceDest = context.getBalanceService().getCurrentBalance(targetAccountId).getTotal();
-        String response = context.getAppClient().isFraudCheck(timeInHours, type, amount, oldbalanceOrg, oldbalanceOrg.subtract(amount),
-                oldbalanceDest, oldbalanceDest.add(amount));
-        System.out.println(response);
+        List<Object> responseList = context.getAppClient().isFraudCheck(timeInHours, type, amount, oldbalanceOrg,
+                oldbalanceOrg.subtract(amount), oldbalanceDest, oldbalanceDest.add(amount));
+        float fraudProbability = (float) responseList.get(0);
+        String predictionResult = (String) responseList.get(1);
+        System.out.println(fraudProbability + " => " + predictionResult);
         System.out.println("account id and target id: " + accountId + ", " + targetAccountId);
-        if(Objects.equals(response, "Fraud")){
+        if(Objects.equals(predictionResult, "Fraud")){
             Transaction suspectTransaction = createTransaction(StatusEnum.SUSPECTED_FRAUD, StatusEnum.FRAUD);
             saveTransaction(suspectTransaction);
             Audit audit = saveAudit(suspectTransaction);
             sendEmailForSuspectTransaction(suspectTransaction, audit.getTimestamp());
-            throw new Exception("Transaction suspected as fraud. Please check your email for further details.");
+            throw new FraudException("Transaction suspected as fraud. Please check your email for further details.",
+                    fraudProbability);
         }
     }
 

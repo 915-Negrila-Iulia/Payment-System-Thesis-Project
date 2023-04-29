@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -32,16 +34,16 @@ public class Client {
     @Autowired
     private RestTemplate restTemplate;
 
-    public String isFraudCheck(int timeInHours, ActionTransactionEnum type, BigDecimal amount, BigDecimal oldbalanceOrg,
-                               BigDecimal newbalanceOrig, BigDecimal oldbalanceDest, BigDecimal newbalanceDest) throws JsonProcessingException {
+    public List<Object> isFraudCheck(int timeInHours, ActionTransactionEnum type, BigDecimal amount, BigDecimal oldbalanceOrg,
+                             BigDecimal newbalanceOrig, BigDecimal oldbalanceDest, BigDecimal newbalanceDest) throws JsonProcessingException {
         LOGGER.logInfo("Check Fraud");
-        int type_converted;
+        CheckTransactionDto checkTransaction;
         if(type.equals(ActionTransactionEnum.TRANSFER))
-            type_converted = 0;
-        else
-            type_converted = 1;
-        CheckTransactionDto checkTransaction = new CheckTransactionDto(timeInHours, type_converted, amount, oldbalanceOrg, newbalanceOrig,
+            checkTransaction = new CheckTransactionDto(timeInHours, 0, amount, oldbalanceOrg, newbalanceOrig,
                 oldbalanceDest, newbalanceDest);
+        else
+            checkTransaction = new CheckTransactionDto(timeInHours, 1, amount, oldbalanceOrg, newbalanceOrig,
+                    new BigDecimal(0), new BigDecimal(0)); // no target balances for withdrawal => use value 0
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -50,8 +52,9 @@ public class Client {
                 HttpMethod.POST, request, String.class);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode responseNode = mapper.readTree(response.getBody());
-        String predictionValue = responseNode.get("prediction").asText();
-        return predictionValue;
+        float fraudProbability = responseNode.get("probability").floatValue();
+        String predictionResult = responseNode.get("prediction").asText();
+        return Arrays.asList(fraudProbability, predictionResult);
     }
 
     public void getPositions(){

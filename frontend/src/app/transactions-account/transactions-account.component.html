@@ -1,5 +1,5 @@
 <div class="transaction-container">
-    <span class="top-span">{{errorMessage}}</span>
+    <!-- <span class="top-span">{{errorMessage}}</span> -->
     <form #myForm="ngForm" class="transaction-form" (ngSubmit) = "onSubmit();  myForm.resetForm()" [formGroup]="transactionForm">
         <label for="iban">Iban of Selected Account</label>
         <input type="text" id="iban" formControlName="iban">

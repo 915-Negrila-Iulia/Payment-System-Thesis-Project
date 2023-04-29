@@ -17,8 +17,10 @@ def predict():
     float_features = [float(x) for x in input_json.values()]
     features = [np.array(float_features)]
     print(features)
-    prediction = predict_transaction(features)
-    resp = {'prediction': prediction}
+    fraud_probability, prediction_result = predict_transaction(features)
+    resp = {'probability': round(float(fraud_probability), 2), # limit number of decimals to 2
+            'prediction': prediction_result}
+
     return jsonify(resp)
 
 
