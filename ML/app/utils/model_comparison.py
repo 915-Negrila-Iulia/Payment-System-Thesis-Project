@@ -164,14 +164,14 @@ class ModelComparison:
 
         self.save_list_to_csv(final_results, '../results/basics_and_sampling.csv')
 
-    def tuning_comparison_XGBoost(self):
+    def tuning_comparison_XGBoost(self, dataset_filename, results_filename):
         """
 
         :return:
         """
         params = {'n_estimators': [100, 200, 400], 'max_depth': [3, 5, 7], 'learning_rate': [0.01, 0.2, 0.8]}
         mt = ModelTuning(XGBClassifier(), params)
-        X_train, y_train = self.model_sampling.separate_sets_from_csv(f"../data/training_SMOTETomek.csv")
+        X_train, y_train = self.model_sampling.separate_sets_from_csv(dataset_filename)
         tuning_results = mt.tune(X_train, y_train)
 
         print(tuning_results)
@@ -196,7 +196,7 @@ class ModelComparison:
 
         df_results = pd.DataFrame(results)
 
-        df_results.to_csv('../results/tuning_xgb.csv', index=False)
+        df_results.to_csv(results_filename, index=False)
 
     def save_best_model(self):
         # Instantiate the model
@@ -212,4 +212,6 @@ mc = ModelComparison()
 # mc.basic_comparison()
 # mc.basic_cross_validation_comparison()
 # mc.basic_comparison_on_sample_data()
-mc.tuning_comparison_XGBoost()
+# mc.tuning_comparison_XGBoost("../data/training_SMOTETomek.csv", "../results/tuning_xgb_smote_tomek.csv")
+# mc.tuning_comparison_XGBoost("../data/training_SMOTEENN.csv", "../results/tuning_xgb_smote_enn.csv")
+mc.tuning_comparison_XGBoost("../data/training_ENN.csv", "../results/tuning_xgb_enn.csv")

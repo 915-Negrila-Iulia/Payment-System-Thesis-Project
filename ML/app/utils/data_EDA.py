@@ -24,11 +24,29 @@ class EDA:
         categorical_values = self.df[['type', 'nameOrig', 'nameDest']]
         print(categorical_values.describe())
 
-    def check_duplicate_or_missing_values(self):
+    def check_values(self):
         # maximum sum of missing values on each column = 0 -> No. missing values
         print("No. of missing values: {}".format(self.df.isnull().sum().max()))
         # duplicate values -> none
         print("No. of duplicate values: {}".format(self.df.duplicated().sum()))
+        # negative values -> none
+        float_features = self.df.select_dtypes(include=['float']).columns
+        print("No. of negative values: {}".format((self.df[float_features] < 0).sum().sum()))
+
+    def check_balance_computation(self):
+        # number of incorrectly computed balances regarding TRANSFERS
+        transfers = self.df[(self.df.type == 'TRANSFER')]
+        incorrect_balances_sender_tr = ((transfers.oldBalanceSender - transfers.newBalanceSender) != transfers.amount)
+        incorrect_balances_receiver_tr = ((transfers.newBalanceReceiver - transfers.oldBalanceReceiver) != transfers.amount)
+        print("Number of TRANSFER records where sender's balances are incorrectly computed is ",
+              len(transfers[incorrect_balances_sender_tr]), " out of ", len(transfers))
+        print("Number of TRANSFER records where receiver's balances are incorrectly computed is ",
+              len(transfers[incorrect_balances_receiver_tr]), " out of ", len(transfers))
+        # number of incorrectly computed balances regarding CASH_OUT
+        cash_outs = self.df[(self.df.type == 'CASH_OUT')]
+        incorrect_balances_co = ((cash_outs.oldBalanceSender - cash_outs.newBalanceSender) != cash_outs.amount)
+        print("Number of CASH_OUT records where balances are incorrectly computed is ",
+              len(cash_outs[incorrect_balances_co]), " out of ", len(cash_outs))
 
     def display_fraud_vs_genuine(self):
         # Fraud vs Genuine transactions
@@ -80,7 +98,7 @@ class EDA:
         :return: -
         """
 
-        # criteria1: oldDestBalance == newDestBalance == 0 even though the amount != 0
+        # criteria1: oldBalanceReceiver == newBalanceReceiver == 0 even though the amount != 0
         transactions_type_criteria = (self.df.type == 'TRANSFER') | (self.df.type == 'CASH_OUT')
         frauds = self.df[(self.df.isFraud == 1) & transactions_type_criteria]
         not_frauds = self.df[(self.df.isFraud == 0) & transactions_type_criteria]
@@ -106,7 +124,7 @@ class EDA:
     def exploratory_data_analysis(self):
         self.display_info()
         self.display_statistics()
-        self.check_duplicate_or_missing_values()
+        self.check_values()
         self.display_fraud_vs_genuine()
         self.display_types_of_fraudulent_transactions()
         self.fraud_theory1()
@@ -116,4 +134,5 @@ class EDA:
 
 
 eda = EDA()
-eda.exploratory_data_analysis()
+# eda.exploratory_data_analysis()
+eda.check_balance_computation()

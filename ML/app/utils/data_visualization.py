@@ -23,22 +23,24 @@ class DataVisualization:
         plt.show()
 
     def plot_transaction_types(self):
-        # drawing pychart for types of transaction
-        type = self.df.type.value_counts()
-        transaction = type.index
-        count = type.values
-        plt.figure(figsize=(8, 8))
-        plt.pie(count, labels=transaction, autopct='%1.0f%%')
-        plt.legend(loc='upper left')
+        type_counts = self.df.type.value_counts()
+        fig, ax = plt.subplots(figsize=(8, 8))
+        ax.pie(type_counts.values, labels=type_counts.index, autopct='%1.1f%%', startangle=90, counterclock=False,
+               pctdistance=0.85, wedgeprops=dict(width=0.5))
+        # Add a circle in the center to make it a donut chart
+        circle = plt.Circle(xy=(0, 0), radius=0.5, facecolor='white')
+        ax.add_artist(circle)
+        ax.set_title('Types of Transactions')
         plt.show()
 
     def plot_fraud_vs_genuine_transaction_types(self):
         # no. of fraud and genuine transactions for each type
         plt.figure(figsize=(12, 8))
         ax = sns.countplot(x='type', hue='isFraud', data=self.df)
+        plt.yscale('log')
         plt.title('Types of Transaction - Fraud and Genuine')
         for p in ax.patches:
-            ax.annotate('{:.1f}'.format(p.get_height()), (p.get_x() + 0.1, p.get_height() + 50))
+            ax.annotate(p.get_height(), (p.get_x() + 0.1, p.get_height() + 50))
         plt.show()
 
     def plot_transactions_per_day_and_hour(self):
@@ -108,5 +110,7 @@ class DataVisualization:
         self.plot_transactions_per_day_and_hour()
         self.plot_kde()
 
-# dv = DataVisualization()
+dv = DataVisualization()
 # dv.draw_plots()
+# dv.plot_fraud_vs_genuine_transaction_types()
+# dv.plot_transaction_types()
