@@ -33,25 +33,26 @@ class EDA:
         float_features = self.df.select_dtypes(include=['float']).columns
         print("No. of negative values: {}".format((self.df[float_features] < 0).sum().sum()))
 
-    def check_balance_computation(self):
-        # number of incorrectly computed balances regarding TRANSFERS
-        transfers = self.df[(self.df.type == 'TRANSFER')]
-        incorrect_balances_sender_tr = ((transfers.oldBalanceSender - transfers.newBalanceSender) != transfers.amount)
-        incorrect_balances_receiver_tr = ((transfers.newBalanceReceiver - transfers.oldBalanceReceiver) != transfers.amount)
-        print("Number of TRANSFER records where sender's balances are incorrectly computed is ",
-              len(transfers[incorrect_balances_sender_tr]), " out of ", len(transfers))
-        print("Number of TRANSFER records where receiver's balances are incorrectly computed is ",
-              len(transfers[incorrect_balances_receiver_tr]), " out of ", len(transfers))
-        # number of incorrectly computed balances regarding CASH_OUT
-        cash_outs = self.df[(self.df.type == 'CASH_OUT')]
-        incorrect_balances_co = ((cash_outs.oldBalanceSender - cash_outs.newBalanceSender) != cash_outs.amount)
-        print("Number of CASH_OUT records where balances are incorrectly computed is ",
-              len(cash_outs[incorrect_balances_co]), " out of ", len(cash_outs))
-
-    def display_fraud_vs_genuine(self):
+    def display_fraud_vs_genuine(self, dataset):
         # Fraud vs Genuine transactions
         print("No. of Frauds and No. of Genuine transactions:")
-        print(self.df['isFraud'].value_counts())
+        print(dataset['isFraud'].value_counts())
+
+        fraud_count = len(dataset[dataset['isFraud'] == 1])
+        genuine_count = len(dataset[dataset['isFraud'] == 0])
+        total_count = len(dataset)
+        print(f"\nFraudulent transactions: {fraud_count} ({fraud_count / total_count * 100:.2f}%)")
+        print(f"Genuine transactions: {genuine_count} ({genuine_count / total_count * 100:.2f}%)")
+        print(f"Total number of transactions: {total_count} (100.00%)")
+
+    def average_amounts(self):
+        # Average amounts of Fraud and Genuine Transactions
+        # only for TRANSFER and CASH_OUT types
+        transactions_type_criteria = (self.df.type == 'TRANSFER') | (self.df.type == 'CASH_OUT')
+        frauds = self.df[(self.df.isFraud == 1) & transactions_type_criteria]
+        not_frauds = self.df[(self.df.isFraud == 0) & transactions_type_criteria]
+        print('Average amount of Frauds: {}'.format(frauds.amount.mean()))
+        print('Average amount of Genuine transactions: {}'.format(not_frauds.amount.mean()))
 
     def display_types_of_fraudulent_transactions(self):
         # only transactions of type 'TRANSFER' and 'CASH_OUT' can be frauds
@@ -125,8 +126,9 @@ class EDA:
         self.display_info()
         self.display_statistics()
         self.check_values()
-        self.display_fraud_vs_genuine()
+        self.display_fraud_vs_genuine(self.df)
         self.display_types_of_fraudulent_transactions()
+        # => only Transfer and Cash-out transactions are relevant and can be frauds
         self.fraud_theory1()
         self.fraud_theory2()
         # from theory1 and theory2 => account names features are not useful for prediction
@@ -135,4 +137,6 @@ class EDA:
 
 eda = EDA()
 # eda.exploratory_data_analysis()
-eda.check_balance_computation()
+# eda.average_amounts()
+# dataset = eda.data_preprocessing.clean_data()
+# eda.display_fraud_vs_genuine(dataset)

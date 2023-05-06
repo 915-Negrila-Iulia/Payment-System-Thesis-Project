@@ -33,6 +33,22 @@ class DataVisualization:
         ax.set_title('Types of Transactions')
         plt.show()
 
+    def plot_fraud_vs_genuine(self, dataset, title):
+        # Calculate number of frauds and genuine transactions
+        num_frauds = len(dataset[dataset.isFraud == 1])
+        num_genuine = len(dataset[dataset.isFraud == 0])
+
+        values = [num_frauds, num_genuine]
+        labels = ['Frauds', 'Genuine']
+
+        fig, ax = plt.subplots()
+        ax.pie(values, labels=labels, autopct='%1.1f%%', startangle=90, colors=['red', '#7fb9b3'])
+        # draw circle
+        centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+        fig.gca().add_artist(centre_circle)
+        ax.set_title(title)
+        plt.show()
+
     def plot_fraud_vs_genuine_transaction_types(self):
         # no. of fraud and genuine transactions for each type
         plt.figure(figsize=(12, 8))
@@ -53,36 +69,33 @@ class DataVisualization:
         fraud_hours = frauds.step % no_hours
         genuine_days = (genuine.step // no_hours) % no_days
         genuine_hours = genuine.step % no_hours
-        # fraud transactions(red) and genuine transactions(green) on each day of the week
-        plt.subplot(1, 2, 1)
-        fraud_days.hist(bins=no_days, color="red")
-        plt.title('Daily Frauds')
-        plt.xlabel('Day of the Week')
-        plt.ylabel('No. of transactions')
-        plt.subplot(1, 2, 2)
-        genuine_days.hist(bins=no_days, color="green")
-        plt.title('Daily Genuine Transactions')
-        plt.xlabel('Day of the Week')
-        plt.ylabel('No. of Transactions')
-        plt.tight_layout()
-        plt.show()
+
+        # plot daily transactions
+        plt.subplot(2, 1, 1)
+        sns.histplot(fraud_days, stat="density", color="red", alpha=0.5, label="Frauds", bins=no_days)
+        sns.histplot(genuine_days, stat="density", color="green", alpha=0.5, label="Genuine Transactions",
+                     bins=no_days)
+        plt.title('Daily Transactions')
+        plt.xlabel('Days of the Week')
+        plt.ylabel("No. of Transactions")
+        plt.legend()
         # => not much evidence to suggest when frauds occur
         # => genuine transactions occur less on some consecutive days of week
-        plt.subplot(1, 2, 1)
-        fraud_hours.hist(bins=no_hours, color="red")
-        plt.title('Frauds per Hour')
+
+        # plot hourly transactions
+        plt.subplot(2, 1, 2)
+        sns.histplot(fraud_hours, stat="density", color="red", alpha=0.5, label="Frauds", bins=no_hours)
+        sns.histplot(genuine_hours, stat="density", color="green", alpha=0.5, label="Genuine Transactions", bins=no_hours)
+        plt.title('Hourly Transactions')
         plt.xlabel('Hour of the Day')
         plt.ylabel("No. of Transactions")
-        plt.subplot(1, 2, 2)
-        genuine_hours.hist(bins=no_hours, color="green")
-        plt.title('Genuine transactions per Hour')
-        plt.xlabel('Hour of the Day')
-        plt.ylabel("No. of Transactions")
-        plt.tight_layout()
-        plt.show()
+        plt.legend()
         # => from hour 0 to hour 9 genuine transactions occur rarely
         # => frauds occur at similar rates any hour of the day
         # => we create a new feature for the hour of the day: 'timeInHours' = step%24
+
+        plt.tight_layout()
+        plt.show()
 
     def plot_kde(self):
         df = self.df
@@ -105,6 +118,7 @@ class DataVisualization:
 
     def draw_plots(self):
         self.plot_correlation_matrix()
+        self.plot_fraud_vs_genuine(self.df,'Frauds vs Genuine Transactions')
         self.plot_transaction_types()
         self.plot_fraud_vs_genuine_transaction_types()
         self.plot_transactions_per_day_and_hour()
@@ -112,5 +126,5 @@ class DataVisualization:
 
 dv = DataVisualization()
 # dv.draw_plots()
-# dv.plot_fraud_vs_genuine_transaction_types()
-# dv.plot_transaction_types()
+# dataset = dv.data_preprocessing.clean_data()
+# dv.plot_fraud_vs_genuine(dataset, 'Frauds vs Genuine Transactions after preprocessing')
