@@ -12,6 +12,7 @@ import { PersonsHomeComponent } from './persons-home/persons-home.component';
 import { TransactionsHomeComponent } from './transactions-home/transactions-home.component';
 import { TransactionsListComponent } from './transactions-list/transactions-list.component';
 import { UsersHomeComponent } from './users-home/users-home.component';
+import { AnalyticsBoardComponent } from './analytics-board/analytics-board.component';
 
 const routes: Routes = [
   { path: '', canActivate:[AuthenticationGuard], children: [
@@ -25,6 +26,7 @@ const routes: Routes = [
     { path: 'accounts-home', component: AccountsHomeComponent },
     { path: 'balances-list', component: BalancesListComponent },
     { path: 'transactions-home', component: TransactionsHomeComponent },
+    { path: 'analytics-board', component: AnalyticsBoardComponent },
     { path: 'object-status-history/:timestamp/:type', component: ObjectStatusHistoryComponent },
     { path: '**', redirectTo: 'home', pathMatch: 'full' }
   ]}

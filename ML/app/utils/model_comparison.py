@@ -87,17 +87,17 @@ class ModelComparison:
                 'AUROC': auroc,
                 'AUPRC': auprc,
                 'Training times (s)': train_time,
-                'Testing times(s)': test_time
+                'Testing times (s)': test_time
             }
 
             results.append(result)
 
         return results
 
-    def basic_comparison(self):
-        X_train, X_test, y_train, y_test = self.data_preprocessing.split_train_test_data()
+    def basic_comparison(self, test_size=0.2, results_filename='../results/basics.csv'):
+        X_train, X_test, y_train, y_test = self.data_preprocessing.split_train_test_data(test_size)
         results = self.basic_comparison_util(X_train, X_test, y_train, y_test)
-        self.save_list_to_csv(results,'../results/basics.csv')
+        self.save_list_to_csv(results,results_filename)
 
     def basic_cross_validation_comparison(self):
         """
@@ -166,8 +166,9 @@ class ModelComparison:
 
     def tuning_comparison_XGBoost(self, dataset_filename, results_filename):
         """
-
-        :return:
+        Hyperparameter tuning on best classifier (XGBoost) trained on different resampled datasets
+        Store the results in a csv file
+        :return: -
         """
         params = {'n_estimators': [100, 200, 400], 'max_depth': [3, 5, 7], 'learning_rate': [0.01, 0.2, 0.8]}
         mt = ModelTuning(XGBClassifier(), params)
@@ -205,13 +206,14 @@ class ModelComparison:
         X_train, y_train = self.model_sampling.separate_sets_from_csv(f"../data/training_SMOTETomek.csv")
         classifier.fit(X_train, y_train)
 
-        # Make pickle file of our model
+        # Make pickle file of the model
         pickle.dump(classifier, open("../model/XGBmodel.pkl", "wb"))
 
 mc = ModelComparison()
-# mc.basic_comparison()
+# mc.basic_comparison() # test set = 20% of data
+# mc.basic_comparison(0.3,'../results/basics2.csv') # test set = 30% of data
 # mc.basic_cross_validation_comparison()
 # mc.basic_comparison_on_sample_data()
 # mc.tuning_comparison_XGBoost("../data/training_SMOTETomek.csv", "../results/tuning_xgb_smote_tomek.csv")
 # mc.tuning_comparison_XGBoost("../data/training_SMOTEENN.csv", "../results/tuning_xgb_smote_enn.csv")
-mc.tuning_comparison_XGBoost("../data/training_ENN.csv", "../results/tuning_xgb_enn.csv")
+# mc.tuning_comparison_XGBoost("../data/training_ENN.csv", "../results/tuning_xgb_enn.csv")

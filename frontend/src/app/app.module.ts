@@ -14,6 +14,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatSortModule } from '@angular/material/sort';
 
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -44,11 +45,14 @@ import { TransactionsHomeComponent } from './transactions-home/transactions-home
 import { TransactionsHistoryComponent } from './transactions-history/transactions-history.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
+import { Papa } from 'ngx-papaparse';
 
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TransactionErrorComponent } from './transaction-error/transaction-error.component';
+import { AnalyticsBoardComponent } from './analytics-board/analytics-board.component';
+import { AnalyticsSamplingResultsComponent } from './analytics-sampling-results/analytics-sampling-results.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +81,9 @@ import { TransactionErrorComponent } from './transaction-error/transaction-error
     ObjectStatusHistoryComponent,
     TransactionsHomeComponent,
     TransactionsHistoryComponent,
-    TransactionErrorComponent
+    TransactionErrorComponent,
+    AnalyticsBoardComponent,
+    AnalyticsSamplingResultsComponent
   ],
   imports: [
     BrowserModule,
@@ -93,6 +99,7 @@ import { TransactionErrorComponent } from './transaction-error/transaction-error
     MatDividerModule,
     MatPaginatorModule,
     MatTableModule,
+    MatSortModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatSlideToggleModule,
@@ -100,7 +107,7 @@ import { TransactionErrorComponent } from './transaction-error/transaction-error
     NgxChartsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }, Papa],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
