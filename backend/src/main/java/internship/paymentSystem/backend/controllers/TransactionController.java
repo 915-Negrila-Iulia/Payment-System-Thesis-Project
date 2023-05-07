@@ -9,6 +9,7 @@ import internship.paymentSystem.backend.customExceptions.FraudException;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.enums.StatusEnum;
 import internship.paymentSystem.backend.services.interfaces.IEmailService;
+import internship.paymentSystem.backend.services.interfaces.IFraudDetectionClassifierService;
 import internship.paymentSystem.backend.services.interfaces.ITransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -28,6 +30,9 @@ public class TransactionController {
 
     @Autowired
     private ITransactionService transactionService;
+
+    @Autowired
+    private IFraudDetectionClassifierService fraudDetectionClassifierService;
 
     @GetMapping()
     public List<Transaction> getTransactions(){
@@ -203,4 +208,32 @@ public class TransactionController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PutMapping("/setClassifier")
+    public ResponseEntity<?> setFraudSystemClassifier(@RequestBody Map<String,String> body){
+        try{
+            String classifierType = body.get("classifierType");
+            fraudDetectionClassifierService.setClassifierType(classifierType);
+            LOGGER.logInfo("HTTP Request -- Put Set Classifier for Fraud Detection System");
+            return ResponseEntity.ok(body);
+        }
+        catch(Exception e){
+            LOGGER.logError("HTTP Request -- Put Set Classifier Failed: "+e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getClassifier")
+    public ResponseEntity<?> getFraudSystemClassifier() {
+        try {
+            String classifierType = fraudDetectionClassifierService.getClassifierType();
+            Map<String,String> body = Map.of("classifierType",classifierType);
+            LOGGER.logInfo("HTTP Request -- Get Classifier for Fraud Detection System");
+            return ResponseEntity.ok(body);
+        } catch (Exception e) {
+            LOGGER.logError("HTTP Request -- Get Classifier Failed: " + e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

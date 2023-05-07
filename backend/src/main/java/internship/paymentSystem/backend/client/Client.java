@@ -7,7 +7,10 @@ import internship.paymentSystem.backend.DTOs.CheckTransactionDto;
 import internship.paymentSystem.backend.config.GenerateXML;
 import internship.paymentSystem.backend.config.MyLogger;
 import internship.paymentSystem.backend.models.enums.ActionTransactionEnum;
+import internship.paymentSystem.backend.models.enums.MLClassifierType;
 import internship.paymentSystem.backend.models.enums.TypeTransactionEnum;
+import internship.paymentSystem.backend.repositories.IFraudDetectionClassifierRepository;
+import internship.paymentSystem.backend.services.interfaces.IFraudDetectionClassifierService;
 import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,15 +37,19 @@ public class Client {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private IFraudDetectionClassifierService fraudDetectionClassifierService;
+
     public List<Object> isFraudCheck(int timeInHours, ActionTransactionEnum type, BigDecimal amount, BigDecimal oldbalanceOrg,
                              BigDecimal newbalanceOrig, BigDecimal oldbalanceDest, BigDecimal newbalanceDest) throws JsonProcessingException {
         LOGGER.logInfo("Check Fraud");
+        String classifierType = fraudDetectionClassifierService.getClassifierType();
         CheckTransactionDto checkTransaction;
         if(type.equals(ActionTransactionEnum.TRANSFER))
-            checkTransaction = new CheckTransactionDto(timeInHours, 0, amount, oldbalanceOrg, newbalanceOrig,
+            checkTransaction = new CheckTransactionDto(classifierType, timeInHours, 0, amount, oldbalanceOrg, newbalanceOrig,
                 oldbalanceDest, newbalanceDest);
         else
-            checkTransaction = new CheckTransactionDto(timeInHours, 1, amount, oldbalanceOrg, newbalanceOrig,
+            checkTransaction = new CheckTransactionDto(classifierType, timeInHours, 1, amount, oldbalanceOrg, newbalanceOrig,
                     new BigDecimal(0), new BigDecimal(0)); // no target balances for withdrawal => use value 0
 
         HttpHeaders headers = new HttpHeaders();

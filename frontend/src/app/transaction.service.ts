@@ -73,4 +73,13 @@ export class TransactionService {
   getStatisticsOfAccount(id: number | undefined){
     return this.httpClient.get<StatisticDto[]>(this.baseUrl+`/statistics/${id}`);
   }
+
+  setFraudSystemClassifier(classifierType: string){
+    const body = { "classifierType": classifierType };
+    return this.httpClient.put<any>(`${this.baseUrl}/setClassifier`, body);
+  }
+
+  getFraudSystemClassifier(){
+    return this.httpClient.get<any>(`${this.baseUrl}/getClassifier`);
+  }
 }

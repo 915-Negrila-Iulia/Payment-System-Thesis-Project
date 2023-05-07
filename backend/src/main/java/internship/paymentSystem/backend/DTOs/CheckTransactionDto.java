@@ -1,5 +1,6 @@
 package internship.paymentSystem.backend.DTOs;
 
+import internship.paymentSystem.backend.models.enums.MLClassifierType;
 import internship.paymentSystem.backend.models.enums.ObjectTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CheckTransactionDto {
+
+    private String classifierType;
 
     private int timeInHours;
 

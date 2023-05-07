@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TransactionService } from '../transaction.service';
 
 @Component({
   selector: 'app-analytics-board',
@@ -8,10 +9,15 @@ import { Component, OnInit } from '@angular/core';
 export class AnalyticsBoardComponent implements OnInit {
 
   show: string = "analyticsBoard";
+  selectedClassifier: string = "overall";
 
-  constructor() { }
+  constructor(private transactionService: TransactionService) { }
 
   ngOnInit(): void {
+    this.transactionService.getFraudSystemClassifier().subscribe(data => {
+      this.selectedClassifier = data.classifierType;
+      console.log(data);
+    })
   }
 
   viewAnalyticsBoard(){
@@ -28,6 +34,13 @@ export class AnalyticsBoardComponent implements OnInit {
 
   viewTuningResults(){
     this.show = "tuningTable";
+  }
+
+  onSelectClassifier(type:any){
+    this.selectedClassifier = type;
+    this.transactionService.setFraudSystemClassifier(this.selectedClassifier).subscribe(data => {
+      console.log(data);
+    });
   }
 
 }

@@ -47,4 +47,5 @@ public interface ITransactionService {
     List<StatisticDto> getStatisticsOfAccount(Long accountId);
 
     Transaction confirmSuspectTransaction(String reference) throws Exception;
+
 }

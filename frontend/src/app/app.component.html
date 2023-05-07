@@ -51,7 +51,7 @@
 
     <mat-divider></mat-divider>
 
-    <button mat-button class="menu-button" routerLink="/analytics-board">
+    <button mat-button *ngIf="role==='ADMIN_ROLE'" class="menu-button" routerLink="/analytics-board">
       <mat-icon>bubble_chart</mat-icon> <!-- <mat-icon>show_chart</mat-icon> -->
       <span>Analytics</span>
     </button>

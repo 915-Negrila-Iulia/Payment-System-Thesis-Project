@@ -133,33 +133,12 @@ class DataVisualization:
 
         plt.show()
 
-
-    def plot_kde(self):
-        df = self.df
-
-        # create new columns with log-transformed values
-        df['oldBalanceSender_log'] = np.log10(df['oldBalanceSender'] + 1)  # adding 1 to avoid log(0)
-        df['newBalanceSender_log'] = np.log10(df['newBalanceSender'] + 1)
-        df['oldBalanceReceiver_log'] = np.log10(df['oldBalanceReceiver'] + 1)
-        df['newBalanceReceiver_log'] = np.log10(df['newBalanceReceiver'] + 1)
-
-        # plot kernel density estimations for the log-transformed values
-        plt.figure(figsize=(12, 8))
-        sns.kdeplot(df['oldBalanceSender_log'], label='Old Balance Sender', fill=True)
-        sns.kdeplot(df['newBalanceSender_log'], label='New Balance Sender', fill=True)
-        sns.kdeplot(df['oldBalanceReceiver_log'], label='Old Balance Receiver', fill=True)
-        sns.kdeplot(df['newBalanceReceiver_log'], label='New Balance Receiver', fill=True)
-        plt.title("Distribution of Old and New Balances for Sender and Receiver (log-transformed)")
-        plt.legend()
-        plt.show()
-
     def draw_plots(self):
         self.plot_correlation_matrix()
         self.plot_fraud_vs_genuine(self.df,'Frauds vs Genuine Transactions')
         self.plot_transaction_types()
         self.plot_fraud_vs_genuine_transaction_types()
         self.plot_transactions_per_day_and_hour()
-        self.plot_kde()
 
 dv = DataVisualization()
 # dv.draw_plots()

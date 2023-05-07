@@ -199,15 +199,19 @@ class ModelComparison:
 
         df_results.to_csv(results_filename, index=False)
 
-    def save_best_model(self):
-        # Instantiate the model
-        classifier = XGBClassifier()
-
-        X_train, y_train = self.model_sampling.separate_sets_from_csv(f"../data/training_SMOTETomek.csv")
+    def save_model_to_pkl_file(self, classifier, dataset_file, pkl_file):
+        X_train, y_train = self.model_sampling.separate_sets_from_csv(dataset_file)
         classifier.fit(X_train, y_train)
+        pickle.dump(classifier, open(pkl_file, "wb")) # Make pickle file of the model
 
-        # Make pickle file of the model
-        pickle.dump(classifier, open("../model/XGBmodel.pkl", "wb"))
+    def save_models(self):
+        # save the best overall classifier
+        self.save_model_to_pkl_file(XGBClassifier(), "../data/training_SMOTETomek.csv", "../model/best_model.pkl")
+        # save the fastest classifier
+        self.save_model_to_pkl_file(DecisionTreeClassifier(), "../data/training_TomekLink.csv", "../model/fast_model.pkl")
+        # save the best recall classifier
+        self.save_model_to_pkl_file(XGBClassifier(), "../data/training_RandomOverSampling.csv", "../model/recall_model.pkl")
+
 
 mc = ModelComparison()
 # mc.basic_comparison() # test set = 20% of data
@@ -217,3 +221,4 @@ mc = ModelComparison()
 # mc.tuning_comparison_XGBoost("../data/training_SMOTETomek.csv", "../results/tuning_xgb_smote_tomek.csv")
 # mc.tuning_comparison_XGBoost("../data/training_SMOTEENN.csv", "../results/tuning_xgb_smote_enn.csv")
 # mc.tuning_comparison_XGBoost("../data/training_ENN.csv", "../results/tuning_xgb_enn.csv")
+#mc.save_models()

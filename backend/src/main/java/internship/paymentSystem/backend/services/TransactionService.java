@@ -1,6 +1,5 @@
 package internship.paymentSystem.backend.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import internship.paymentSystem.backend.DTOs.StatisticDto;
 import internship.paymentSystem.backend.DTOs.TransactionBuilderContext;
 import internship.paymentSystem.backend.client.Client;
@@ -8,6 +7,7 @@ import internship.paymentSystem.backend.config.MyLogger;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.bases.TransactionEntity;
 import internship.paymentSystem.backend.models.enums.*;
+import internship.paymentSystem.backend.repositories.IFraudDetectionClassifierRepository;
 import internship.paymentSystem.backend.repositories.ITransactionRepository;
 import internship.paymentSystem.backend.services.interfaces.*;
 import internship.paymentSystem.backend.utils.*;

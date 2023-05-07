@@ -11,4 +11,21 @@
     [csvFilePath]="'../../assets/basics_and_sampling.csv'"></app-analytics-table-results>
     <app-analytics-table-results *ngIf="show==='tuningTable'" [type]="'TUNING'"
     [csvFilePath]="'../../assets/tuning_xgb_smote_enn.csv'"></app-analytics-table-results>
+
+    <div class="classifier-container" *ngIf="show==='analyticsBoard'">
+        <button class="classifier-card" (click)="onSelectClassifier('OVERALL')" [ngClass]="{'selected': selectedClassifier === 'OVERALL'}">
+        <h2>Best Overall Classifier</h2>
+        <p>A classifier that balances accuracy and speed.</p>
+        </button>
+        <button class="classifier-card" (click)="onSelectClassifier('FAST')" [ngClass]="{'selected': selectedClassifier === 'FAST'}">
+        <h2>Fastest Classifier</h2>
+        <p>A classifier that prioritizes speed over accuracy.</p>
+        </button>
+        <button class="classifier-card" (click)="onSelectClassifier('RECALL')" [ngClass]="{'selected': selectedClassifier === 'RECALL'}">
+        <h2>Best Recall Classifier</h2>
+        <p>A classifier that has the best recall to catch possible frauds, but with a risk of incorrectly flagging genuine transactions.</p>
+        </button>
+    </div>
+
 </div>
+  

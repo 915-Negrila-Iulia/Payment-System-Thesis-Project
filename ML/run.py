@@ -14,10 +14,11 @@ def predict():
     """
     input_json = request.get_json(force=True)
     print(input_json)
-    float_features = [float(x) for x in input_json.values()]
+    classifier_type = input_json["classifierType"]
+    float_features = [float(x) for x in input_json.values() if x != classifier_type]
     features = [np.array(float_features)]
-    print(features)
-    fraud_probability, prediction_result = predict_transaction(features)
+    print(classifier_type," and ",features)
+    fraud_probability, prediction_result = predict_transaction(classifier_type,features)
     resp = {'probability': round(float(fraud_probability), 2), # limit number of decimals to 2
             'prediction': prediction_result}
 
