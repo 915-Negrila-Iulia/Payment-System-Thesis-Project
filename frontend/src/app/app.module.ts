@@ -52,7 +52,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TransactionErrorComponent } from './transaction-error/transaction-error.component';
 import { AnalyticsBoardComponent } from './analytics-board/analytics-board.component';
-import { AnalyticsSamplingResultsComponent } from './analytics-sampling-results/analytics-sampling-results.component';
+import { AnalyticsTableResultsComponent } from './analytics-table-results/analytics-table-results.component';
 
 @NgModule({
   declarations: [
@@ -83,7 +83,7 @@ import { AnalyticsSamplingResultsComponent } from './analytics-sampling-results/
     TransactionsHistoryComponent,
     TransactionErrorComponent,
     AnalyticsBoardComponent,
-    AnalyticsSamplingResultsComponent
+    AnalyticsTableResultsComponent
   ],
   imports: [
     BrowserModule,

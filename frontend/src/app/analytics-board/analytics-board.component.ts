@@ -7,9 +7,27 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AnalyticsBoardComponent implements OnInit {
 
+  show: string = "analyticsBoard";
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  viewAnalyticsBoard(){
+    this.show = "analyticsBoard";
+  }
+
+  viewBasicResults(){
+    this.show = "basicTable";
+  }
+
+  viewSamplingResults(){
+    this.show = "samplingTable";
+  }
+
+  viewTuningResults(){
+    this.show = "tuningTable";
   }
 
 }

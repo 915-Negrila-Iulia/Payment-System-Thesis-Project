@@ -1,2 +1,14 @@
-<p>analytics-board works!</p>
-<app-analytics-sampling-results></app-analytics-sampling-results>
+<div class="container">
+    <div class="top-bar-container">
+        <button (click)="viewAnalyticsBoard()">DASHBOARD</button>
+        <button (click)="viewBasicResults()">BASICS</button>
+        <button (click)="viewSamplingResults()">SAMPLING</button>
+        <button (click)="viewTuningResults()">TUNING</button>
+    </div>
+    <app-analytics-table-results *ngIf="show==='basicTable'" [type]="'BASICS'"
+    [csvFilePath]="'../../assets/basics_means.csv'"></app-analytics-table-results>
+    <app-analytics-table-results *ngIf="show==='samplingTable'" [type]="'SAMPLING'"
+    [csvFilePath]="'../../assets/basics_and_sampling.csv'"></app-analytics-table-results>
+    <app-analytics-table-results *ngIf="show==='tuningTable'" [type]="'TUNING'"
+    [csvFilePath]="'../../assets/tuning_xgb_smote_enn.csv'"></app-analytics-table-results>
+</div>

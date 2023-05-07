@@ -97,6 +97,43 @@ class DataVisualization:
         plt.tight_layout()
         plt.show()
 
+    def plot_imbalanced_vs_balanced_data(self):
+        data = self.data_preprocessing.clean_data()
+        testing_data = pd.read_csv('../data/testing_data.csv')
+        frauds = len(data[data.isFraud == 1])
+        genuine = len(data[data.isFraud == 0])
+        testing_frauds = len(testing_data[testing_data.isFraud == 1])
+        testing_genuine = len(testing_data[testing_data.isFraud == 0])
+        imbalanced_num_frauds = frauds - testing_frauds
+        imbalanced_num_genuine = genuine - testing_genuine
+
+        rus_balanced_data = pd.read_csv('../data/training_RandomUnderSampling.csv')
+        rus_balanced_num_frauds = len(rus_balanced_data[rus_balanced_data.isFraud == 1])
+        rus_balanced_num_genuine = len(rus_balanced_data[rus_balanced_data.isFraud == 0])
+
+        smote_balanced_data = pd.read_csv('../data/training_SMOTE.csv')
+        smote_balanced_num_frauds = len(smote_balanced_data[smote_balanced_data.isFraud == 1])
+        smote_balanced_num_genuine = len(smote_balanced_data[smote_balanced_data.isFraud == 0])
+
+        fig, (ax0, ax1, ax2) = plt.subplots(1, 3, figsize=(12, 4), sharey='all')
+        colors = ['#ff8e7f', '#7fb9b3']
+
+        ax0.bar(['Fraud', 'Genuine'], [imbalanced_num_frauds, imbalanced_num_genuine], color=colors)
+        ax0.set_title('Imbalanced original dataset')
+
+        ax1.bar(['Fraud', 'Genuine'], [rus_balanced_num_frauds, rus_balanced_num_genuine], color=colors)
+        ax1.set_title('Sampled dataset using RUS')
+
+        ax2.bar(['Fraud', 'Genuine'], [smote_balanced_num_frauds, smote_balanced_num_genuine], color=colors)
+        ax2.set_title('Sampled dataset using SMOTE')
+
+        ax0.set_ylabel('Number of Transactions')
+        ax0.set_yscale('log')
+        ax0.set_ylim(bottom=1000)
+
+        plt.show()
+
+
     def plot_kde(self):
         df = self.df
 
@@ -128,3 +165,4 @@ dv = DataVisualization()
 # dv.draw_plots()
 # dataset = dv.data_preprocessing.clean_data()
 # dv.plot_fraud_vs_genuine(dataset, 'Frauds vs Genuine Transactions after preprocessing')
+# dv.plot_imbalanced_vs_balanced_data()
