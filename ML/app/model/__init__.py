@@ -3,8 +3,7 @@ import pickle
 import pandas as pd
 from matplotlib import pyplot as plt
 
-# best_model = pickle.load(open('app/model/RFmodel.pkl', "rb"))
-best_model = pickle.load(open("app/model/XGBmodel.pkl", "rb"))
+best_model = pickle.load(open("app/model/best_model.pkl", "rb"))
 fast_model = pickle.load(open("app/model/fast_model.pkl", "rb"))
 recall_model = pickle.load(open("app/model/recall_model.pkl", "rb"))
 

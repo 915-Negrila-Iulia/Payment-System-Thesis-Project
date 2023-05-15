@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TransactionService } from '../transaction.service';
+import { colorSets } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-analytics-board',
@@ -10,6 +11,10 @@ export class AnalyticsBoardComponent implements OnInit {
 
   show: string = "analyticsBoard";
   selectedClassifier: string = "overall";
+  performanceValues = [{name: 'Overall', value: 95.623}, {name: 'Recall', value: 89.02}, {name: 'Fast', value: 72.564}]
+  colorScheme = colorSets.find(s => s.name === 'cool');
+  showLegend = true;
+  legendTitle = 'Performance';
 
   constructor(private transactionService: TransactionService) { }
 

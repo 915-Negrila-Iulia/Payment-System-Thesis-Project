@@ -27,5 +27,16 @@
         </button>
     </div>
 
+    <div class="performance-container" *ngIf="show==='analyticsBoard'">
+        <ngx-charts-pie-chart
+            [results]="performanceValues"
+            [legend]="showLegend"
+            [legendTitle]="legendTitle"
+            [doughnut]="true"
+            [arcWidth]="0.2"
+            [type]="'semi-pie'">
+        </ngx-charts-pie-chart>
+    </div>
+
 </div>
   

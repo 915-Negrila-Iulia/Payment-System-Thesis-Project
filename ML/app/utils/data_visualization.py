@@ -1,8 +1,11 @@
+import pickle
+
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 import seaborn as sns
 
+from app.model import best_model
 from app.utils.data_preprocessing import DataPreprocessing
 
 

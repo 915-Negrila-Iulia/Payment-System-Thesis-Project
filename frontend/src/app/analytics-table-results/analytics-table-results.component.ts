@@ -31,10 +31,10 @@ export class AnalyticsTableResultsComponent implements OnInit {
         this.displayedColumns = ["Classifier","Precision","Recall","Accuracy","F1","AUROC","AUPRC","Training time (s)","Testing time (s)"];
         break;
       case "SAMPLING":
-        this.displayedColumns = ["Classifier","Confusion Matrix","Precision","Recall","Accuracy","F1","AUROC","AUPRC","Training times (s)","Testing times (s)"];
+        this.displayedColumns = ["Classifier + Sampling","Confusion Matrix","Precision","Recall","F1","Accuracy","AUROC","AUPRC","Training times (s)","Testing times (s)"];
         break;
       case "TUNING":
-        this.displayedColumns = ["XGBoost + SMOTETomek params","Precision","Recall","Accuracy","F1","AUROC","AUPRC"];
+        this.displayedColumns = ["XGBoost + SMOTEENN params","Precision","Recall","Accuracy","F1","AUROC","AUPRC"];
         break;
     }
     this.loadCsvData();
