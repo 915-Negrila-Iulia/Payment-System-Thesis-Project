@@ -11,10 +11,53 @@ export class AnalyticsBoardComponent implements OnInit {
 
   show: string = "analyticsBoard";
   selectedClassifier: string = "overall";
-  performanceValues = [{name: 'Overall', value: 95.623}, {name: 'Recall', value: 89.02}, {name: 'Fast', value: 72.564}]
-  colorScheme = colorSets.find(s => s.name === 'cool');
-  showLegend = true;
-  legendTitle = 'Performance';
+  data: any[] = [
+    {
+      name: 'Best Overall',
+      series: [
+        //{ name: 'Testing Time', value: 0.696 },
+        { name: 'Precision', value: 0.864 },
+        { name: 'Recall', value: 0.933 },
+        { name: 'F1-score', value: 0.897 },
+        { name: 'Accuracy', value: 0.999 },
+        { name: 'AUPRC', value: 0.972 },
+        { name: 'AUROC', value: 0.998 },
+      ]
+    },
+    {
+      name: 'Best Recall',
+      series: [
+        //{ name: 'Testing Time', value: 0.156 },
+        { name: 'Precision', value: 0.534 },
+        { name: 'Recall', value: 0.988 },
+        { name: 'F1-score', value: 0.694 },
+        { name: 'Accuracy', value: 0.997 },
+        { name: 'AUPRC', value: 0.967 },
+        { name: 'AUROC', value: 0.999 },
+      ]
+    },
+    {
+      name: 'Fastest',
+      series: [
+        //{ name: 'Testing Time', value: 0.044 },
+        { name: 'Precision', value: 0.878 },
+        { name: 'Recall', value: 0.898 },
+        { name: 'F1-score', value: 0.888 },
+        { name: 'Accuracy', value: 0.999 },
+        { name: 'AUPRC', value: 0.767 },
+        { name: 'AUROC', value: 0.948 },
+      ]
+    }
+  ];
+
+  view: [number, number] = [900, 400];
+  xAxisLabel = 'Metrics';
+  yAxisLabel = 'Performance';
+  colorScheme = [
+    { name: 'Best Overall', value: '#264b96' },
+    { name: 'Best Recall', value: '#006f3c' } ,
+    { name: 'Fastest', value: '#bf212f' }
+  ];
 
   constructor(private transactionService: TransactionService) { }
 

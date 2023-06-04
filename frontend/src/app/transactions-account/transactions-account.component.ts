@@ -166,11 +166,11 @@ export class TransactionsAccountComponent implements OnInit, OnChanges {
   }
 
   handleError(error: any){
-    console.log(error.status);
     if(error.status === 451){
       const fraudValues = error.error.split("|");
       this.errorMessage = fraudValues[0];
       this.fraudProbability = fraudValues[1];
+      console.log("FRAUD split "+this.fraudProbability);
     } else {
       this.errorMessage = error.error;
     }

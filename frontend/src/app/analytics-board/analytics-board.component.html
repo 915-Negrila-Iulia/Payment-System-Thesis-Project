@@ -12,30 +12,37 @@
     <app-analytics-table-results *ngIf="show==='tuningTable'" [type]="'TUNING'"
     [csvFilePath]="'../../assets/tuning_xgb_smote_enn.csv'"></app-analytics-table-results>
 
-    <div class="classifier-container" *ngIf="show==='analyticsBoard'">
-        <button class="classifier-card" (click)="onSelectClassifier('OVERALL')" [ngClass]="{'selected': selectedClassifier === 'OVERALL'}">
-        <h2>Best Overall Classifier</h2>
-        <p>A classifier that balances accuracy and speed.</p>
-        </button>
-        <button class="classifier-card" (click)="onSelectClassifier('FAST')" [ngClass]="{'selected': selectedClassifier === 'FAST'}">
-        <h2>Fastest Classifier</h2>
-        <p>A classifier that prioritizes speed over accuracy.</p>
-        </button>
-        <button class="classifier-card" (click)="onSelectClassifier('RECALL')" [ngClass]="{'selected': selectedClassifier === 'RECALL'}">
-        <h2>Best Recall Classifier</h2>
-        <p>A classifier that has the best recall to catch possible frauds, but with a risk of incorrectly flagging genuine transactions.</p>
-        </button>
-    </div>
+    <div class="analytics-body-container">
+        <div class="classifier-container" *ngIf="show==='analyticsBoard'">
+            <button class="overall-classifier-card classifier-card" (click)="onSelectClassifier('OVERALL')" [ngClass]="{'selected': selectedClassifier === 'OVERALL'}">
+            <h2>Best Overall Classifier</h2>
+            <p>A classifier that balances precision, recall, accuracy and speed.</p>
+            </button>
+            <button class="recall-classifier-card classifier-card" (click)="onSelectClassifier('FAST')" [ngClass]="{'selected': selectedClassifier === 'FAST'}">
+            <h2>Fastest Classifier</h2>
+            <p>A classifier that prioritizes speed over other metrics.</p>
+            </button>
+            <button class="fastest-classifier-card classifier-card" (click)="onSelectClassifier('RECALL')" [ngClass]="{'selected': selectedClassifier === 'RECALL'}">
+            <h2>Best Recall Classifier</h2>
+            <p>A classifier that has the best recall to catch possible frauds, but with a risk of incorrectly flagging genuine transactions.</p>
+            </button>
+        </div>
 
-    <div class="performance-container" *ngIf="show==='analyticsBoard'">
-        <ngx-charts-pie-chart
-            [results]="performanceValues"
-            [legend]="showLegend"
-            [legendTitle]="legendTitle"
-            [doughnut]="true"
-            [arcWidth]="0.2"
-            [type]="'semi-pie'">
-        </ngx-charts-pie-chart>
+        <div class="performance-container" *ngIf="show==='analyticsBoard'">
+            <ngx-charts-line-chart
+                [results]="data"
+                [view]="view"
+                [xAxis]="true"
+                [yAxis]="true"
+                [showGridLines]="true"
+                [showDataPoints]="true"
+                [autoScale]="true"
+                [showLegend]="true"
+                [xAxisLabel]="xAxisLabel"
+                [yAxisLabel]="yAxisLabel"
+                [customColors]="colorScheme">
+            </ngx-charts-line-chart>
+        </div>
     </div>
 
 </div>
