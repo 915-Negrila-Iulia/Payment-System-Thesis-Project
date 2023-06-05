@@ -82,4 +82,9 @@ export class TransactionService {
   getFraudSystemClassifier(){
     return this.httpClient.get<any>(`${this.baseUrl}/getClassifier`);
   }
+
+  getSystemTransactions(){
+    return this.httpClient.get<any>(`${this.baseUrl}/getSystemTransactions`);
+  }
+
 }

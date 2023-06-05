@@ -48,4 +48,5 @@ public interface ITransactionService {
 
     Transaction confirmSuspectTransaction(String reference) throws Exception;
 
+    Long getCountFraudsInSystem();
 }

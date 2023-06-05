@@ -196,7 +196,6 @@ public class TransactionService implements ITransactionService {
         Long accountId = transactionDetails.getAccountID();
         Long userId = this.getUserIdOfAccount(accountId);
         AccountStatusEnum accountStatus = getStatusByAccountId(accountId);
-        //this.fraudCheck(transactionDetails);
         String userEmail = userService.findUserById(currentUserId).isPresent() ?
                 userService.findUserById(currentUserId).get().getEmail() : null;
         TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,accountId,
@@ -213,7 +212,6 @@ public class TransactionService implements ITransactionService {
         Long userId = this.getUserIdOfAccount(accountId);
         AccountStatusEnum accountStatus = getStatusByAccountId(accountId);
         AccountStatusEnum targetAccountStatus = getStatusByAccountId(targetId);
-        //this.fraudCheck(transactionDetails);
         String userEmail = userService.findUserById(currentUserId).isPresent() ?
                 userService.findUserById(currentUserId).get().getEmail() : null;
         TransactionBuilderContext context = new TransactionBuilderContext(transactionDetails,currentUserId,userId,accountId,
@@ -506,6 +504,13 @@ public class TransactionService implements ITransactionService {
         else{
             throw new Exception("Authorize not required");
         }
+    }
+
+    public Long getCountFraudsInSystem(){
+        List<Transaction> transactions = this.getAllTransactions();
+        return transactions.stream()
+                .filter(transaction -> transaction.getStatus() == StatusEnum.FRAUD)
+                .count();
     }
 
     private Long getCountStatisticByStatus(Long accountId,StatusEnum status){

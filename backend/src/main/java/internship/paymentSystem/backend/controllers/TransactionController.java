@@ -190,6 +190,11 @@ public class TransactionController {
             LOGGER.logInfo("HTTP Request -- Put Transfer Transaction");
             return ResponseEntity.ok(transaction);
         }
+        catch(FraudException fe){
+            LOGGER.logError("HTTP Request -- Put Transfer Transaction Failed: "+fe.getMessage());
+            return new ResponseEntity<>(fe.getMessage()+"|"+fe.getFraudProbability(),
+                    HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS);
+        }
         catch(Exception e){
             LOGGER.logError("HTTP Request -- Put Transfer Transaction Failed: "+e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -232,6 +237,21 @@ public class TransactionController {
             return ResponseEntity.ok(body);
         } catch (Exception e) {
             LOGGER.logError("HTTP Request -- Get Classifier Failed: " + e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getSystemTransactions")
+    public ResponseEntity<?> getSystemTransactions() {
+        try {
+            Long frauds = transactionService.getCountFraudsInSystem();
+            Long genuineTransactions = (long) transactionService.getAllTransactions().size()
+                                                - transactionService.getCountFraudsInSystem();
+            Map<String,Long> body = Map.of("frauds",frauds,"genuine",genuineTransactions);
+            LOGGER.logInfo("HTTP Request -- Get Fraudulent and Genuine Transactions in the System");
+            return ResponseEntity.ok(body);
+        } catch (Exception e) {
+            LOGGER.logError("HTTP Request -- Get Fraudulent and Genuine Transactions in the System Failed: " + e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

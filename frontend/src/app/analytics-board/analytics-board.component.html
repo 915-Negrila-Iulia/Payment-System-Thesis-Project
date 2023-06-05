@@ -12,36 +12,80 @@
     <app-analytics-table-results *ngIf="show==='tuningTable'" [type]="'TUNING'"
     [csvFilePath]="'../../assets/tuning_xgb_smote_enn.csv'"></app-analytics-table-results>
 
-    <div class="analytics-body-container">
-        <div class="classifier-container" *ngIf="show==='analyticsBoard'">
-            <button class="overall-classifier-card classifier-card" (click)="onSelectClassifier('OVERALL')" [ngClass]="{'selected': selectedClassifier === 'OVERALL'}">
-            <h2>Best Overall Classifier</h2>
-            <p>A classifier that balances precision, recall, accuracy and speed.</p>
-            </button>
-            <button class="recall-classifier-card classifier-card" (click)="onSelectClassifier('FAST')" [ngClass]="{'selected': selectedClassifier === 'FAST'}">
-            <h2>Fastest Classifier</h2>
-            <p>A classifier that prioritizes speed over other metrics.</p>
-            </button>
-            <button class="fastest-classifier-card classifier-card" (click)="onSelectClassifier('RECALL')" [ngClass]="{'selected': selectedClassifier === 'RECALL'}">
-            <h2>Best Recall Classifier</h2>
-            <p>A classifier that has the best recall to catch possible frauds, but with a risk of incorrectly flagging genuine transactions.</p>
-            </button>
+    <div class="body-container">
+        <div class="statistics-boxes-container" *ngIf="show=='analyticsBoard'">
+            <div class="box system-frauds-box">
+                <p>Fraudulent Transactions</p>
+                <h2>{{systemFraudulentTransactions}}</h2>
+                <p>in the system</p>
+            </div>
+            <div class="box system-genuine-transactions-box">
+                <p>Genuine Transactions</p>
+                <h2>{{systemGenuineTransactions}}</h2>
+                <p>in the system</p>
+            </div>
+            <div class="box trained-data-box">
+                <div class="imbalanced-data">
+                    <p>Imbalanced data</p>
+                    <ngx-charts-pie-chart
+                        [results]="[{ name: 'Frauds', value: 0.13},{ name: 'Not Fraud', value: 99.87}]"
+                        [view]="[200,200]"
+                        [customColors]="pieChartColors">
+                    </ngx-charts-pie-chart>
+                </div>
+                <div class="sampled data">
+                    <p>SMOTE+ENN sampled data</p>
+                    <ngx-charts-pie-chart
+                        [results]="[{ name: 'Frauds', value: 50.19},{ name: 'Not Fraud', value: 49.81}]"
+                        [view]="[200,200]"
+                        [customColors]="pieChartColors">
+                    </ngx-charts-pie-chart>
+                </div>
+            </div>
+            <div class="box time-performance-box">
+                <p>Time Performance</p>
+                <ngx-charts-bar-vertical
+                    [results]="testingTimes"
+                    [view]="[200, 200]"
+                    [yAxis]="true"
+                    [customColors]="performanceColorScheme">
+                </ngx-charts-bar-vertical>
+            </div>
         </div>
 
-        <div class="performance-container" *ngIf="show==='analyticsBoard'">
-            <ngx-charts-line-chart
-                [results]="data"
-                [view]="view"
-                [xAxis]="true"
-                [yAxis]="true"
-                [showGridLines]="true"
-                [showDataPoints]="true"
-                [autoScale]="true"
-                [showLegend]="true"
-                [xAxisLabel]="xAxisLabel"
-                [yAxisLabel]="yAxisLabel"
-                [customColors]="colorScheme">
-            </ngx-charts-line-chart>
+        <div class="analytics-body-container">
+            <div class="classifier-container" *ngIf="show==='analyticsBoard'">
+                <button class="overall-classifier-card classifier-card" (click)="onSelectClassifier('OVERALL')" [ngClass]="{'selected': selectedClassifier === 'OVERALL'}">
+                    <h2>Best Overall Classifier</h2>
+                    <p>A finely tuned classifier that strikes the perfect balance between precision, recall, accuracy, and speed. With optimized hyperparameters and advanced techniques like SMOTE+ENN, it outperforms existing models, showcasing improved recall and impressive performance.</p>
+                </button>
+                <button class="recall-classifier-card classifier-card" (click)="onSelectClassifier('RECALL')" [ngClass]="{'selected': selectedClassifier === 'RECALL'}">
+                    <h2>Best Recall Classifier</h2>
+                    <p>A classifier that has the best recall to catch possible frauds, but with a risk of incorrectly flagging genuine transactions.</p>
+                </button>
+                <button class="fastest-classifier-card classifier-card" (click)="onSelectClassifier('FAST')" [ngClass]="{'selected': selectedClassifier === 'FAST'}">
+                    <h2>Fastest Classifier</h2>
+                    <p>A classifier that prioritizes speed over other metrics.</p>
+                </button>
+            </div>
+
+            <div class="box performance-container" *ngIf="show==='analyticsBoard'">
+                <ngx-charts-line-chart
+                    [results]="data"
+                    [view]="[700,300]"
+                    [xAxis]="true"
+                    [yAxis]="true"
+                    [showGridLines]="true"
+                    [showDataPoints]="true"
+                    [autoScale]="true"
+                    [showLegend]="true"
+                    [showXAxisLabel]="true"
+                    [showYAxisLabel]="true"
+                    [xAxisLabel]="'Metrics'"
+                    [yAxisLabel]="'Performance'"
+                    [customColors]="performanceColorScheme">
+                </ngx-charts-line-chart>
+            </div>
         </div>
     </div>
 

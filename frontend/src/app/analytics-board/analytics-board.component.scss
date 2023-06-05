@@ -46,67 +46,116 @@
           }
     }   
 
-    .analytics-body-container {
+    .body-container{
       display: flex;
+      flex-direction: column;
       margin-top: 40px;
-      width: 100%;
-      justify-content: space-around;
 
-      .classifier-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 10px;
-        width: 20%;
-
-        .overall-classifier-card{
-          border-color: #264b96;
-          color: #264b96;
-        }
-
-        .recall-classifier-card{
-          border-color: #006f3c;
-          color: #006f3c;
-        }
-
-        .fastest-classifier-card{
-          border-color: #bf212f;
-          color: #bf212f;
-        }
-
-        .selected {
-          background-color: #b2d9c3;
-        }
-
-        .classifier-card:hover{
-          background-color: #b2d9c3;
-          color: #fff;
-        }
-      
-        .classifier-card {
-          border: 3px solid;
-          border-radius: 25px;
-          padding: 20px;
-          text-align: center;
-          box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-
-          h2 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-          }
-
-          p {
-            font-size: 1rem;
-            color: #555;
-            margin-bottom: 10px;
-          }
-        }
-    
+      .box{
+        border: 3px solid #ccc;
+        height: 10%;
+        width: auto;
+        text-align: center;
+        border-radius: 25px;
+        padding: 20px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
       }
-      
-      .performance-container{
+
+      .statistics-boxes-container{
         display: flex;
+        justify-content: space-around;
         align-items: center;
+
+        p{
+          font-size: 14px;
+          color: #888;
+        }
+
+        h2{
+          font-size: 24px;
+          font-weight: bold;
+        }
+
+        .trained-data-box{
+          display: flex;
+          width: 30%;
+        }
       }
-    }
+
+      .analytics-body-container {
+        display: flex;
+        margin-top: 20px;
+        width: 100%;
+        justify-content: space-around;
+
+        .classifier-container {
+          display: grid;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
+          width: 40%;
+
+          .overall-classifier-card{
+            border-color: #264b96;
+            color: #264b96;
+
+            grid-column: 1;
+            grid-row: 1 / span 2;
+          }
+
+          .recall-classifier-card{
+            border-color: #006f3c;
+            color: #006f3c;
+
+            grid-column: 2;
+            grid-row: 1;
+          }
+
+          .fastest-classifier-card{
+            border-color: #bf212f;
+            color: #bf212f;
+
+            grid-column: 2;
+            grid-row: 2;
+          }
+
+          .selected {
+            background-color: #b2d9c3;
+          }
+
+          .classifier-card:hover{
+            background-color: #b2d9c3;
+            color: #fff;
+          }
+        
+          .classifier-card {
+            border: 3px solid;
+            border-radius: 25px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+
+            h2 {
+              font-size: 24px;
+              margin-bottom: 10px;
+            }
+
+            p {
+              font-size: 14px;
+              color: #555;
+              margin-bottom: 10px;
+            }
+          }
+      
+        }
+        
+        .performance-container{
+          display: flex;
+          align-items: center;
+          width: 50%;
+        }
+      }
+
+  }
 }
