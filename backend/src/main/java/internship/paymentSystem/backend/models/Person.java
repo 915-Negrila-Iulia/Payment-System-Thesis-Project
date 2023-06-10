@@ -11,4 +11,5 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Person extends PersonEntity {
+
 }

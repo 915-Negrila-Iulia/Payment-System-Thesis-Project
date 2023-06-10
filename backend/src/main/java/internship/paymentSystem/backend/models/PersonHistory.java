@@ -37,4 +37,10 @@ public class PersonHistory extends PersonEntity {
         super(firstName, lastName, address, dateOfBirth, phoneNumber);
     }
 
+    public PersonHistory(Person person){
+        super(person.getStatus(), person.getNextStatus(), person.getFirstName(), person.getLastName(), person.getAddress(),
+                person.getDateOfBirth(), person.getPhoneNumber(), person.getUserID());
+        this.personID = person.getId();
+    }
+
 }
