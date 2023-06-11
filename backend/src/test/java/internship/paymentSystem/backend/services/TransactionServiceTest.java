@@ -1,35 +1,28 @@
 package internship.paymentSystem.backend.services;
 
+import internship.paymentSystem.backend.DTOs.StatisticDto;
+import internship.paymentSystem.backend.DTOs.TransactionBuilderContext;
 import internship.paymentSystem.backend.client.Client;
-import internship.paymentSystem.backend.config.MyLogger;
-import internship.paymentSystem.backend.models.Account;
-import internship.paymentSystem.backend.models.Person;
-import internship.paymentSystem.backend.models.Transaction;
-import internship.paymentSystem.backend.models.User;
+import internship.paymentSystem.backend.customExceptions.FraudException;
+import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.enums.*;
 import internship.paymentSystem.backend.repositories.ITransactionRepository;
 import internship.paymentSystem.backend.services.interfaces.*;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TransactionServiceTest {
-
     @Mock
     private ITransactionRepository transactionRepository;
     @Mock
@@ -55,10 +48,11 @@ public class TransactionServiceTest {
     private Person person;
     private Account senderAccount, receiverAccount;
     private Transaction depositTransaction, withdrawalTransaction, internalTransferTransaction;
+    private TransactionBuilderContext context;
 
     @BeforeEach
     public void setup(){
-        user = new User("iuli", "iulia.negrila06@gmail.com", "", RoleEnum.ADMIN_ROLE,
+        user = new User("bob", "bob@yahoo.com", "", RoleEnum.ADMIN_ROLE,
                 StatusEnum.ACTIVE, StatusEnum.ACTIVE);
         user.setId(1L);
 
@@ -66,8 +60,8 @@ public class TransactionServiceTest {
         person.setId(1L);
         person.setStatus(StatusEnum.ACTIVE);
         person.setNextStatus(StatusEnum.ACTIVE);
-        person.setFirstName("Iuli");
-        person.setLastName("NNN");
+        person.setFirstName("Bob");
+        person.setLastName("Bobbert");
         person.setAddress("Romania/Cluj-Napoca/411458/Memo10");
         person.setDateOfBirth(new Date(1997,10,10));
         person.setPhoneNumber("0745698412");
@@ -96,17 +90,32 @@ public class TransactionServiceTest {
         receiverAccount.setPersonID(person.getId());
 
         depositTransaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.DEPOSIT,
-                BigDecimal.valueOf(100), senderAccount.getId(), receiverAccount.getId(),
-                "FI43ABCD5375449011255431", "", "", StatusEnum.APPROVE, StatusEnum.ACTIVE);
+                BigDecimal.valueOf(100), senderAccount.getId(), null,
+                null, null, null, StatusEnum.APPROVE, StatusEnum.ACTIVE);
         depositTransaction.setId(1L);
         withdrawalTransaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.WITHDRAWAL,
-                BigDecimal.valueOf(100), senderAccount.getId(), receiverAccount.getId(),
-                "FI43ABCD5375449011255431", "", "", StatusEnum.APPROVE, StatusEnum.ACTIVE);
+                BigDecimal.valueOf(100), senderAccount.getId(), null,
+                null, null, null, StatusEnum.APPROVE, StatusEnum.ACTIVE);
         withdrawalTransaction.setId(2L);
         internalTransferTransaction = new Transaction(TypeTransactionEnum.INTERNAL, ActionTransactionEnum.TRANSFER,
                 BigDecimal.valueOf(100), senderAccount.getId(), receiverAccount.getId(),
                 "FI43ABCD5375449011255431", "", "", StatusEnum.APPROVE, StatusEnum.ACTIVE);
         internalTransferTransaction.setId(3L);
+
+        // remain to be set: transactionDetails, accountId
+        context = new TransactionBuilderContext();
+        context.setCurrentUserId(user.getId());
+        context.setAccountUserId(user.getId());
+        context.setAccountStatus(AccountStatusEnum.OPEN);
+        context.setTargetAccountStatus(AccountStatusEnum.OPEN);
+        context.setTransactionRepository(transactionRepository);
+        context.setTransactionHistoryService(transactionHistoryService);
+        context.setBalanceService(balanceService);
+        context.setAuditService(auditService);
+        context.setAppClient(appClient);
+        context.setCurrentUserEmail(user.getEmail());
+        context.setEmailService(emailService);
+
     }
 
     @Test
@@ -184,7 +193,221 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void testDepositTransaction(){
+    void testDepositTransaction() throws Exception {
+        Long userId = user.getId();
 
+        when(personService.findPersonById(any())).thenReturn(Optional.ofNullable(person));
+        when(accountService.findAccountById(any())).thenReturn(Optional.ofNullable(senderAccount));
+        when(userService.findUserById(userId)).thenReturn(Optional.ofNullable(user));
+
+        Transaction finalTransaction = transactionService.depositTransaction(depositTransaction,userId);
+
+        assertEquals(finalTransaction.getStatus(), depositTransaction.getStatus());
+        assertEquals(finalTransaction.getNextStatus(), depositTransaction.getNextStatus());
+        assertEquals(finalTransaction.getAction(), depositTransaction.getAction());
+        assertEquals(finalTransaction.getAction(), ActionTransactionEnum.DEPOSIT);
+        assertEquals(finalTransaction.getAmount(), depositTransaction.getAmount());
+        assertEquals(finalTransaction.getAccountID(), depositTransaction.getAccountID());
+        assertEquals(finalTransaction.getTargetAccountID(), depositTransaction.getTargetAccountID());
+
+        verify(userService, times(2)).findUserById(userId);
+        verify(personService, times(2)).findPersonById(any());
+        verify(accountService, times(4)).findAccountById(any());
     }
+
+    @Test
+    void testWithdrawalTransaction() throws Exception {
+        Long userId = user.getId();
+        Balance balance = new Balance(BigDecimal.valueOf(100), BigDecimal.valueOf(100), senderAccount.getId());
+        List<Object> fraudCheckList = Arrays.asList(18.25F,"notFraud");
+
+        when(personService.findPersonById(any())).thenReturn(Optional.ofNullable(person));
+        when(accountService.findAccountById(any())).thenReturn(Optional.ofNullable(senderAccount));
+        when(userService.findUserById(userId)).thenReturn(Optional.ofNullable(user));
+        when(balanceService.getCurrentBalance(any())).thenReturn(balance);
+        when(appClient.isFraudCheck(anyInt(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(fraudCheckList);
+
+        Transaction finalTransaction = transactionService.withdrawalTransaction(withdrawalTransaction,userId);
+
+        assertEquals(finalTransaction.getStatus(), withdrawalTransaction.getStatus());
+        assertEquals(finalTransaction.getNextStatus(), withdrawalTransaction.getNextStatus());
+        assertEquals(finalTransaction.getAction(), withdrawalTransaction.getAction());
+        assertEquals(finalTransaction.getAction(), ActionTransactionEnum.WITHDRAWAL);
+        assertEquals(finalTransaction.getAmount(), withdrawalTransaction.getAmount());
+        assertEquals(finalTransaction.getAccountID(), withdrawalTransaction.getAccountID());
+        assertEquals(finalTransaction.getTargetAccountID(), withdrawalTransaction.getTargetAccountID());
+
+        verify(userService, times(2)).findUserById(userId);
+        verify(personService, times(2)).findPersonById(any());
+        verify(accountService, times(4)).findAccountById(any());
+    }
+
+    @Test
+    void testWithdrawalTransactionIsFraud() throws Exception {
+        Long userId = user.getId();
+        Balance balance = new Balance(BigDecimal.valueOf(100), BigDecimal.valueOf(100), senderAccount.getId());
+        Audit audit = new Audit(withdrawalTransaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, userId);
+        audit.setTimestamp(LocalDateTime.now());
+        List<Object> fraudCheckList = Arrays.asList(98.25F,"Fraud");
+
+        when(personService.findPersonById(any())).thenReturn(Optional.ofNullable(person));
+        when(accountService.findAccountById(any())).thenReturn(Optional.ofNullable(senderAccount));
+        when(userService.findUserById(userId)).thenReturn(Optional.ofNullable(user));
+        when(balanceService.getCurrentBalance(any())).thenReturn(balance);
+        when(auditService.saveAudit(any())).thenReturn(audit);
+        when(appClient.isFraudCheck(anyInt(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(fraudCheckList);
+
+        try {
+            Transaction finalTransaction = transactionService.withdrawalTransaction(withdrawalTransaction, userId);
+
+        } catch (FraudException fe) {
+            assertEquals("Transaction suspected as fraud. Please check your email for further details.",
+                    fe.getMessage());
+            assertEquals(98.25F, fe.getFraudProbability());
+        }
+
+        verify(userService, times(2)).findUserById(userId);
+        verify(personService, times(2)).findPersonById(any());
+        verify(accountService, times(4)).findAccountById(any());
+    }
+
+    @Test
+    void testInternalTransfer() throws Exception {
+        Long userId = user.getId();
+        Balance balance = new Balance(BigDecimal.valueOf(100), BigDecimal.valueOf(100), senderAccount.getId());
+        List<Object> fraudCheckList = Arrays.asList(18.25F,"notFraud");
+
+        when(personService.findPersonById(any())).thenReturn(Optional.ofNullable(person));
+        when(accountService.findAccountById(any())).thenReturn(Optional.ofNullable(senderAccount));
+        when(userService.findUserById(userId)).thenReturn(Optional.ofNullable(user));
+        when(balanceService.getCurrentBalance(any())).thenReturn(balance);
+        when(appClient.isFraudCheck(anyInt(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(fraudCheckList);
+
+        Transaction finalTransaction = transactionService.transferTransaction(internalTransferTransaction,userId);
+
+        assertEquals(finalTransaction.getStatus(), internalTransferTransaction.getStatus());
+        assertEquals(finalTransaction.getNextStatus(), internalTransferTransaction.getNextStatus());
+        assertEquals(finalTransaction.getAction(), internalTransferTransaction.getAction());
+        assertEquals(finalTransaction.getAction(), ActionTransactionEnum.TRANSFER);
+        assertEquals(finalTransaction.getAmount(), internalTransferTransaction.getAmount());
+        assertEquals(finalTransaction.getAccountID(), internalTransferTransaction.getAccountID());
+        assertEquals(finalTransaction.getTargetAccountID(), internalTransferTransaction.getTargetAccountID());
+
+        verify(userService, times(2)).findUserById(userId);
+        verify(personService, times(2)).findPersonById(any());
+        verify(accountService, times(6)).findAccountById(any());
+    }
+
+    @Test
+    void testInternalTransferIsFraud() throws Exception {
+        Long userId = user.getId();
+        Balance balance = new Balance(BigDecimal.valueOf(100), BigDecimal.valueOf(100), senderAccount.getId());
+        Audit audit = new Audit(internalTransferTransaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE, userId);
+        audit.setTimestamp(LocalDateTime.now());
+        List<Object> fraudCheckList = Arrays.asList(98.25F,"Fraud");
+
+        when(personService.findPersonById(any())).thenReturn(Optional.ofNullable(person));
+        when(accountService.findAccountById(any())).thenReturn(Optional.ofNullable(senderAccount));
+        when(userService.findUserById(userId)).thenReturn(Optional.ofNullable(user));
+        when(balanceService.getCurrentBalance(any())).thenReturn(balance);
+        when(auditService.saveAudit(any())).thenReturn(audit);
+        when(appClient.isFraudCheck(anyInt(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(fraudCheckList);
+
+        try {
+            Transaction finalTransaction = transactionService.internalTransfer(internalTransferTransaction, userId);
+
+        } catch (FraudException fe) {
+            assertEquals("Transaction suspected as fraud. Please check your email for further details.",
+                    fe.getMessage());
+            assertEquals(98.25F, fe.getFraudProbability());
+        }
+
+        verify(userService, times(2)).findUserById(userId);
+        verify(personService, times(2)).findPersonById(any());
+        verify(accountService, times(6)).findAccountById(any());
+    }
+
+    @Test
+    void testConfirmSuspectTransaction() throws Exception {
+        String reference = UUID.randomUUID().toString().replaceAll("-","");
+        withdrawalTransaction.setReference(reference);
+        withdrawalTransaction.setStatus(StatusEnum.SUSPECTED_FRAUD);
+        withdrawalTransaction.setNextStatus(StatusEnum.FRAUD);
+
+        assertEquals(withdrawalTransaction.getStatus(), StatusEnum.SUSPECTED_FRAUD);
+        assertEquals(withdrawalTransaction.getNextStatus(), StatusEnum.FRAUD);
+
+        when(transactionRepository.findByReference(any())).thenReturn(withdrawalTransaction);
+
+        Transaction confirmedTransaction = transactionService.confirmSuspectTransaction(withdrawalTransaction.getReference());
+
+        assertEquals(confirmedTransaction.getStatus(), withdrawalTransaction.getStatus());
+        assertEquals(confirmedTransaction.getStatus(), StatusEnum.APPROVE);
+        assertEquals(confirmedTransaction.getNextStatus(), withdrawalTransaction.getNextStatus());
+        assertEquals(confirmedTransaction.getNextStatus(), StatusEnum.ACTIVE);
+        assertEquals(confirmedTransaction.getAction(), withdrawalTransaction.getAction());
+        assertEquals(confirmedTransaction.getAmount(), withdrawalTransaction.getAmount());
+        assertEquals(confirmedTransaction.getAccountID(), withdrawalTransaction.getAccountID());
+        assertEquals(confirmedTransaction.getTargetAccountID(), withdrawalTransaction.getTargetAccountID());
+
+        verify(transactionRepository, times(1)).findByReference(withdrawalTransaction.getReference());
+        verify(transactionHistoryService, times(1)).saveTransactionHistory(any());
+        verify(balanceService, times(1)).updateAvailableAmount(senderAccount.getId(),
+                withdrawalTransaction.getId());
+        verify(transactionRepository, times(1)).save(withdrawalTransaction);
+        verify(auditService, times(1)).saveAudit(any());
+    }
+
+    @Test
+    void testGetCountFraudsInSystem(){
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(depositTransaction);
+        transactions.add(withdrawalTransaction);
+        internalTransferTransaction.setStatus(StatusEnum.FRAUD);
+        internalTransferTransaction.setNextStatus(StatusEnum.FRAUD);
+        transactions.add(internalTransferTransaction);
+
+        when(transactionService.getAllTransactions()).thenReturn(transactions);
+
+        Long countFrauds = transactionService.getCountFraudsInSystem();
+
+        assertEquals(1, countFrauds);
+    }
+
+    @Test
+    void testGetStatisticsOfAccount(){
+        depositTransaction.setStatus(StatusEnum.APPROVE);
+        withdrawalTransaction.setStatus(StatusEnum.ACTIVE);
+        internalTransferTransaction.setStatus(StatusEnum.ACTIVE);
+        Transaction deletedTransaction = new Transaction();
+        deletedTransaction.setAccountID(senderAccount.getId());
+        deletedTransaction.setStatus(StatusEnum.DELETE);
+        deletedTransaction.setAmount(BigDecimal.TEN);
+
+        when(transactionRepository.findAll()).thenReturn(Arrays.asList(depositTransaction,withdrawalTransaction,
+                internalTransferTransaction, deletedTransaction));
+
+        List<StatisticDto> statistics = transactionService.getStatisticsOfAccount(senderAccount.getId());
+
+        assertEquals(statistics.get(0).getStatus(), StatusEnum.APPROVE);
+        assertEquals(statistics.get(0).getCount(), 1L);
+        assertEquals(statistics.get(0).getAmount(), BigDecimal.valueOf(100));
+
+        assertEquals(statistics.get(1).getStatus(), StatusEnum.AUTHORIZE);
+        assertEquals(statistics.get(1).getCount(), 0L);
+        assertEquals(statistics.get(1).getAmount(), BigDecimal.ZERO);
+
+        assertEquals(statistics.get(2).getStatus(), StatusEnum.ACTIVE);
+        assertEquals(statistics.get(2).getCount(), 2L);
+        assertEquals(statistics.get(2).getAmount(), BigDecimal.valueOf(200));
+
+        assertEquals(statistics.get(3).getStatus(), StatusEnum.DELETE);
+        assertEquals(statistics.get(3).getCount(), 1L);
+        assertEquals(statistics.get(3).getAmount(), BigDecimal.TEN);
+    }
+
 }

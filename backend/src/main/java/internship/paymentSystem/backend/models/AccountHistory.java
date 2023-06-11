@@ -37,4 +37,10 @@ public class AccountHistory extends AccountEntity {
         super(iban, countryCode, bankCode, currency, accountStatus);
     }
 
+    public AccountHistory(Account account){
+        super(account.getStatus(), account.getNextStatus(), account.getIban(), account.getCountryCode(),
+                account.getBankCode(), account.getCurrency(), account.getPersonID(), account.getAccountStatus());
+        this.accountID = getAccountID();
+    }
+
 }

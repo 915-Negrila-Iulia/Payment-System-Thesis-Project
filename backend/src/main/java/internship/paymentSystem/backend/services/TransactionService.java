@@ -513,14 +513,14 @@ public class TransactionService implements ITransactionService {
                 .count();
     }
 
-    private Long getCountStatisticByStatus(Long accountId,StatusEnum status){
+    public Long getCountStatisticByStatus(Long accountId,StatusEnum status){
         List<Transaction> transactions = this.getTransactionsByAccountId(accountId);
         return transactions.stream()
                 .filter(transaction -> transaction.getStatus() == status)
                 .count();
     }
 
-    private BigDecimal getAmountStatisticByStatus(Long accountId, StatusEnum status){
+    public BigDecimal getAmountStatisticByStatus(Long accountId, StatusEnum status){
         List<Transaction> transactions = this.getTransactionsByAccountId(accountId);
         return transactions.stream()
                 .filter(transaction -> transaction.getStatus() == status)

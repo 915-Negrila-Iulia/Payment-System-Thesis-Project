@@ -7,6 +7,9 @@ import internship.paymentSystem.backend.models.Balance;
 import internship.paymentSystem.backend.models.Transaction;
 import internship.paymentSystem.backend.models.enums.*;
 import internship.paymentSystem.backend.services.TransactionService;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.mail.SimpleMailMessage;
 
 import java.math.BigDecimal;
@@ -22,6 +25,9 @@ import java.util.Objects;
  * subclasses (WithdrawTransaction, DepositTransaction, TransferTransaction) will
  * override some steps without changing the structure
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public abstract class BaseTransactionBuilder {
 
     TransactionBuilderContext context;
@@ -113,7 +119,6 @@ public abstract class BaseTransactionBuilder {
     private Audit saveAudit(Transaction transaction){
         Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.CREATE,
                 context.getCurrentUserId());
-        context.getAuditService().saveAudit(audit);
-        return audit;
+        return context.getAuditService().saveAudit(audit);
     }
 }
