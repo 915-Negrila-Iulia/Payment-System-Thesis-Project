@@ -11,7 +11,7 @@ import internship.paymentSystem.backend.repositories.IUserRepository;
 import internship.paymentSystem.backend.services.interfaces.IAuditService;
 import internship.paymentSystem.backend.services.interfaces.IUserHistoryService;
 import internship.paymentSystem.backend.services.interfaces.IUserService;
-import internship.paymentSystem.backend.models.SignupRequest;
+import internship.paymentSystem.backend.DTOs.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

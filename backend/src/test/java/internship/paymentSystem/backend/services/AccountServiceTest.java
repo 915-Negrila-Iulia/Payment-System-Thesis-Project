@@ -187,7 +187,7 @@ public class AccountServiceTest {
         when(accountHistoryService.saveAccountHistory(account1)).thenReturn(accountHistory1);
         when(auditService.saveAudit(audit)).thenReturn(audit);
 
-        Account createdAccount = accountService.saveAccount(account1);
+        Account createdAccount = accountService.createAccount(account1, user.getId());
         AccountHistory createdAccountHistory = accountHistoryService.saveAccountHistory(account1);
         Audit createdAudit = auditService.saveAudit(audit);
 
@@ -199,8 +199,8 @@ public class AccountServiceTest {
         assertEquals(audit.getObjectType(), createdAudit.getObjectType());
 
         verify(accountRepository, times(1)).save(account1);
-        verify(accountHistoryService, times(1)).saveAccountHistory(account1);
-        verify(auditService, times(1)).saveAudit(audit);
+        verify(accountHistoryService, times(2)).saveAccountHistory(account1);
+        verify(auditService, times(2)).saveAudit(audit);
     }
 
     @Test

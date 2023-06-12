@@ -2,10 +2,10 @@ package internship.paymentSystem.backend.controllers;
 
 import internship.paymentSystem.backend.config.MyLogger;
 import internship.paymentSystem.backend.jwt.JwtUtils;
-import internship.paymentSystem.backend.models.JwtResponse;
-import internship.paymentSystem.backend.models.LoginRequest;
-import internship.paymentSystem.backend.models.MessageResponse;
-import internship.paymentSystem.backend.models.SignupRequest;
+import internship.paymentSystem.backend.DTOs.JwtResponse;
+import internship.paymentSystem.backend.DTOs.LoginRequest;
+import internship.paymentSystem.backend.DTOs.MessageResponse;
+import internship.paymentSystem.backend.DTOs.SignupRequest;
 import internship.paymentSystem.backend.services.UserDetailsImpl;
 import internship.paymentSystem.backend.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;

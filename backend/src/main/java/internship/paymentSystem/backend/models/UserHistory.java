@@ -46,4 +46,12 @@ public class UserHistory extends BaseEntity {
     public UserHistory(String email) {
         this.email = email;
     }
+
+    public UserHistory(User user) {
+        super(user.getStatus(), user.getNextStatus());
+        this.username = user.getUsername();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.userID = user.getId();
+    }
 }

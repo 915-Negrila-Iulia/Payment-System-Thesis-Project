@@ -1,4 +1,4 @@
-package internship.paymentSystem.backend.models;
+package internship.paymentSystem.backend.DTOs;
 
 public class MessageResponse {
     private String message;

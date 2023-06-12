@@ -1,4 +1,4 @@
-package internship.paymentSystem.backend.models;
+package internship.paymentSystem.backend.DTOs;
 
 import internship.paymentSystem.backend.models.enums.RoleEnum;
 

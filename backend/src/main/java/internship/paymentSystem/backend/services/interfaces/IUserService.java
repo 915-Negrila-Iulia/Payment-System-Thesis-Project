@@ -1,9 +1,8 @@
 package internship.paymentSystem.backend.services.interfaces;
 
-import internship.paymentSystem.backend.models.SignupRequest;
+import internship.paymentSystem.backend.DTOs.SignupRequest;
 import internship.paymentSystem.backend.models.User;
 import internship.paymentSystem.backend.models.UserHistory;
-import internship.paymentSystem.backend.models.enums.RoleEnum;
 
 import java.util.List;
 import java.util.Optional;
