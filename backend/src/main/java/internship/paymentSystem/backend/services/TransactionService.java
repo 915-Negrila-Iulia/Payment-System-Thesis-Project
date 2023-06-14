@@ -7,7 +7,6 @@ import internship.paymentSystem.backend.config.MyLogger;
 import internship.paymentSystem.backend.models.*;
 import internship.paymentSystem.backend.models.bases.TransactionEntity;
 import internship.paymentSystem.backend.models.enums.*;
-import internship.paymentSystem.backend.repositories.IFraudDetectionClassifierRepository;
 import internship.paymentSystem.backend.repositories.ITransactionRepository;
 import internship.paymentSystem.backend.services.interfaces.*;
 import internship.paymentSystem.backend.utils.*;
@@ -260,7 +259,7 @@ public class TransactionService implements ITransactionService {
     public Transaction transferTransaction(Transaction transactionDetails, Long currentUserId) throws Exception {
         return transactionDetails.getType() == TypeTransactionEnum.INTERNAL ?
                 this.internalTransfer(transactionDetails,currentUserId) : // internal transfer
-                this.externalTransfer(transactionDetails,currentUserId); // ips external transfer
+                this.externalTransfer(transactionDetails,currentUserId); // external transfer
     }
 
     @Transactional
@@ -338,8 +337,8 @@ public class TransactionService implements ITransactionService {
             if(transaction.getType() == TypeTransactionEnum.INTERNAL) {
                 transaction.setNextStatus(StatusEnum.ACTIVE);
             }
-            else { // EXTERNAL transaction -> perform ips request
-                transaction.setNextStatus(StatusEnum.AUTHORIZE_IPS);
+            else { // EXTERNAL transaction -> perform external request
+                transaction.setNextStatus(StatusEnum.AUTHORIZE_EXTERNAL_SYSTEM);
             }
             Transaction activeTransaction = transactionRepository.save(transaction);
             balanceService.updateTotalAmount(transaction.getId());
@@ -395,31 +394,31 @@ public class TransactionService implements ITransactionService {
 
     private void externalAuthorize(Transaction transaction){
         transactionHistoryService.saveTransactionHistory(transaction);
-        transaction.setStatus(StatusEnum.AUTHORIZE_IPS);
+        transaction.setStatus(StatusEnum.AUTHORIZE_EXTERNAL_SYSTEM);
         transaction.setNextStatus(StatusEnum.ACTIVE);
         Transaction authorizedTransaction = transactionRepository.save(transaction);
         Audit audit = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
         auditService.saveAudit(audit);
     }
 
-    private Transaction ipsAcceptTransaction(Transaction transaction){
+    private Transaction externalAcceptTransaction(Transaction transaction){
         transactionHistoryService.saveTransactionHistory(transaction);
         transaction.setStatus(StatusEnum.ACTIVE);
-        Transaction authorizedIpsTransaction = transactionRepository.save(transaction);
+        Transaction authorizedExternalTransaction = transactionRepository.save(transaction);
         balanceService.updateTotalAmount(transaction.getId());
-        Audit auditIps = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
-        auditService.saveAudit(auditIps);
-        return authorizedIpsTransaction;
+        Audit auditExternalTransfer = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.AUTHORIZE, 0L);
+        auditService.saveAudit(auditExternalTransfer);
+        return authorizedExternalTransaction;
     }
 
-    private Transaction ipsRejectTransaction(Transaction transaction){
+    private Transaction externalRejectTransaction(Transaction transaction){
         transactionHistoryService.saveTransactionHistory(transaction);
         transaction.setStatus(StatusEnum.DELETE);
         transaction.setNextStatus(StatusEnum.DELETE);
         Transaction rejectedTransaction = transactionRepository.save(transaction);
         balanceService.cancelAmountChanges(transaction.getId());
-        Audit auditIps = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.REJECT, 0L);
-        auditService.saveAudit(auditIps);
+        Audit auditExternalTransfer = new Audit(transaction.getId(), ObjectTypeEnum.TRANSACTION, OperationEnum.REJECT, 0L);
+        auditService.saveAudit(auditExternalTransfer);
         return rejectedTransaction;
     }
 
@@ -441,7 +440,7 @@ public class TransactionService implements ITransactionService {
             if(transaction.getType() == TypeTransactionEnum.INTERNAL) {
                 return this.internalAuthorize(transaction);
             }
-            else{ // EXTERNAL transaction -> perform ips request
+            else{ // EXTERNAL transaction -> simulate performing external request
                 this.externalAuthorize(transaction);
 
                 BigDecimal amount = transaction.getAmount();
@@ -452,11 +451,9 @@ public class TransactionService implements ITransactionService {
                 String bankName = transaction.getBankName();
                 String nameReceiver = transaction.getNameReceiver();
                 String bicReceiver = this.getBicOfBank(bankName);
-                String ipsResponse = appClient.sendPaymentRequestIPS(amount, referenceTransaction,
-                        nameSender, ibanSender, bicReceiver, nameReceiver,
-                        ibanReceiver);
+                String externalResponse = "NAC";
 
-                // waiting for ips response
+                // waiting for external response
                 try {
                     sleep(5000);
                 }
@@ -464,11 +461,11 @@ public class TransactionService implements ITransactionService {
                     throw new Exception("Thread sleep not working");
                 }
 
-                if(Objects.equals(ipsResponse, "ACSP")){
-                    return this.ipsAcceptTransaction(transaction);
+                if(Objects.equals(externalResponse, "AC")){
+                    return this.externalAcceptTransaction(transaction);
                 }
                 else{
-                    return this.ipsRejectTransaction(transaction);
+                    return this.externalRejectTransaction(transaction);
                 }
             }
         }

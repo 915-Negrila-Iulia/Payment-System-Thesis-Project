@@ -5,7 +5,7 @@ public enum StatusEnum {
     APPROVE,
     DELETE,
     AUTHORIZE,
-    AUTHORIZE_IPS,
+    AUTHORIZE_EXTERNAL_SYSTEM,
     SUSPECTED_FRAUD,
     FRAUD
 }
